@@ -6,11 +6,11 @@ export default class Enemy extends GameObjects.Sprite {
     private hp: number;
 
     constructor(scene: Phaser.Scene, x: number, y: number, texture: string, frame?: string | number) {
-        super(scene, x, y, 'sprites', 'enemy');
+        super(scene, x, y, 'bloons-0', '0001');
 
-        this.setDisplaySize(32, 32);
-        this.height = 32;
-        this.width = 32;
+        this.setDisplaySize(64, 64);
+        this.height = 64;
+        this.width = 64;
 
         this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
         this.hp = 0;
@@ -33,13 +33,13 @@ export default class Enemy extends GameObjects.Sprite {
         // if hp drops below 0 we deactivate this enemy
         if(this.hp <= 0) {
             this.setActive(false);
-            this.setVisible(false);      
+            this.setVisible(false);
         }
     }
     
     public update(time, delta)
     {
-        this.follower.t += (1/10000) * delta;
+        this.follower.t += (1/50000) * delta;
         this.path.getPoint(this.follower.t, this.follower.vec);
         
         this.setPosition(this.follower.vec.x, this.follower.vec.y);
