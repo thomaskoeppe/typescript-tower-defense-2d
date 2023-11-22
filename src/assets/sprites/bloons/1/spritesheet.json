@@ -1,7 +1,7 @@
 {
 	"frames": [
 		{
-			"filename": "0001.png",
+			"filename": "1",
 			"frame": {
 				"x": 1,
 				"y": 1,
@@ -22,7 +22,7 @@
 			}
 		},
 		{
-			"filename": "0002.png",
+			"filename": "2",
 			"frame": {
 				"x": 47,
 				"y": 1,
@@ -43,7 +43,7 @@
 			}
 		},
 		{
-			"filename": "0003.png",
+			"filename": "3",
 			"frame": {
 				"x": 1,
 				"y": 47,
@@ -64,7 +64,7 @@
 			}
 		},
 		{
-			"filename": "0004.png",
+			"filename": "4",
 			"frame": {
 				"x": 47,
 				"y": 47,

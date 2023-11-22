@@ -1,7 +1,7 @@
 {
 	"frames": [
 		{
-			"filename": "0001",
+			"filename": "1",
 			"frame": {
 				"x": 1,
 				"y": 1,
@@ -22,7 +22,7 @@
 			}
 		},
 		{
-			"filename": "0002",
+			"filename": "2",
 			"frame": {
 				"x": 50,
 				"y": 1,
@@ -43,7 +43,7 @@
 			}
 		},
 		{
-			"filename": "0003",
+			"filename": "3",
 			"frame": {
 				"x": 99,
 				"y": 1,
@@ -64,7 +64,7 @@
 			}
 		},
 		{
-			"filename": "0004",
+			"filename": "4",
 			"frame": {
 				"x": 1,
 				"y": 49,
@@ -85,7 +85,7 @@
 			}
 		},
 		{
-			"filename": "0005",
+			"filename": "5",
 			"frame": {
 				"x": 50,
 				"y": 49,
@@ -106,7 +106,7 @@
 			}
 		},
 		{
-			"filename": "0006",
+			"filename": "6",
 			"frame": {
 				"x": 99,
 				"y": 49,
@@ -127,7 +127,7 @@
 			}
 		},
 		{
-			"filename": "0007",
+			"filename": "7",
 			"frame": {
 				"x": 1,
 				"y": 97,
@@ -148,7 +148,7 @@
 			}
 		},
 		{
-			"filename": "0008",
+			"filename": "8",
 			"frame": {
 				"x": 50,
 				"y": 97,
@@ -169,7 +169,7 @@
 			}
 		},
 		{
-			"filename": "0009",
+			"filename": "9",
 			"frame": {
 				"x": 99,
 				"y": 97,
@@ -190,7 +190,7 @@
 			}
 		},
 		{
-			"filename": "0010",
+			"filename": "10",
 			"frame": {
 				"x": 148,
 				"y": 1,
@@ -211,7 +211,7 @@
 			}
 		},
 		{
-			"filename": "0011",
+			"filename": "11",
 			"frame": {
 				"x": 148,
 				"y": 49,

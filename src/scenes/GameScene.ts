@@ -1,6 +1,7 @@
-import { Scene, Curves, Tilemaps, Input, GameObjects } from "phaser";
+import { Scene, Curves, Tilemaps, Input, GameObjects, Physics } from "phaser";
 import Enemy from "../objects/Enemy";
 import Turret from "../objects/Turret";
+import Projectile from "../objects/Projectile";
 
 export default class GameScene extends Scene {
   private mapProperties: {
@@ -8,12 +9,23 @@ export default class GameScene extends Scene {
     end: Tilemaps.Tile;
   }
 
+  private wave: number = 0;
+  private waveData: any;
+  public enemiesLeft: number = 0;
+  private enemiesSpawned: number = 0;
+  private nextEnemy: number = 0;
+
+  private text: GameObjects.Text;
+
+  private money: number = 0;
+  private lifes: number = 10;
+
   private path: Curves.Path;
   private world: Tilemaps.TilemapLayer;
 
-  private nextEnemy: number = 0;
-  private enemies: Phaser.Physics.Arcade.Group;
-  private turrets: Phaser.Physics.Arcade.Group;
+  public enemies: Phaser.Physics.Arcade.Group;
+  public turrets: Phaser.Physics.Arcade.Group;
+  public projectiles: Phaser.Physics.Arcade.Group;
 
   constructor() {
     super({ key: "game", active: true, visible: true });
@@ -31,6 +43,8 @@ export default class GameScene extends Scene {
 
     this.load.image("tiles", "./assets/images/tiles.png");
     this.load.tilemapTiledJSON("tilemap", "./assets/tilemaps/map-1.json");
+
+    this.load.json("wavedata", "./config/wavedata/normal.json");
   }
 
   public create() {
@@ -50,7 +64,7 @@ export default class GameScene extends Scene {
    
     this.createPath(tiles, this.mapProperties.start, null);
 
-    this.add.text(16, 16, "Wave 0/0", {
+    this.text = this.add.text(16, 16, `Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}`, {
       font: "18px monospace",
       padding: { x: 20, y: 10 },
       backgroundColor: "#000000"
@@ -58,27 +72,68 @@ export default class GameScene extends Scene {
 
     this.enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
     this.turrets = this.physics.add.group({ classType: Turret, runChildUpdate: true });
+    this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
+
+    this.physics.add.overlap(this.projectiles, this.enemies, Enemy.damageEnemy);
 
     this.input.on("pointerdown", this.placeTurret, this);
+
+    this.waveData = this.cache.json.get("wavedata")[this.wave];
+    this.enemiesLeft = this.waveData.enemies.length;
   }
 
   public update(time: number, delta: number): void {
-    this.turrets.children.each((turret: Turret) => {
-      turret.findNearestEnemy(this.enemies.children.entries);
-      return true;
-    });
+    this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
 
-    if (this.enemies.countActive(true) < 10 && time > this.nextEnemy) {
+    if (this.enemiesLeft === 0 && this.enemies.countActive() === 0) {
+      this.wave++;
+
+      if (this.wave === this.cache.json.get("wavedata").length) {
+        this.scene.stop("game");
+        this.scene.start("gameover");
+        return;
+      }
+
+      this.waveData = this.cache.json.get("wavedata")[this.wave];
+      this.enemiesLeft = this.waveData.enemies.length;
+      this.enemiesSpawned = 0;
+    }
+
+    if (this.nextEnemy < time && this.enemiesSpawned < this.waveData.enemies.length) {
+      const e = this.waveData.enemies[this.enemiesSpawned];
       const enemy = this.enemies.get();
 
       if (enemy) {
         enemy.setActive(true);
         enemy.setVisible(true);
         enemy.startOnPath(this.path);
+        enemy.setFrame("1");
+        enemy.setTexture(`bloons-${e.type}`);
+        enemy.setDisplaySize(e.size.width, e.size.height);
+        enemy.height = e.size.height;
+        enemy.width = e.size.width;
+        enemy.setHp(e.hp);
+        enemy.setSpeed(e.movementSpeed);
+        enemy.setReward(e.reward);
+        enemy.setTakesHealth(e.takesHealth);
 
         this.nextEnemy = time + 200;
+        this.enemiesSpawned++;
       }
     }
+  }
+
+  public removeLife(lifes) {
+    this.lifes -= lifes;
+
+    if (this.lifes <= 0) {
+      this.scene.stop("game");
+      this.scene.start("gameover");
+    }
+  }
+
+  public addMoney(money) {
+    this.money += money;
   }
 
   private placeTurret(pointer: Input.Pointer): void {
