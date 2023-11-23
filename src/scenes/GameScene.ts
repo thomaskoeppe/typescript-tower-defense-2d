@@ -17,11 +17,15 @@ export default class GameScene extends Scene {
 
   private text: GameObjects.Text;
 
+  private isInBuildMode: boolean = false;
+
   private money: number = 0;
   private lifes: number = 10;
 
   private path: Curves.Path;
   private world: Tilemaps.TilemapLayer;
+
+  public hud: GameObjects.Container;
 
   public enemies: Phaser.Physics.Arcade.Group;
   public turrets: Phaser.Physics.Arcade.Group;
@@ -45,6 +49,8 @@ export default class GameScene extends Scene {
     this.load.tilemapTiledJSON("tilemap", "./assets/tilemaps/map-1.json");
 
     this.load.json("wavedata", "./config/wavedata/normal.json");
+
+    this.load.image("monkey-0", "./assets/images/monkey-0.png");
   }
 
   public create() {
@@ -70,13 +76,46 @@ export default class GameScene extends Scene {
       backgroundColor: "#000000"
     });
 
+    this.hud = this.add.container(this.cameras.main.width - 64, 16);
+    let backgroundColor = this.add.graphics();
+    backgroundColor.fillStyle(0x000000, 1);
+    backgroundColor.fillRect(0, 0, 128, 128);
+    this.hud.add(backgroundColor);
+
+    let monkey = this.add.image(0, 0, "monkey-0").setOrigin(0, 0).setInteractive();
+    this.hud.add(monkey);
+    this.input.setDraggable(monkey);
+
+    this.input.on("drag", (pointer: Input.Pointer, gameObject: GameObjects.Image, dragX: number, dragY: number) => {
+      gameObject.x = dragX;
+      gameObject.y = dragY;
+
+      this.world.replaceByIndex(39, 25);
+
+      const tile = this.world.getTileAtWorldXY(pointer.worldX, pointer.worldY);
+      if (tile && tile.index === 25) {
+        tile.index = 39;
+      }
+    });
+
+    this.input.on("dragend", (pointer: Input.Pointer, gameObject: GameObjects.Image, dragX: number, dragY: number) => {
+      gameObject.x = gameObject.input.dragStartX;
+      gameObject.y = gameObject.input.dragStartY;
+
+      const tile = this.world.getTileAtWorldXY(pointer.worldX, pointer.worldY);
+      if (tile && tile.index === 39) {
+        this.placeTurret(pointer);
+      }
+
+      this.world.replaceByIndex(39, 25);
+    });
+
     this.enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
     this.turrets = this.physics.add.group({ classType: Turret, runChildUpdate: true });
     this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
 
     this.physics.add.overlap(this.projectiles, this.enemies, Enemy.damageEnemy);
 
-    this.input.on("pointerdown", this.placeTurret, this);
 
     this.waveData = this.cache.json.get("wavedata")[this.wave];
     this.enemiesLeft = this.waveData.enemies.length;

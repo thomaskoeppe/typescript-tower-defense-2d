@@ -25,5 +25,1085 @@
                 "takesHealth": 1
             }
         ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
+    },
+    {
+        "enemies": [
+            {
+                "type": "0",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1,
+                "reward": 10,
+                "takesHealth": 1
+            },
+            {
+                
+                "type": "1",
+                "size": {
+                    "width": 64,
+                    "height": 64
+                },
+                "hp": 100,
+                "movementSpeed": 1.5,
+                "reward": 20,
+                "takesHealth": 1
+            }
+        ]
     }
 ]
