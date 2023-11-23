@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/sebsowter/phaser-webpack#readme",
   "devDependencies": {
-    "@babel/core": "^7.21.4",
+    "@babel/core": "^7.23.3",
     "@babel/preset-env": "^7.23.3",
     "babel-loader": "^9.1.3",
     "copy-webpack-plugin": "^11.0.0",
