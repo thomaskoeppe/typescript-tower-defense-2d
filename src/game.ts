@@ -1,8 +1,25 @@
-import { AUTO as hasWebGlSupport, Types, Game } from "phaser";
+import PhaserMatterCollisionPlugin from "phaser-matter-collision-plugin";
 import GameScene from "./scenes/GameScene";
 
-const config: Types.Core.GameConfig = {
-  type: hasWebGlSupport,
+const pluginConfig = {
+  plugin: PhaserMatterCollisionPlugin,
+  key: "matterCollision" as "matterCollision",
+  mapping: "matterCollision" as "matterCollision",
+};
+
+declare module "phaser" {
+  interface Scene {
+    [pluginConfig.mapping]: PhaserMatterCollisionPlugin;
+  }
+  namespace Scenes {
+    interface Systems {
+      [pluginConfig.key]: PhaserMatterCollisionPlugin;
+    }
+  }
+}
+
+const config: Phaser.Types.Core.GameConfig = {
+  type: Phaser.AUTO,
   scale: {
     height: 1408,
     width: 2560,
@@ -10,22 +27,17 @@ const config: Types.Core.GameConfig = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  // input: {
-  //   keyboard: true,
-  //   gamepad: true,
-  // },
-  // render: {
-  //   pixelArt: true,
-  //   antialias: false,
-  //   antialiasGL: false,
-  // },
   physics: {
-    default: "arcade",
-    arcade: {
+    default: "matter",
+    matter: {
+      debug: true,
       gravity: { y: 0 },
     },
   },
   scene: [GameScene],
+  plugins: {
+    scene: [pluginConfig],
+  },
 };
 
-window.addEventListener("load", () => new Game(config));
+window.addEventListener("load", () => new Phaser.Game(config));
