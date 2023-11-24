@@ -1,13 +1,27 @@
 import { Scene, Curves, Tilemaps, Input, GameObjects, Physics } from "phaser";
-import Enemy from "../objects/Enemy";
+import Enemy from "../objects/Bloon";
+import { isEmpty, range, take, zip } from 'lodash';
 import Turret from "../objects/Turret";
-import Projectile from "../objects/Projectile";
+import Loader from "../lib/Loader";
+import AutoRemoveList from "../lib/AutoRemoveList";
+import Pathfinding from "../lib/Pathfinding";
+import { Projectile } from "~/objects/Projectile";
+
+export enum CollisionGroup {
+  BULLET = -1,
+  ENEMY = -2
+}
+
+export type PlacedTurret = {
+  sprite: Turret,
+  tile: Tilemaps.Tile
+}
 
 export default class GameScene extends Scene {
-  private mapProperties: {
-    start: Tilemaps.Tile;
-    end: Tilemaps.Tile;
-  }
+  private spawn: Phaser.Math.Vector2 = Phaser.Math.Vector2.ZERO;
+  private goal: Phaser.Math.Vector2 = Phaser.Math.Vector2.ZERO;
+
+  private mapdata: any;
 
   private wave: number = 0;
   private waveData: any;
@@ -15,60 +29,56 @@ export default class GameScene extends Scene {
   private enemiesSpawned: number = 0;
   private nextEnemy: number = 0;
 
-  private text: GameObjects.Text;
-
-  private isInBuildMode: boolean = false;
+  private text: GameObjects.Text | undefined;
 
   private money: number = 0;
   private lifes: number = 10;
 
-  private path: Curves.Path;
-  private world: Tilemaps.TilemapLayer;
+  private path: Curves.Path | undefined;
+  private world: Tilemaps.TilemapLayer | undefined;
 
-  public hud: GameObjects.Container;
+  public hud: GameObjects.Container | undefined;
 
-  public enemies: Phaser.Physics.Arcade.Group;
-  public turrets: Phaser.Physics.Arcade.Group;
-  public projectiles: Phaser.Physics.Arcade.Group;
+  public enemies: AutoRemoveList<Enemy>;
+  public projectiles: AutoRemoveList<Projectile>;
+  private turrets: PlacedTurret[];
 
   constructor() {
     super({ key: "game", active: true, visible: true });
+
+    this.enemies = new AutoRemoveList<Enemy>();
+    this.projectiles = new AutoRemoveList<Projectile>();
+    this.turrets = [];
   }
 
   public preload() {
-    this.load.atlas('bloons-0', './assets/sprites/bloons/0/spritesheet.png', './assets/sprites/bloons/0/spritesheet.json');
-    this.load.atlas('bloons-1', './assets/sprites/bloons/1/spritesheet.png', './assets/sprites/bloons/1/spritesheet.json');
-    this.load.atlas('bloons-2', './assets/sprites/bloons/2/spritesheet.png', './assets/sprites/bloons/2/spritesheet.json');
-    this.load.atlas('bloons-3', './assets/sprites/bloons/3/spritesheet.png', './assets/sprites/bloons/3/spritesheet.json');
-    this.load.atlas('bloons-4', './assets/sprites/bloons/4/spritesheet.png', './assets/sprites/bloons/4/spritesheet.json');
-
-    this.load.atlas('turrets-0', './assets/sprites/turrets/0/spritesheet.png', './assets/sprites/turrets/0/spritesheet.json');
-    this.load.atlas('projectiles-0', './assets/sprites/projectiles/0/spritesheet.png', './assets/sprites/projectiles/0/spritesheet.json');
-
-    this.load.image("tiles", "./assets/images/tiles.png");
-    this.load.tilemapTiledJSON("tilemap", "./assets/tilemaps/map-1.json");
-
-    this.load.json("wavedata", "./config/wavedata/normal.json");
-
-    this.load.image("monkey-0", "./assets/images/monkey-0.png");
+    Loader.initiate(this);
   }
 
   public create() {
     const tilemap = this.make.tilemap({ key: "tilemap" });
     const tileset = tilemap.addTilesetImage("tiles");
 
-    this.world = tilemap.createLayer("Layer 1", tileset, 0, 0);
+    if (tileset === null) {
+      throw new Error("Tileset not found");
+    }
+
+    const layer1 = tilemap.createLayer("Layer 1", tileset, 0, 0);
+
+    if (layer1 === null) {
+      throw new Error("Layer not found");
+    }
+
+    this.mapdata = this.cache.json.get("mapdata")
+    this.world = layer1;
     this.world.setCollisionByProperty({ collides: true });
 
-    this.mapProperties = {
-      start: this.world.findByIndex(35),
-      end: this.world.findByIndex(35, 0, true)
-    };
+    this.matter.world.setBounds(0, 0, tilemap.widthInPixels, tilemap.heightInPixels);
 
-    this.path = new Curves.Path(this.mapProperties.start.pixelX + this.mapProperties.start.width/2, this.mapProperties.start.pixelY);
-    const tiles = this.world.filterTiles((tile) => tile.index === 35);
-   
-    this.createPath(tiles, this.mapProperties.start, null);
+    this.spawn = new Phaser.Math.Vector2(this.mapdata.spawn.x, this.mapdata.spawn.y);
+    this.goal = new Phaser.Math.Vector2(this.mapdata.goal.x, this.mapdata.goal.y);
+
+    this.path = Pathfinding.create(this.path!, this.mapdata.path, this.spawn, this.goal);
 
     this.text = this.add.text(16, 16, `Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}`, {
       font: "18px monospace",
@@ -90,96 +100,136 @@ export default class GameScene extends Scene {
       gameObject.x = dragX;
       gameObject.y = dragY;
 
-      this.world.replaceByIndex(39, 25);
+      this.world!.replaceByIndex(39, 25);
 
-      const tile = this.world.getTileAtWorldXY(pointer.worldX, pointer.worldY);
+      const tile = this.world!.getTileAtWorldXY(pointer.worldX, pointer.worldY);
       if (tile && tile.index === 25) {
         tile.index = 39;
       }
     });
 
     this.input.on("dragend", (pointer: Input.Pointer, gameObject: GameObjects.Image, dragX: number, dragY: number) => {
-      gameObject.x = gameObject.input.dragStartX;
-      gameObject.y = gameObject.input.dragStartY;
+      gameObject.x = gameObject.input!.dragStartX;
+      gameObject.y = gameObject.input!.dragStartY;
 
-      const tile = this.world.getTileAtWorldXY(pointer.worldX, pointer.worldY);
+      const tile = this.world!.getTileAtWorldXY(pointer.worldX, pointer.worldY);
       if (tile && tile.index === 39) {
         this.placeTurret(pointer);
+        console.log("place turret")
       }
 
-      this.world.replaceByIndex(39, 25);
+      this.world!.replaceByIndex(39, 25);
     });
-
-    this.enemies = this.physics.add.group({ classType: Enemy, runChildUpdate: true });
-    this.turrets = this.physics.add.group({ classType: Turret, runChildUpdate: true });
-    this.projectiles = this.physics.add.group({ classType: Projectile, runChildUpdate: true });
-
-    this.physics.add.overlap(this.projectiles, this.enemies, Enemy.damageEnemy);
-
 
     this.waveData = this.cache.json.get("wavedata")[this.wave];
     this.enemiesLeft = this.waveData.enemies.length;
   }
 
   public update(time: number, delta: number): void {
-    this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
-
-    if (this.enemiesLeft === 0 && this.enemies.countActive() === 0) {
-      this.wave++;
-
-      if (this.wave === this.cache.json.get("wavedata").length) {
-        this.scene.stop("game");
-        this.scene.start("gameover");
-        return;
-      }
-
-      this.waveData = this.cache.json.get("wavedata")[this.wave];
-      this.enemiesLeft = this.waveData.enemies.length;
-      this.enemiesSpawned = 0;
+    if (this.text) {
+      this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
     }
 
-    if (this.nextEnemy < time && this.enemiesSpawned < this.waveData.enemies.length) {
-      const e = this.waveData.enemies[this.enemiesSpawned];
-      const enemy = this.enemies.get();
+    if (this.enemies.active < 2 && this.nextEnemy < time) {
+      const enemy = Enemy.create(this, {
+        x: this.spawn.x,
+        y: this.spawn.y,
+        scale: 0.5,
+      });
+      enemy.startOnPath(this.path);
+      this.enemies.add(enemy);
 
-      if (enemy) {
-        enemy.setActive(true);
-        enemy.setVisible(true);
-        enemy.startOnPath(this.path);
-        enemy.setFrame("1");
-        enemy.setTexture(`bloons-${e.type}`);
-        enemy.setDisplaySize(e.size.width, e.size.height);
-        enemy.height = e.size.height;
-        enemy.width = e.size.width;
-        enemy.setHp(e.hp);
-        enemy.setSpeed(e.movementSpeed);
-        enemy.setReward(e.reward);
-        enemy.setTakesHealth(e.takesHealth);
-
-        this.nextEnemy = time + 200;
-        this.enemiesSpawned++;
-      }
+      this.nextEnemy = time + 2000;
     }
+
+    this.enemies.update(time, delta);
+    this.projectiles.update(time, delta)
+    this.turrets.forEach(({sprite}) => { sprite.update(time, delta) });
+
+    console.log(this.projectiles.active, this.projectiles)
+
+    // if (this.enemiesLeft === 0 && this.enemies!.countActive() === 0) {
+    //   this.wave++;
+
+    //   if (this.wave === this.cache.json.get("wavedata").length) {
+    //     this.scene.stop("game");
+    //     this.scene.start("gameover");
+    //     return;
+    //   }
+
+    //   this.waveData = this.cache.json.get("wavedata")[this.wave];
+    //   this.enemiesLeft = this.waveData.enemies.length;
+    //   this.enemiesSpawned = 0;
+    // }
+
+    // if (this.nextEnemy < time && this.enemiesSpawned < this.waveData.enemies.length) {
+    //   const e = this.waveData.enemies[this.enemiesSpawned];
+    //   const enemy = this.enemies!.get();
+
+    //   if (enemy) {
+    //     enemy.setActive(true);
+    //     enemy.setVisible(true);
+    //     enemy.startOnPath(this.path);
+    //     enemy.setFrame("1");
+    //     enemy.setTexture(`bloons-${e.type}`);
+    //     enemy.setDisplaySize(64, 64);
+    //     enemy.body.setSize(enemy.width*0.5, enemy.height*0.5);
+    //     enemy.setHp(e.hp);
+    //     enemy.setSpeed(e.movementSpeed);
+    //     enemy.setReward(e.reward);
+    //     enemy.setTakesHealth(e.takesHealth);
+
+    //     this.nextEnemy = time + 200;
+    //     this.enemiesSpawned++;
+    //   }
+    // }
+
+    this.getNearestBloon(new Phaser.Math.Vector2(0, 0), 0);
   }
 
-  public removeLife(lifes) {
-    this.lifes -= lifes;
+  public getNearestBloon(pos: Phaser.Math.Vector2, maxDistance: number): Enemy | undefined {
+    let nearestEnemy: Enemy | undefined;
+    let nearestDistance: number = maxDistance;
 
-    if (this.lifes <= 0) {
-      this.scene.stop("game");
-      this.scene.start("gameover");
-    }
+    this.enemies.forEach((enemy: Enemy) => {
+      if (!enemy.isDead()) {
+        const { x, y } = enemy.getXY();
+
+        const distance = Phaser.Math.Distance.Between(pos.x, pos.y, x, y);
+        if (distance < nearestDistance) {
+          nearestEnemy = enemy;
+          nearestDistance = distance;
+        }
+      }
+    });
+
+    return nearestEnemy;
   }
 
-  public addMoney(money) {
-    this.money += money;
+  // public removeLife(lifes) {
+  //   this.lifes -= lifes;
+
+  //   if (this.lifes <= 0) {
+  //     this.scene.stop("game");
+  //     this.scene.start("gameover");
+  //   }
+  // }
+
+  // public addMoney(money) {
+  //   this.money += money;
+  // }
+
+  public spawnProjectile(projectile: Projectile) {
+    this.projectiles.add(projectile);
   }
 
   private placeTurret(pointer: Input.Pointer): void {
+    //get tile at pointer
     const x = Math.floor(pointer.x / 64) * 64 + 32;
     const y = Math.floor(pointer.y / 64) * 64 + 32;
+    const tile = this.world!.getTileAtWorldXY(x, y);
 
-    if (this.turrets.children.entries.some((turret: Turret) => { return turret.x === x && turret.y === y; })) {
+    if (this.turrets.some((v: PlacedTurret) => { return v.tile === tile })) {
       const text = this.add.text(this.cameras.main.width / 2, 16, "Turret already placed here", {
         font: "18px monospace",
         padding: { x: 20, y: 10 },
@@ -193,7 +243,6 @@ export default class GameScene extends Scene {
       return;
     }
 
-    const tile = this.world.getTileAtWorldXY(x, y);
     if (tile && tile.properties.collides) {
       const text = this.add.text(this.cameras.main.width / 2, 16, "Cannot place turret here", {
         font: "18px monospace",
@@ -208,43 +257,10 @@ export default class GameScene extends Scene {
       return;
     }
 
-    const turret = this.turrets.get();
-
-    if (turret) {
-      turret.setActive(true);
-      turret.setVisible(true);
-      turret.setPosition(x, y);
-    }
-  }
-
-  private createPath(tiles: Tilemaps.Tile[], currentTile: Tilemaps.Tile, previousTile: Tilemaps.Tile): void {
-    const { x, y } = currentTile;
-    
-    const neighbours = tiles.filter((tile) => {
-      return (
-        ((tile.x === x - 1 && tile.y === y) ||
-        (tile.x === x + 1 && tile.y === y) ||
-        (tile.x === x && tile.y === y - 1) ||
-        (tile.x === x && tile.y === y + 1)) &&
-        tile !== previousTile
-      );
+    const turret = Turret.create(this, { x, y }, {
+      sprite: "turrets-0"
     });
 
-    if (neighbours.length === 0) {
-      return;
-    }
-
-    const nextTile = neighbours[0];
-
-    if (nextTile === this.mapProperties.end) {
-      if (this.world.height === nextTile.bottom) {
-        this.path.lineTo(nextTile.pixelX + nextTile.width/2, nextTile.pixelY + nextTile.height);
-      } else {
-        this.path.lineTo(nextTile.pixelX + nextTile.width, nextTile.pixelY + nextTile.height/2);
-      }
-    } else {
-      this.path.lineTo(nextTile.pixelX + nextTile.width/2, nextTile.pixelY + nextTile.height/2);
-      this.createPath(tiles, nextTile, currentTile);
-    }
+    this.turrets.push({ sprite: turret, tile: tile });
   }
 }

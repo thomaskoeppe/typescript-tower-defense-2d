@@ -1,71 +1,73 @@
-import { Curves, GameObjects, Math as Math2 } from "phaser";
-import GameScene from "../scenes/GameScene";
-import Enemy from "./Enemy";
+import { Curves, GameObjects, Math as Math2, Physics } from "phaser";
+import GameScene, { CollisionGroup } from "../scenes/GameScene";
+import Projectile from "./Projectile";
+import Enemy from "./Bloon";
+import { Vector } from "matter";
 
-export default class Turret extends GameObjects.Sprite {
-    public scene: GameScene;
+export type TurretParams = {
+    cooldown: number,
+    sprite: string,
+}
 
-    private maxDistance: number = 200;
+export default class Turret {
+    protected scene: GameScene;
+    protected sprite: Phaser.Physics.Matter.Sprite;
+
+    private params: TurretParams;
+    private cooldown: number;
+
+    private maxDistance: number = 500;
     private lastFired: number = 0;
 
-    private lockedEnemy: Enemy = null;
+    private debugGraphics: GameObjects.Graphics;
 
-    constructor(scene: GameScene, x: number, y: number, texture: string, frame?: string | number) {
-        super(scene, x, y, 'turrets-0', '1');
+    private lockedEnemy: Enemy | undefined;
 
+    constructor(scene, v, params) {
         this.scene = scene;
-        this.setDisplaySize(64, 64);
-        this.height = 64;
-        this.width = 64;
+        this.params = params;
+        this.cooldown = 0;
+
+        this.sprite = this.scene.matter.add.sprite(v.x, v.y, this.params.sprite, '1').setCollisionGroup(CollisionGroup.BULLET).setAngle(0);
+
+        this.debugGraphics = this.scene.add.graphics();
+    }
+
+    public static create(scene, v, params) {
+        return new Turret(scene, v, params);
     }
 
     public update(time, delta) {
-        this.findNearestEnemy();
+        this.debugGraphics.clear();
+        this.debugGraphics.lineStyle(1, 0x00ff00);
+        this.debugGraphics.strokeCircle(this.sprite.x, this.sprite.y, this.maxDistance);
 
-        if (this.lockedEnemy && time > this.lastFired) {
-            this.fire();
-            this.lastFired = time + 500;
-        }
-    }
+        this.lockedEnemy = this.scene.getNearestBloon(new Phaser.Math.Vector2(this.sprite.x, this.sprite.y), this.maxDistance);
 
-    public fire() {
-        const projectile = this.scene.projectiles.get();
+        if (this.lockedEnemy) {
+            const { x, y } = this.lockedEnemy.getXY();
+            this.sprite.setAngle(Math2.Angle.Between(this.sprite.x, this.sprite.y, x, y) * 180 / Math.PI);
 
-        if (projectile) {
-            projectile.setActive(true);
-            projectile.setVisible(true);
-            projectile.setPosition(this.x + (24 * Math.cos(this.rotation+Math.PI/2)), this.y + (24 * Math.sin(this.rotation+Math.PI/2)));
-            projectile.setRotation(this.rotation);
+            this.debugGraphics.lineBetween(this.sprite.x, this.sprite.y, x, y);
 
-            this.scene.physics.moveToObject(projectile, this.lockedEnemy, 500);
-        } 
-    }
+            if (time > this.lastFired) {
+                // this.scene.spawnProjectile();
 
-    public findNearestEnemy() {
-        if (!this.scene.enemies.children.entries.length) {
-            this.lockedEnemy = null;
-            return;
-        }
+                //TODO: abstract class is for definition only, not for implementation. use export class DartMonkey extends Turret. same for bullet and enemy
 
-        let nearestEnemy: Enemy = null;
-        let minDistance = Infinity;
-
-        this.scene.enemies.children.entries.forEach((enemy: Enemy) => {
-            const distance = Math2.Distance.Between(this.x, this.y, enemy.x, enemy.y);
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearestEnemy = enemy;
+                this.lastFired = time + 500;
             }
-        });
-
-        if (nearestEnemy && minDistance <= this.maxDistance && nearestEnemy.active) {
-            this.setRotation(Math2.Angle.Between(this.x, this.y, nearestEnemy.x, nearestEnemy.y));
-            
-            this.lockedEnemy = nearestEnemy;
-        } else {
-            this.lockedEnemy = null;
         }
+    }
 
-        console.log(this.lockedEnemy)
+    getXY() {
+        return {
+            x: this.sprite.x,
+            y: this.sprite.y
+        }
+    }
+
+    getCenter() {
+        return this.sprite.getCenter
     }
 }
