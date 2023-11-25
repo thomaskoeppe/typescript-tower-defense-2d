@@ -1,11 +1,11 @@
 import { Scene, Curves, Tilemaps, Input, GameObjects, Physics } from "phaser";
-import Enemy from "../objects/Bloon";
+import { Bloon, RedBloon } from "../objects/Bloon";
 import { isEmpty, range, take, zip } from 'lodash';
-import Turret from "../objects/Turret";
+import { DartMonkey, AbstractTower, ITower } from "../objects/Tower";
 import Loader from "../lib/Loader";
 import AutoRemoveList from "../lib/AutoRemoveList";
 import Pathfinding from "../lib/Pathfinding";
-import { Projectile } from "~/objects/Projectile";
+import { Dart, IProjectile } from "~/objects/Projectile";
 
 export enum CollisionGroup {
   BULLET = -1,
@@ -13,7 +13,7 @@ export enum CollisionGroup {
 }
 
 export type PlacedTurret = {
-  sprite: Turret,
+  sprite: AbstractTower,
   tile: Tilemaps.Tile
 }
 
@@ -39,15 +39,15 @@ export default class GameScene extends Scene {
 
   public hud: GameObjects.Container | undefined;
 
-  public enemies: AutoRemoveList<Enemy>;
-  public projectiles: AutoRemoveList<Projectile>;
+  public enemies: AutoRemoveList<Bloon>;
+  public projectiles: AutoRemoveList<IProjectile>;
   private turrets: PlacedTurret[];
 
   constructor() {
     super({ key: "game", active: true, visible: true });
 
-    this.enemies = new AutoRemoveList<Enemy>();
-    this.projectiles = new AutoRemoveList<Projectile>();
+    this.enemies = new AutoRemoveList<Bloon>();
+    this.projectiles = new AutoRemoveList<IProjectile>();
     this.turrets = [];
   }
 
@@ -131,10 +131,9 @@ export default class GameScene extends Scene {
     }
 
     if (this.enemies.active < 2 && this.nextEnemy < time) {
-      const enemy = Enemy.create(this, {
+      const enemy = RedBloon.create(this, {
         x: this.spawn.x,
-        y: this.spawn.y,
-        scale: 0.5,
+        y: this.spawn.y
       });
       enemy.startOnPath(this.path);
       this.enemies.add(enemy);
@@ -187,11 +186,11 @@ export default class GameScene extends Scene {
     this.getNearestBloon(new Phaser.Math.Vector2(0, 0), 0);
   }
 
-  public getNearestBloon(pos: Phaser.Math.Vector2, maxDistance: number): Enemy | undefined {
-    let nearestEnemy: Enemy | undefined;
+  public getNearestBloon(pos: Phaser.Math.Vector2, maxDistance: number): Bloon | undefined {
+    let nearestEnemy: Bloon | undefined;
     let nearestDistance: number = maxDistance;
 
-    this.enemies.forEach((enemy: Enemy) => {
+    this.enemies.forEach((enemy: Bloon) => {
       if (!enemy.isDead()) {
         const { x, y } = enemy.getXY();
 
@@ -219,7 +218,7 @@ export default class GameScene extends Scene {
   //   this.money += money;
   // }
 
-  public spawnProjectile(projectile: Projectile) {
+  public spawnProjectile(projectile: IProjectile) {
     this.projectiles.add(projectile);
   }
 
@@ -257,7 +256,7 @@ export default class GameScene extends Scene {
       return;
     }
 
-    const turret = Turret.create(this, { x, y }, {
+    const turret = DartMonkey.create(this, { x, y }, {
       sprite: "turrets-0"
     });
 

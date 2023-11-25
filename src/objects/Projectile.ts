@@ -1,27 +1,31 @@
 import { CanDie } from './GameObject';
 import GameScene, { CollisionGroup } from '../scenes/GameScene';
 
-export interface Projectile extends CanDie {
-    params: ProjectileParams
-    destroy: () => void
-    getSprite: () => Phaser.Physics.Matter.Sprite
-    setAngle: (angle: number) => void
-    onCollide: () => void
+export interface IProjectile extends CanDie {
+    params: ProjectileParams;
+
+    destroy: () => void;
+    getSprite: () => Phaser.Physics.Matter.Sprite;
+    setAngle: (angle: number) => void;
+    clone: (pos, dir, angle) => IProjectile;
+    onCollide: () => void;
 }
 
 export type ProjectileParams = {
     scale: { x: number, y: number },
     damage: number,
     frictionAir: number,
-    mass: number
+    mass: number,
+    radius: number,
+    sprite: string,
+    frame: string
 }
 
-export default class Dart implements Projectile {
+export abstract class AbstractProjectile implements IProjectile {
     protected scene: GameScene;
     protected sprite: Phaser.Physics.Matter.Sprite;
     private collided: boolean = false;
 
-    private body: MatterJS.BodyFactory;
     private bodies: MatterJS.BodiesFactory;
 
     public params: ProjectileParams;
@@ -30,13 +34,12 @@ export default class Dart implements Projectile {
         this.scene = scene;
         this.params = params;
 
-        this.body = this.scene.matter.body;
         this.bodies = this.scene.matter.bodies;
 
         const { scale: { x: scaleX, y: scaleY } } = params;
-        const sprite = this.scene.matter.add.sprite(x, y, 'projectiles-0', '1');
+        const sprite = this.scene.matter.add.sprite(x, y, params.sprite, params.frame);
 
-        sprite.setExistingBody(this.bodies.rectangle(0, 0, sprite.width, sprite.height, { chamfer: { radius: 20 } }))
+        sprite.setExistingBody(this.bodies.rectangle(0, 0, sprite.width, sprite.height, { chamfer: { radius: params.radius } }))
             .setScale(scaleX, scaleY)
             .setVelocity(dirX * 30, dirY * 30)
             .setMass(params.mass)
@@ -55,12 +58,12 @@ export default class Dart implements Projectile {
         // this.width = 24*1.5;
     }
 
-    public static create(scene, pos, dir, params) {
-        return new Dart(scene, pos, dir, params);
+    clone(pos, dir, angle){
+        return {} as any
     }
 
     getSprite() {
-        return this.sprite
+        return this.sprite;
     }
 
     getXY() {
@@ -78,21 +81,21 @@ export default class Dart implements Projectile {
     }
 
     setAngle(angle){
-        this.sprite.setAngle(angle)
-        return this
+        this.sprite.setAngle(angle);
+        return this;
     }
 
     isDead() {
-        return this.collided
+        return this.collided;
     }
 
     destroy() {
-        this.sprite.destroy()
+        this.sprite.destroy();
     }
 
-    update(delta) {
+    update(time, delta) {
         if(Math.abs((this.sprite.body as MatterJS.BodyType).velocity.x) <= 0.001 && Math.abs((this.sprite.body as MatterJS.BodyType).velocity.x) <= 0.001){
-            this.collided = true
+            this.collided = true;
         }
     }
 
@@ -100,3 +103,5 @@ export default class Dart implements Projectile {
         this.collided = true;
     }
 }
+
+export { Dart } from './Projectiles/Dart';
