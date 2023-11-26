@@ -1,19 +1,17 @@
 import PhaserMatterCollisionPlugin from "phaser-matter-collision-plugin";
+import AnimatedTilesPlugin from 'phaser-animated-tiles-phaser3.5/dist/AnimatedTiles.min.js';
 import GameScene from "./scenes/GameScene";
-
-const pluginConfig = {
-  plugin: PhaserMatterCollisionPlugin,
-  key: "matterCollision" as "matterCollision",
-  mapping: "matterCollision" as "matterCollision",
-};
 
 declare module "phaser" {
   interface Scene {
-    [pluginConfig.mapping]: PhaserMatterCollisionPlugin;
+    ["matterCollision"]: PhaserMatterCollisionPlugin;
+    ["animatedTiles"]: AnimatedTilesPlugin;
   }
+
   namespace Scenes {
     interface Systems {
-      [pluginConfig.key]: PhaserMatterCollisionPlugin;
+      ["matterCollision"]: PhaserMatterCollisionPlugin;
+      ["animatedTiles"]: AnimatedTilesPlugin;
     }
   }
 }
@@ -36,7 +34,18 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   scene: [GameScene],
   plugins: {
-    scene: [pluginConfig],
+    scene: [
+      {
+        plugin: PhaserMatterCollisionPlugin,
+        key: "matterCollision" as "matterCollision",
+        mapping: "matterCollision" as "matterCollision",
+      },
+      {
+        plugin: AnimatedTilesPlugin,
+        key: "animatedTiles" as "animatedTiles",
+        mapping: "animatedTiles" as "animatedTiles",
+      },
+    ],
   },
 };
 

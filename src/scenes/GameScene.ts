@@ -1,11 +1,15 @@
 import { Scene, Curves, Tilemaps, Input, GameObjects, Physics } from "phaser";
-import { Bloon, RedBloon } from "../objects/Bloon";
+import { IBloon } from "../objects/Bloon";
+import { RedBloon } from "../objects/Bloons/RedBloon";
 import { isEmpty, range, take, zip } from 'lodash';
-import { DartMonkey, AbstractTower, ITower } from "../objects/Tower";
+import { product } from '../lib/Array';
+import { ITower } from "../objects/Tower";
+import { DartMonkey } from "../objects/Towers/DartMonkey";
 import Loader from "../lib/Loader";
 import AutoRemoveList from "../lib/AutoRemoveList";
 import Pathfinding from "../lib/Pathfinding";
-import { Dart, IProjectile } from "~/objects/Projectile";
+import { IProjectile } from "~/objects/Projectile";
+import { LayerDepth } from "../lib/LayerDepth";
 
 export enum CollisionGroup {
   BULLET = -1,
@@ -13,7 +17,7 @@ export enum CollisionGroup {
 }
 
 export type PlacedTurret = {
-  sprite: AbstractTower,
+  sprite: ITower,
   tile: Tilemaps.Tile
 }
 
@@ -35,20 +39,23 @@ export default class GameScene extends Scene {
   private lifes: number = 10;
 
   private path: Curves.Path | undefined;
-  private world: Tilemaps.TilemapLayer | undefined;
+  private world: Tilemaps.Tilemap | undefined;
 
   public hud: GameObjects.Container | undefined;
 
-  public enemies: AutoRemoveList<Bloon>;
+  public enemies: AutoRemoveList<IBloon>;
   public projectiles: AutoRemoveList<IProjectile>;
-  private turrets: PlacedTurret[];
+  public turrets: PlacedTurret[];
+
+  private projectileSubscriptions: (() => void)[]
 
   constructor() {
     super({ key: "game", active: true, visible: true });
 
-    this.enemies = new AutoRemoveList<Bloon>();
+    this.enemies = new AutoRemoveList<IBloon>();
     this.projectiles = new AutoRemoveList<IProjectile>();
     this.turrets = [];
+    this.projectileSubscriptions = [];
   }
 
   public preload() {
@@ -56,29 +63,54 @@ export default class GameScene extends Scene {
   }
 
   public create() {
-    const tilemap = this.make.tilemap({ key: "tilemap" });
-    const tileset = tilemap.addTilesetImage("tiles");
+    this.world = this.make.tilemap({ key: "tilemap" });
 
-    if (tileset === null) {
-      throw new Error("Tileset not found");
-    }
+    const baseTiles = this.world.addTilesetImage("tiles-base");
+    const waterTiles = this.world.addTilesetImage("tiles-water");
+    const leavesTiles = this.world.addTilesetImage("tiles-leaves");
+    const windTiles = this.world.addTilesetImage("tiles-wind");
 
-    const layer1 = tilemap.createLayer("Layer 1", tileset, 0, 0);
+    const groundLayer = this.world.createLayer("Ground", [baseTiles!], 0, 0);
+    const waterLayer = this.world.createLayer("Water", [waterTiles!], 0, 0);
+    const pathLayer = this.world.createLayer("Path", [baseTiles!], 0, 0);
+    const decorationsLayer = this.world.createLayer("Decorations", [baseTiles!], 0, 0);
+    const animationsLayer = this.world.createLayer("Animations", [leavesTiles!, windTiles!], 0, 0);
+    const interactionLayer = this.world.createLayer("Interaction", [baseTiles!], 0, 0);
 
-    if (layer1 === null) {
-      throw new Error("Layer not found");
-    }
+    groundLayer!.setDepth(LayerDepth.GROUND);
+    waterLayer!.setDepth(LayerDepth.WATER);
+    pathLayer!.setDepth(LayerDepth.PATH);
+    decorationsLayer!.setDepth(LayerDepth.DECORATIONS);
+    animationsLayer!.setDepth(LayerDepth.ANIMATIONS);
+    interactionLayer!.setDepth(LayerDepth.INTERACTION);
 
-    this.mapdata = this.cache.json.get("mapdata")
-    this.world = layer1;
-    this.world.setCollisionByProperty({ collides: true });
+    this.world.setLayer(interactionLayer!);
+    this.world.setCollisionByProperty({ isBlocked: true });
+    this.animatedTiles.init(this.world!);
+    this.animatedTiles.setRate(0.5);
 
-    this.matter.world.setBounds(0, 0, tilemap.widthInPixels, tilemap.heightInPixels);
+    this.mapdata = this.cache.json.get("mapdata");
+
+    this.world.forEachTile((tile: Tilemaps.Tile) => {
+      const graphics = this.add.graphics();
+      graphics.setDepth(100);
+
+      if (tile.canCollide) {
+        this.add.text(tile.pixelX, tile.pixelY, `${tile.getCenterX()}\n${tile.getCenterY()}`, {
+          font: "26px",
+        }).setOrigin(0, 0).setDepth(100);
+      }
+    });
+
+    this.matter.world.setBounds(0, 0, this.world.widthInPixels, this.world.heightInPixels);
 
     this.spawn = new Phaser.Math.Vector2(this.mapdata.spawn.x, this.mapdata.spawn.y);
     this.goal = new Phaser.Math.Vector2(this.mapdata.goal.x, this.mapdata.goal.y);
 
     this.path = Pathfinding.create(this.path!, this.mapdata.path, this.spawn, this.goal);
+    const graphics = this.add.graphics();
+    graphics.lineStyle(1, 0xff0000);
+    this.path.draw(graphics).setDepth(100);
 
     this.text = this.add.text(16, 16, `Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}`, {
       font: "18px monospace",
@@ -121,8 +153,8 @@ export default class GameScene extends Scene {
       this.world!.replaceByIndex(39, 25);
     });
 
-    this.waveData = this.cache.json.get("wavedata")[this.wave];
-    this.enemiesLeft = this.waveData.enemies.length;
+    // this.waveData = this.cache.json.get("wavedata")[this.wave];
+    // this.enemiesLeft = this.waveData.enemies.length;
   }
 
   public update(time: number, delta: number): void {
@@ -130,7 +162,8 @@ export default class GameScene extends Scene {
       this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
     }
 
-    if (this.enemies.active < 2 && this.nextEnemy < time) {
+    if (this.enemies.active < 10 && this.nextEnemy < time) {
+      console.log("create enemy")
       const enemy = RedBloon.create(this, {
         x: this.spawn.x,
         y: this.spawn.y
@@ -138,14 +171,10 @@ export default class GameScene extends Scene {
       enemy.startOnPath(this.path);
       this.enemies.add(enemy);
 
-      this.nextEnemy = time + 2000;
+      this.nextEnemy = time + 200;
     }
 
-    this.enemies.update(time, delta);
-    this.projectiles.update(time, delta)
-    this.turrets.forEach(({sprite}) => { sprite.update(time, delta) });
-
-    console.log(this.projectiles.active, this.projectiles)
+    this.updateSubscriptions();
 
     // if (this.enemiesLeft === 0 && this.enemies!.countActive() === 0) {
     //   this.wave++;
@@ -183,14 +212,53 @@ export default class GameScene extends Scene {
     //   }
     // }
 
-    this.getNearestBloon(new Phaser.Math.Vector2(0, 0), 0);
+    this.enemies.update(time, delta);
+    this.projectiles.update(time, delta)
+    this.turrets.forEach(({sprite}) => { sprite.update(time, delta) });
   }
 
-  public getNearestBloon(pos: Phaser.Math.Vector2, maxDistance: number): Bloon | undefined {
-    let nearestEnemy: Bloon | undefined;
+  public updateSubscriptions() {
+    this.projectileSubscriptions.length > 0 && this.projectileSubscriptions.forEach((fn) => { fn() });
+    this.projectileSubscriptions = product(this.enemies, this.projectiles).map(([enemy, projectile]) => {
+      return this.matterCollision.addOnCollideStart({
+        objectA: projectile.getSprite(),
+        objectB: enemy.getSprite(),
+        context: this,
+        callback: (collision) => {
+          const { gameObjectA, gameObjectB } = collision;
+          if (gameObjectB instanceof Phaser.Physics.Matter.Sprite) {
+            enemy.getHit(projectile.params.damage);
+            projectile.destroy();
+            this.projectiles.remove(projectile);
+
+            const { x, y } = collision.gameObjectB as Phaser.Physics.Matter.Sprite;
+
+            const explosion = this.add.sprite(x, y, 'effects-0', Math.floor(Math.random() * 3) + 1).setScale(1.5);
+            setTimeout(() => {
+                explosion.destroy();
+            }, 50);
+          }
+        }
+      });
+    });
+  }
+
+  public loseHealth(enemy: IBloon) {
+    this.lifes -= enemy.params.takesHealth;
+    enemy.destroy();
+    this.enemies.remove(enemy);
+
+    if (this.lifes <= 0) {
+      // this.scene.stop("game");
+      // this.scene.start("gameover");
+    }
+  }
+
+  public getNearestBloon(pos: Phaser.Math.Vector2, maxDistance: number): IBloon | undefined {
+    let nearestEnemy: IBloon | undefined;
     let nearestDistance: number = maxDistance;
 
-    this.enemies.forEach((enemy: Bloon) => {
+    this.enemies.forEach((enemy: IBloon) => {
       if (!enemy.isDead()) {
         const { x, y } = enemy.getXY();
 
@@ -223,7 +291,6 @@ export default class GameScene extends Scene {
   }
 
   private placeTurret(pointer: Input.Pointer): void {
-    //get tile at pointer
     const x = Math.floor(pointer.x / 64) * 64 + 32;
     const y = Math.floor(pointer.y / 64) * 64 + 32;
     const tile = this.world!.getTileAtWorldXY(x, y);
@@ -260,6 +327,6 @@ export default class GameScene extends Scene {
       sprite: "turrets-0"
     });
 
-    this.turrets.push({ sprite: turret, tile: tile });
+    this.turrets.push({ sprite: turret, tile: tile as Tilemaps.Tile });
   }
 }
