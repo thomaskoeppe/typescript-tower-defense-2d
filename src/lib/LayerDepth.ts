@@ -5,5 +5,7 @@ export enum LayerDepth {
     ENEMY = 3,
     DECORATIONS = 4,
     ANIMATIONS = 5,
-    INTERACTION = 6
+    INTERACTION = 6,
+    UI = 7,
+    UI_ITEM = 8,
 }

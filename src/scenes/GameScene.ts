@@ -10,6 +10,8 @@ import AutoRemoveList from "../lib/AutoRemoveList";
 import Pathfinding from "../lib/Pathfinding";
 import { IProjectile } from "~/objects/Projectile";
 import { LayerDepth } from "../lib/LayerDepth";
+import { DartMonkeyIcon } from "../objects/TowerIcons/DartMonkey";
+import { ITowerIcons } from "~/objects/TowerIcons";
 
 export enum CollisionGroup {
   BULLET = -1,
@@ -42,6 +44,7 @@ export default class GameScene extends Scene {
   private world: Tilemaps.Tilemap | undefined;
 
   public hud: GameObjects.Container | undefined;
+  private _tempDragObject: GameObjects.Image | undefined;
 
   public enemies: AutoRemoveList<IBloon>;
   public projectiles: AutoRemoveList<IProjectile>;
@@ -90,27 +93,11 @@ export default class GameScene extends Scene {
     this.animatedTiles.setRate(0.5);
 
     this.mapdata = this.cache.json.get("mapdata");
-
-    this.world.forEachTile((tile: Tilemaps.Tile) => {
-      const graphics = this.add.graphics();
-      graphics.setDepth(100);
-
-      if (tile.canCollide) {
-        this.add.text(tile.pixelX, tile.pixelY, `${tile.getCenterX()}\n${tile.getCenterY()}`, {
-          font: "26px",
-        }).setOrigin(0, 0).setDepth(100);
-      }
-    });
-
     this.matter.world.setBounds(0, 0, this.world.widthInPixels, this.world.heightInPixels);
 
     this.spawn = new Phaser.Math.Vector2(this.mapdata.spawn.x, this.mapdata.spawn.y);
     this.goal = new Phaser.Math.Vector2(this.mapdata.goal.x, this.mapdata.goal.y);
-
     this.path = Pathfinding.create(this.path!, this.mapdata.path, this.spawn, this.goal);
-    const graphics = this.add.graphics();
-    graphics.lineStyle(1, 0xff0000);
-    this.path.draw(graphics).setDepth(100);
 
     this.text = this.add.text(16, 16, `Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}`, {
       font: "18px monospace",
@@ -118,40 +105,28 @@ export default class GameScene extends Scene {
       backgroundColor: "#000000"
     });
 
-    this.hud = this.add.container(this.cameras.main.width - 64, 16);
+    this.hud = this.add.container(this.cameras.main.width - 64, 16).setDepth(LayerDepth.UI);
     let backgroundColor = this.add.graphics();
     backgroundColor.fillStyle(0x000000, 1);
     backgroundColor.fillRect(0, 0, 128, 128);
     this.hud.add(backgroundColor);
 
-    let monkey = this.add.image(0, 0, "monkey-0").setOrigin(0, 0).setInteractive();
-    this.hud.add(monkey);
-    this.input.setDraggable(monkey);
+    DartMonkeyIcon.create(this);
 
-    this.input.on("drag", (pointer: Input.Pointer, gameObject: GameObjects.Image, dragX: number, dragY: number) => {
-      gameObject.x = dragX;
-      gameObject.y = dragY;
+    // this.input.on("dragstart", (pointer: Input.Pointer, gameObject: ITowerIcons) => {
+    //   console.log(gameObject)
+    //   gameObject.dragStart();
+    // });
 
-      this.world!.replaceByIndex(39, 25);
+    // this.input.on("drag", (pointer: Input.Pointer, gameObject: ITowerIcons, dragX: number, dragY: number) => {
+    //   gameObject.moveTo(dragX, dragY);
+    // });
 
-      const tile = this.world!.getTileAtWorldXY(pointer.worldX, pointer.worldY);
-      if (tile && tile.index === 25) {
-        tile.index = 39;
-      }
-    });
-
-    this.input.on("dragend", (pointer: Input.Pointer, gameObject: GameObjects.Image, dragX: number, dragY: number) => {
-      gameObject.x = gameObject.input!.dragStartX;
-      gameObject.y = gameObject.input!.dragStartY;
-
-      const tile = this.world!.getTileAtWorldXY(pointer.worldX, pointer.worldY);
-      if (tile && tile.index === 39) {
-        this.placeTurret(pointer);
-        console.log("place turret")
-      }
-
-      this.world!.replaceByIndex(39, 25);
-    });
+    // this.input.on("dragend", (pointer: Input.Pointer, gameObject: ITowerIcons, dragX: number, dragY: number) => {
+    //   gameObject.dragEnd();
+    //   // gameObject.x = gameObject.input!.dragStartX;
+    //   // gameObject.y = gameObject.input!.dragStartY;
+    // });
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;
@@ -162,8 +137,7 @@ export default class GameScene extends Scene {
       this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
     }
 
-    if (this.enemies.active < 10 && this.nextEnemy < time) {
-      console.log("create enemy")
+    if (this.enemies.active < 20 && this.nextEnemy < time) {
       const enemy = RedBloon.create(this, {
         x: this.spawn.x,
         y: this.spawn.y
@@ -290,17 +264,28 @@ export default class GameScene extends Scene {
     this.projectiles.add(projectile);
   }
 
-  private placeTurret(pointer: Input.Pointer): void {
-    const x = Math.floor(pointer.x / 64) * 64 + 32;
-    const y = Math.floor(pointer.y / 64) * 64 + 32;
-    const tile = this.world!.getTileAtWorldXY(x, y);
+  public checkCollision(x: number, y: number, r: number): boolean {
+    const tiles = this.world!.getTilesWithinShape(new Phaser.Geom.Circle(x, y, r));
 
-    if (this.turrets.some((v: PlacedTurret) => { return v.tile === tile })) {
+    if (tiles === null) {
+      return false;
+    }
+
+    return tiles.some((v: Tilemaps.Tile) => { return v.collides });
+  }
+
+  public placeTurret(pointer: Input.Pointer): void {
+    const tile = this.world!.getTileAtWorldXY(pointer.worldX, pointer.worldY);
+
+    console.log(pointer.worldX, pointer.worldY)
+    console.log(tile);
+
+    if (this.turrets.some((v: PlacedTurret) => { console.log(v); return v.tile === tile })) {
       const text = this.add.text(this.cameras.main.width / 2, 16, "Turret already placed here", {
         font: "18px monospace",
         padding: { x: 20, y: 10 },
         backgroundColor: "#000000"
-      }).setOrigin(0.5, 0);;
+      }).setOrigin(0.5, 0).setDepth(LayerDepth.UI_ITEM);
 
       setTimeout(() => {
         text.destroy();
@@ -314,7 +299,7 @@ export default class GameScene extends Scene {
         font: "18px monospace",
         padding: { x: 20, y: 10 },
         backgroundColor: "#000000"
-      }).setOrigin(0.5, 0);
+      }).setOrigin(0.5, 0).setDepth(LayerDepth.UI_ITEM);
 
       setTimeout(() => {
         text.destroy();
@@ -323,10 +308,14 @@ export default class GameScene extends Scene {
       return;
     }
 
-    const turret = DartMonkey.create(this, { x, y }, {
+    const turret = DartMonkey.create(this, { x: pointer.worldX, y: pointer.worldY }, {
       sprite: "turrets-0"
     });
 
     this.turrets.push({ sprite: turret, tile: tile as Tilemaps.Tile });
+  }
+
+  public getTileAtWorldXY(x: number, y: number): Tilemaps.Tile | null {
+    return this.world!.getTileAtWorldXY(x, y);
   }
 }
