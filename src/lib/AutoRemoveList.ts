@@ -38,8 +38,12 @@ export default class AutoRemoveList<T extends CanDie> implements List<T> {
     update(time: number, delta: number) {
         this.list.forEach(e => e.update(time, delta))
         const [dead, alive] = partition(this.list, e => e.isDead())
-        dead.forEach(e => setTimeout(() => e.destroy(), 300))
+        dead.forEach(e => e.destroy())
         this.list = alive
+    }
+
+    remove(e: T) {
+        this.list = this.list.filter(x => x !== e)
     }
 
     get active() {

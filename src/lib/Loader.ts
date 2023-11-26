@@ -26,14 +26,17 @@ export default class Loader {
 
     public static loadTilemaps(scene: Scene) {
         // == Tilemap == //
-        scene.load.image("tiles", "./assets/images/tiles.png");
-        scene.load.tilemapTiledJSON("tilemap", "./assets/tilemaps/map-1.json");
+        scene.load.image("tiles-base", "./assets/tilesets/base.png");
+        scene.load.image("tiles-water", "./assets/tilesets/water.png");
+        scene.load.image("tiles-leaves", "./assets/tilesets/leaves.png");
+        scene.load.image("tiles-wind", "./assets/tilesets/wind.png");
+        scene.load.tilemapTiledJSON("tilemap", "./assets/tilemaps/map-2.json");
     }
 
     public static loadWavedata(scene: Scene) {
         // == Wave Data == //
         scene.load.json("wavedata", "./config/wavedata/normal.json");
-        scene.load.json("mapdata", "./config/mapdata/map-1.json")
+        scene.load.json("mapdata", "./config/mapdata/map-2.json")
     }
 
     public static loadAudio(scene: Scene) {

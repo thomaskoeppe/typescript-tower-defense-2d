@@ -3,8 +3,7 @@ export default class Pathfinding {
         path = new Phaser.Curves.Path(spawn.x, spawn.y);
 
         waypoints.forEach((waypoint) => {
-            path.lineTo(waypoint[0].x, waypoint[0].y);
-            path.lineTo(waypoint[1].x, waypoint[1].y);
+            path.lineTo(waypoint.x, waypoint.y);
         });
 
         path!.lineTo(goal.x, goal.y);
