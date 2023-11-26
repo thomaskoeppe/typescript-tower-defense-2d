@@ -1,7 +1,13 @@
-import { Bloon } from "../Bloon";
+import { AbstractBloon } from "../Bloon";
 
-export class RedBloon extends Bloon {
+export class RedBloon extends AbstractBloon {
+    constructor(scene, v, params) {
+        console.log('Creating RedBloon')
+        super(scene, v, params);
+    }
+
     static create(scene, v) {
+        console.log('Creating RedBloon create')
         return new RedBloon(scene, v, {
             hp: 1,
             speed: 1,

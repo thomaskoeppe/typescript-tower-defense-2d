@@ -7,15 +7,12 @@ export interface IProjectile extends CanDie {
     destroy: () => void;
     getSprite: () => Phaser.Physics.Matter.Sprite;
     setAngle: (angle: number) => void;
-    clone: (pos, dir, angle) => IProjectile;
-    onCollide: () => void;
+    onCollide: (collision) => void;
 }
 
 export type ProjectileParams = {
-    scale: { x: number, y: number },
+    scale: number,
     damage: number,
-    frictionAir: number,
-    mass: number,
     radius: number,
     sprite: string,
     frame: string
@@ -26,40 +23,34 @@ export abstract class AbstractProjectile implements IProjectile {
     protected sprite: Phaser.Physics.Matter.Sprite;
     private collided: boolean = false;
 
+    private body: MatterJS.BodyFactory;
     private bodies: MatterJS.BodiesFactory;
 
     public params: ProjectileParams;
 
-    constructor(scene, {x, y}, {dirX, dirY}, params) {
+    constructor(scene, source, target, params) {
         this.scene = scene;
         this.params = params;
 
+        this.body = this.scene.matter.body;
         this.bodies = this.scene.matter.bodies;
 
-        const { scale: { x: scaleX, y: scaleY } } = params;
-        const sprite = this.scene.matter.add.sprite(x, y, params.sprite, params.frame);
+        this.sprite = this.scene.matter.add.sprite(source.x, source.y, params.sprite, params.frame);
 
-        sprite.setExistingBody(this.bodies.rectangle(0, 0, sprite.width, sprite.height, { chamfer: { radius: params.radius } }))
-            .setScale(scaleX, scaleY)
-            .setVelocity(dirX * 30, dirY * 30)
-            .setMass(params.mass)
-            .setFrictionAir(params.frictionAir)
-            .setCollisionGroup(CollisionGroup.BULLET);
+        this.sprite.setExistingBody(this.body.create({
+            parts: [this.bodies.rectangle(0, 0, this.sprite.width, this.sprite.height, { chamfer: { radius: this.params.radius } })],
+            frictionAir: 0.0,
+            friction: 0.0,
+            frictionStatic: 0.0,
+        })).setCollisionGroup(CollisionGroup.BULLET).setPosition(source.x, source.y).setAngle(Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI).setScale(this.params.scale);
 
-        this.sprite = sprite;
+        this.sprite.thrust(0.005);
+
         this.scene.matterCollision.addOnCollideStart({
-            objectA: sprite,
+            objectA: this.sprite,
             callback: this.onCollide,
             context: this
         });
-
-        // this.setDisplaySize(24*1.5, 10*1.5);
-        // this.height = 10*1.5;
-        // this.width = 24*1.5;
-    }
-
-    clone(pos, dir, angle){
-        return {} as any
     }
 
     getSprite() {
@@ -94,14 +85,12 @@ export abstract class AbstractProjectile implements IProjectile {
     }
 
     update(time, delta) {
-        if(Math.abs((this.sprite.body as MatterJS.BodyType).velocity.x) <= 0.001 && Math.abs((this.sprite.body as MatterJS.BodyType).velocity.x) <= 0.001){
+        if(Math.abs((this.sprite.body as MatterJS.BodyType).velocity.x) <= 0.001 && Math.abs((this.sprite.body as MatterJS.BodyType).velocity.x) <= 0.001) {
             this.collided = true;
         }
     }
 
-    onCollide() {
+    onCollide(collision) {
         this.collided = true;
     }
 }
-
-export { Dart } from './Projectiles/Dart';

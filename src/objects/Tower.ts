@@ -1,7 +1,7 @@
 import { GameObjects, Math as Math2 } from "phaser";
 import GameScene, { CollisionGroup } from "../scenes/GameScene";
-import { Bloon } from "./Bloon";
-import { Dart, IProjectile } from "./Projectile";
+import { IBloon } from "./Bloon";
+import { IProjectile } from "./Projectile";
 
 export type ITower = {
     params: TowerParams;
@@ -9,6 +9,7 @@ export type ITower = {
     update: (time, delta) => void;
     getXY: () => { x: number, y: number };
     getCenter: () => { x: number, y: number };
+    getCoords: () => Phaser.Math.Vector2;
 }
 
 export type TowerParams = {
@@ -24,18 +25,17 @@ export abstract class AbstractTower implements ITower {
 
     public params: TowerParams;
 
-    private lockedEnemy: Bloon | undefined;
+    private lockedEnemy: IBloon | undefined;
     private lastFired: number;
-
-    public projectileProto: IProjectile | undefined;
 
     private debugGraphics: GameObjects.Graphics;
 
-    abstract generateProjectiles(dirX: number, dirY: number): void
+    abstract shoot({ x, y }: { x: number, y: number }): void;
 
     constructor(scene: GameScene, v, params: TowerParams) {
         this.scene = scene;
         this.params = params;
+        console.log(this.params)
         this.sprite = this.scene.matter.add.sprite(v.x, v.y, this.params.sprite, this.params.texture).setCollisionGroup(CollisionGroup.BULLET).setAngle(0);
         this.lastFired = 0;
 
@@ -56,13 +56,7 @@ export abstract class AbstractTower implements ITower {
             this.debugGraphics.lineBetween(this.sprite.x, this.sprite.y, x, y);
 
             if (time > this.lastFired) {
-                const spriteAngle360 = this.sprite.angle < 0 ? 360 + this.sprite.angle : this.sprite.angle;
-                const {dirX, dirY} = {
-                    dirX: Math.cos((450 - spriteAngle360) % 360 / 180 * Math.PI),
-                    dirY: Math.sin((450 - spriteAngle360) % 360 / 180 * Math.PI)
-                }
-
-                this.generateProjectiles(dirX, dirY);
+                this.shoot(this.lockedEnemy.getCoords());
                 this.lastFired = time + this.params.cooldown;
             }
         }
@@ -75,9 +69,11 @@ export abstract class AbstractTower implements ITower {
         };
     }
 
+    getCoords(): Phaser.Math.Vector2 {
+        return new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
+    }
+
     getCenter(): { x: number, y: number } {
         return this.sprite.getCenter();
     }
 }
-
-export { DartMonkey } from "./Towers/DartMonkey";

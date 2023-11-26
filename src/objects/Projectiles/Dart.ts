@@ -1,15 +1,13 @@
 import { AbstractProjectile } from "../Projectile";
 
 export class Dart extends AbstractProjectile {
-    static create(scene, {x, y}, {dirX, dirY}, params) {
-        params.sprite = 'projectiles-0';
-        params.frame = '1';
-        params.radius = 20;
-
-        return new Dart(scene, {x, y}, {dirX, dirY}, params);
-    }
-
-    clone(pos, dir, angle) {
-        return Dart.create(this.scene, pos, dir, this.params).setAngle(angle)
+    static create(scene, source, target) {
+        return new Dart(scene, source, target, {
+            sprite: 'projectiles-0',
+            frame: '1',
+            radius: 20,
+            scale: 1.5,
+            damage: 1
+        });
     }
 }
