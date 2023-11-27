@@ -87,21 +87,16 @@ export default class GameScene extends Scene {
     animationsLayer!.setDepth(LayerDepth.ANIMATIONS);
     interactionLayer!.setDepth(LayerDepth.INTERACTION);
 
-    this.world.setLayer(interactionLayer!);
-    this.world.setCollisionByProperty({ isBlocked: true });
-    this.animatedTiles.init(this.world!);
-    this.animatedTiles.setRate(0.5);
-
-    //set all -1 tiles to 39
-    this.world.forEachTile((tile: Tilemaps.Tile) => {
+    interactionLayer!.forEachTile((tile: Tilemaps.Tile) => {
       if (tile.index === -1) {
-        tile.index = 39;
+        tile.index = 72;
       }
     });
 
-    this.world.forEachTile((tile: Tilemaps.Tile) => {
-      console.log(tile);
-    });
+    this.world.setLayer(interactionLayer!);
+    this.world.setCollisionByProperty({ isBlocked: true });
+    this.animatedTiles.init(this.world);
+    this.animatedTiles.setRate(0.5);
 
     this.mapdata = this.cache.json.get("mapdata");
     this.matter.world.setBounds(0, 0, this.world.widthInPixels, this.world.heightInPixels);
@@ -148,16 +143,16 @@ export default class GameScene extends Scene {
       this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
     }
 
-    if (this.enemies.active < 20 && this.nextEnemy < time) {
-      const enemy = RedBloon.create(this, {
-        x: this.spawn.x,
-        y: this.spawn.y
-      });
-      enemy.startOnPath(this.path);
-      this.enemies.add(enemy);
+    // if (this.enemies.active < 20 && this.nextEnemy < time) {
+    //   const enemy = RedBloon.create(this, {
+    //     x: this.spawn.x,
+    //     y: this.spawn.y
+    //   });
+    //   enemy.startOnPath(this.path);
+    //   this.enemies.add(enemy);
 
-      this.nextEnemy = time + 200;
-    }
+    //   this.nextEnemy = time + 200;
+    // }
 
     this.updateSubscriptions();
 
