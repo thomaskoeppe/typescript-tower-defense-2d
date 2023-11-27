@@ -95,7 +95,7 @@ export default class GameScene extends Scene {
 
     this.world.setLayer(interactionLayer!);
     this.world.setCollisionByProperty({ isBlocked: true });
-    this.animatedTiles.init(this.world);
+    this.animatedTiles.init(this.world, [this.world.getLayerIndex(animationsLayer!), this.world.getLayerIndex(waterLayer!)]);
     this.animatedTiles.setRate(0.5);
 
     this.mapdata = this.cache.json.get("mapdata");
@@ -282,9 +282,7 @@ export default class GameScene extends Scene {
 
   public placeTurret(pointer: Input.Pointer): void {
     const tile = this.world!.getTileAtWorldXY(pointer.worldX, pointer.worldY);
-
-    console.log(pointer.worldX, pointer.worldY)
-    console.log(tile);
+    
 
     if (this.turrets.some((v: PlacedTurret) => { console.log(v); return v.tile === tile })) {
       const text = this.add.text(this.cameras.main.width / 2, 16, "Turret already placed here", {

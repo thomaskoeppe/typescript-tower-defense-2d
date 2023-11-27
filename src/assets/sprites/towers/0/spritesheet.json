@@ -1,7 +1,7 @@
 {
 	"frames": [
 		{
-			"filename": "Tower 01-0.png",
+			"filename": "1",
 			"frame": {
 				"x": 1,
 				"y": 1,
@@ -22,7 +22,7 @@
 			}
 		},
 		{
-			"filename": "Tower 01-1.png",
+			"filename": "2",
 			"frame": {
 				"x": 67,
 				"y": 1,
@@ -43,7 +43,7 @@
 			}
 		},
 		{
-			"filename": "Tower 01-2.png",
+			"filename": "3",
 			"frame": {
 				"x": 133,
 				"y": 1,

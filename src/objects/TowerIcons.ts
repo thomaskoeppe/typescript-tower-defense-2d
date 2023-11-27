@@ -20,6 +20,7 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
     protected defaulPosition: { x: number, y: number };
     protected sprite: Phaser.GameObjects.Image;
     protected graphics: Phaser.GameObjects.Graphics;
+    protected graphics2: Phaser.GameObjects.Graphics;
 
     constructor(scene: GameScene, params: TowerIconsParams) {
         this.scene = scene;
@@ -34,7 +35,8 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         this.sprite.on('dragstart', () => this.dragStart());
         this.sprite.on('drag', (pointer, dragX, dragY) => this.drag(pointer, dragX, dragY));
         this.sprite.on('dragend', (pointer) => this.dragEnd(pointer));
-        this.graphics = this.scene.add.graphics().setDepth(LayerDepth.UI);
+        this.graphics = this.scene.add.graphics().setDepth(LayerDepth.INTERACTION);
+        this.graphics2 = this.scene.add.graphics().setDepth(LayerDepth.INTERACTION);
         this.scene.hud!.add(this.graphics);
     }
 
@@ -45,13 +47,20 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
 
         this.graphics.lineStyle(3, 0xff0000);
         this.graphics.strokeCircle(this.sprite.x, this.sprite.y, this.params.maxDistance);
+
+        this.graphics2.fillStyle(0x000000);
+        this.graphics2.setAlpha(0.2);
+        this.graphics2.fillRect(this.sprite.x, this.sprite.y, 64, 64);
     }
 
     public drag(pointer: Phaser.Input.Pointer, x: number, y: number) {
         const tile = this.scene.getTileAtWorldXY(pointer.worldX, pointer.worldY);
-        if (tile) {
-            tile.tint = 0xff0000;
+
+        if (tile && tile.index !== 74) {
+            this.graphics2.setPosition(tile.getCenterX(), tile.getCenterY());
         }
+
+        console.log(tile)
         
         this.sprite.setPosition(x, y);
         this.graphics.setPosition(this.sprite.getCenter().x, this.sprite.getCenter().y);
@@ -59,9 +68,24 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         this.hasCollisions(this.scene.checkCollision(pointer.worldX, pointer.worldY, this.params.radius));
     }
 
+    // tile-based placement
+
+
     public dragEnd(pointer: Phaser.Input.Pointer) {
         if (Phaser.Math.Distance.Between(this.sprite.x, this.sprite.y, this.defaulPosition.x, this.defaulPosition.y) > 5) {
-            this.scene.placeTurret(pointer)
+            if (this.scene.checkCollision(pointer.worldX, pointer.worldY, this.params.radius)) {
+                const text = this.scene.add.text(this.scene.cameras.main.width / 2, 16, "Turret can't placed here", {
+                    font: "18px monospace",
+                    padding: { x: 20, y: 10 },
+                    backgroundColor: "#000000"
+                  }).setOrigin(0.5, 0).setDepth(LayerDepth.UI_ITEM);
+            
+                  setTimeout(() => {
+                    text.destroy();
+                  }, 2500);
+            } else {
+                this.scene.placeTurret(pointer)
+            }
         }
 
         this.sprite.setPosition(this.sprite.input?.dragStartX, this.sprite.input?.dragStartY);

@@ -10,7 +10,7 @@ export default class Loader {
         scene.load.atlas('bloons-4', './assets/sprites/bloons/4/spritesheet.png', './assets/sprites/bloons/4/spritesheet.json');
 
         // == Turrets == //
-        scene.load.atlas('turrets-0', './assets/sprites/turrets/0/spritesheet.png', './assets/sprites/turrets/0/spritesheet.json');
+        scene.load.atlas('towers-0', './assets/sprites/towers/0/spritesheet.png', './assets/sprites/towers/0/spritesheet.json');
 
         // == Projectiles == //
         scene.load.atlas('projectiles-0', './assets/sprites/projectiles/0/spritesheet.png', './assets/sprites/projectiles/0/spritesheet.json');

@@ -33,7 +33,7 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         eventEmitter.on("destroy", this.destroy, this);
     }
 
-    public init(map) {
+    public init(map, activeLayers: number[] = []) {
         let mapAnimData = this.getAnimatedTiles(map);
         let animatedTiles: {
             map: Phaser.Tilemaps.Tilemap;
@@ -49,8 +49,14 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
             activeLayer: [],
         };
 
-        map.layers.forEach(() => animatedTiles.activeLayer.push(true));
+        map.layers.forEach((i) => {
+            const index = map.layers.indexOf(i);
+            animatedTiles.activeLayer.push(activeLayers.indexOf(index) > -1);
+        });
+
         this.animatedTiles.push(animatedTiles);
+
+        console.log(this.animatedTiles)
 
         if (this.animatedTiles.length === 1) {
             this.active = true;
@@ -164,7 +170,7 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
                         if (!mapAnimData.activeLayer[layerIndex]) {
                             return;
                         }
-
+                        
                         this.updateLayer(animatedTile, layer, oldTileId);
                     });
                 }
