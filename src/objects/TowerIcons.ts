@@ -48,6 +48,11 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
     }
 
     public drag(pointer: Phaser.Input.Pointer, x: number, y: number) {
+        const tile = this.scene.getTileAtWorldXY(pointer.worldX, pointer.worldY);
+        if (tile) {
+            tile.tint = 0xff0000;
+        }
+        
         this.sprite.setPosition(x, y);
         this.graphics.setPosition(this.sprite.getCenter().x, this.sprite.getCenter().y);
 

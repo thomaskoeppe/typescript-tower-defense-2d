@@ -92,6 +92,17 @@ export default class GameScene extends Scene {
     this.animatedTiles.init(this.world!);
     this.animatedTiles.setRate(0.5);
 
+    //set all -1 tiles to 39
+    this.world.forEachTile((tile: Tilemaps.Tile) => {
+      if (tile.index === -1) {
+        tile.index = 39;
+      }
+    });
+
+    this.world.forEachTile((tile: Tilemaps.Tile) => {
+      console.log(tile);
+    });
+
     this.mapdata = this.cache.json.get("mapdata");
     this.matter.world.setBounds(0, 0, this.world.widthInPixels, this.world.heightInPixels);
 
