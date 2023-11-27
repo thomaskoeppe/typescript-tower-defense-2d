@@ -280,10 +280,7 @@ export default class GameScene extends Scene {
     return tiles.some((v: Tilemaps.Tile) => { return v.collides });
   }
 
-  public placeTurret(pointer: Input.Pointer): void {
-    const tile = this.world!.getTileAtWorldXY(pointer.worldX, pointer.worldY);
-    
-
+  public placeTurret(tile: Phaser.Tilemaps.Tile): void {
     if (this.turrets.some((v: PlacedTurret) => { console.log(v); return v.tile === tile })) {
       const text = this.add.text(this.cameras.main.width / 2, 16, "Turret already placed here", {
         font: "18px monospace",
@@ -312,7 +309,7 @@ export default class GameScene extends Scene {
       return;
     }
 
-    const turret = DartMonkey.create(this, { x: pointer.worldX, y: pointer.worldY }, {
+    const turret = DartMonkey.create(this, { x: tile.pixelX, y: tile.pixelY }, {
       sprite: "turrets-0"
     });
 

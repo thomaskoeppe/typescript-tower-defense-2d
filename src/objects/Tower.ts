@@ -2,6 +2,7 @@ import { GameObjects, Math as Math2 } from "phaser";
 import GameScene, { CollisionGroup } from "../scenes/GameScene";
 import { IBloon } from "./Bloon";
 import { IProjectile } from "./Projectile";
+import { LayerDepth } from "../lib/LayerDepth";
 
 export type ITower = {
     params: TowerParams;
@@ -35,8 +36,7 @@ export abstract class AbstractTower implements ITower {
     constructor(scene: GameScene, v, params: TowerParams) {
         this.scene = scene;
         this.params = params;
-        console.log(this.params)
-        this.sprite = this.scene.matter.add.sprite(v.x, v.y, this.params.sprite, this.params.texture).setCollisionGroup(CollisionGroup.BULLET).setAngle(0);
+        this.sprite = this.scene.matter.add.sprite(v.x+32, v.y, this.params.sprite, this.params.texture).setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
         this.lastFired = 0;
 
         this.debugGraphics = this.scene.add.graphics();

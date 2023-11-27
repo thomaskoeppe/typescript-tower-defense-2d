@@ -17,7 +17,7 @@ export type TowerIconsParams = {
 export abstract class AbstractTowerIcons implements ITowerIcons {
     protected params: TowerIconsParams;
     protected scene: GameScene;
-    protected defaulPosition: { x: number, y: number };
+    protected defaultPosition: { x: number, y: number };
     protected sprite: Phaser.GameObjects.Image;
     protected graphics: Phaser.GameObjects.Graphics;
     protected graphics2: Phaser.GameObjects.Graphics;
@@ -27,7 +27,7 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         this.params = params;
 
         this.sprite = this.scene.add.image(0, 0, this.params.sprite).setOrigin(0, 0).setInteractive().setDepth(LayerDepth.UI_ITEM);
-        this.defaulPosition = { x: this.sprite.x, y: this.sprite.y };
+        this.defaultPosition = { x: this.sprite.x, y: this.sprite.y };
 
         this.scene.hud!.add(this.sprite);
         this.scene.input.setDraggable(this.sprite);
@@ -57,10 +57,8 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         const tile = this.scene.getTileAtWorldXY(pointer.worldX, pointer.worldY);
 
         if (tile && tile.index !== 74) {
-            this.graphics2.setPosition(tile.getCenterX(), tile.getCenterY());
+            this.graphics2.setPosition(tile.x * 64, tile.y * 64);
         }
-
-        console.log(tile)
         
         this.sprite.setPosition(x, y);
         this.graphics.setPosition(this.sprite.getCenter().x, this.sprite.getCenter().y);
@@ -68,11 +66,11 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         this.hasCollisions(this.scene.checkCollision(pointer.worldX, pointer.worldY, this.params.radius));
     }
 
-    // tile-based placement
-
 
     public dragEnd(pointer: Phaser.Input.Pointer) {
-        if (Phaser.Math.Distance.Between(this.sprite.x, this.sprite.y, this.defaulPosition.x, this.defaulPosition.y) > 5) {
+        const tile = this.scene.getTileAtWorldXY(pointer.worldX, pointer.worldY);
+
+        if (Phaser.Math.Distance.Between(this.sprite.x, this.sprite.y, this.defaultPosition.x, this.defaultPosition.y) > 5) {
             if (this.scene.checkCollision(pointer.worldX, pointer.worldY, this.params.radius)) {
                 const text = this.scene.add.text(this.scene.cameras.main.width / 2, 16, "Turret can't placed here", {
                     font: "18px monospace",
@@ -84,13 +82,16 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
                     text.destroy();
                   }, 2500);
             } else {
-                this.scene.placeTurret(pointer)
+                if (tile && tile.index !== 74) {
+                    this.scene.placeTurret(tile)
+                }
             }
         }
 
         this.sprite.setPosition(this.sprite.input?.dragStartX, this.sprite.input?.dragStartY);
         this.hasCollisions(false);
         this.graphics.clear();
+        this.graphics2.clear();
     }
 
     public hasCollisions(hasCollisions: boolean) {
