@@ -1,5 +1,6 @@
 import { CanDie } from './GameObject';
-import GameScene, { CollisionGroup } from '../scenes/GameScene';
+import GameScene from '../scenes/GameScene';
+import { CollisionGroup } from '../lib/Utils';
 
 export interface IProjectile extends CanDie {
     params: ProjectileParams;

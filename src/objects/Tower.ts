@@ -1,8 +1,8 @@
 import { GameObjects, Math as Math2 } from "phaser";
-import GameScene, { CollisionGroup } from "../scenes/GameScene";
+import GameScene from "../scenes/GameScene";
 import { IBloon } from "./Bloon";
 import { IProjectile } from "./Projectile";
-import { LayerDepth } from "../lib/LayerDepth";
+import { CollisionGroup, LayerDepth } from '../lib/Utils';
 
 export type ITower = {
     params: TowerParams;
@@ -11,12 +11,13 @@ export type ITower = {
     getXY: () => { x: number, y: number };
     getCenter: () => { x: number, y: number };
     getCoords: () => Phaser.Math.Vector2;
+    getLevel: () => number;
+    upgrade: () => void
 }
 
 export type TowerParams = {
     cooldown: number,
     sprite: string,
-    texture: string,
     maxDistance: number,
 }
 
@@ -29,6 +30,8 @@ export abstract class AbstractTower implements ITower {
     private lockedEnemy: IBloon | undefined;
     private lastFired: number;
 
+    private level: number = 1;
+
     private debugGraphics: GameObjects.Graphics;
 
     abstract shoot({ x, y }: { x: number, y: number }): void;
@@ -36,7 +39,7 @@ export abstract class AbstractTower implements ITower {
     constructor(scene: GameScene, v, params: TowerParams) {
         this.scene = scene;
         this.params = params;
-        this.sprite = this.scene.matter.add.sprite(v.x+32, v.y, this.params.sprite, this.params.texture).setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
+        this.sprite = this.scene.matter.add.sprite(v.x+32, v.y, this.params.sprite, this.level.toString()).setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
         this.lastFired = 0;
 
         this.debugGraphics = this.scene.add.graphics();
@@ -75,5 +78,14 @@ export abstract class AbstractTower implements ITower {
 
     getCenter(): { x: number, y: number } {
         return this.sprite.getCenter();
+    }
+
+    getLevel(): number {
+        return this.level;
+    }
+    
+    upgrade() {
+        // TODO: Build animation and update texture, weapon & stats
+        this.sprite.setTexture((this.level+1).toString());
     }
 }

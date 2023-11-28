@@ -1,9 +1,7 @@
-import { Physics } from 'phaser';
-
 export default interface GameObject {
     getXY: () => { x: number, y: number }
     getVelXY: () => { velX: number, velY: number }
-    getSprite: () => Physics.Matter.Sprite
+    getSprite: () => Phaser.Physics.Matter.Sprite
     destroy: () => void
     update: (time: number, delta: number) => void
 }

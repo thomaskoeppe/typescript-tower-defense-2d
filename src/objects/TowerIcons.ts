@@ -1,4 +1,4 @@
-import { LayerDepth } from "../lib/LayerDepth";
+import { LayerDepth } from "../lib/Utils";
 import GameScene from "../scenes/GameScene";
 
 export interface ITowerIcons {
@@ -20,13 +20,12 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
     protected defaultPosition: { x: number, y: number };
     protected sprite: Phaser.GameObjects.Image;
     protected graphics: Phaser.GameObjects.Graphics;
-    protected graphics2: Phaser.GameObjects.Graphics;
 
     constructor(scene: GameScene, params: TowerIconsParams) {
         this.scene = scene;
         this.params = params;
 
-        this.sprite = this.scene.add.image(0, 0, this.params.sprite).setOrigin(0, 0).setInteractive().setDepth(LayerDepth.UI_ITEM);
+        this.sprite = this.scene.add.sprite(0, 0, 'towers-0', '1').setOrigin(0, 0).setInteractive().setDepth(LayerDepth.UI_ITEM);
         this.defaultPosition = { x: this.sprite.x, y: this.sprite.y };
 
         this.scene.hud!.add(this.sprite);
@@ -36,34 +35,31 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         this.sprite.on('drag', (pointer, dragX, dragY) => this.drag(pointer, dragX, dragY));
         this.sprite.on('dragend', (pointer) => this.dragEnd(pointer));
         this.graphics = this.scene.add.graphics().setDepth(LayerDepth.INTERACTION);
-        this.graphics2 = this.scene.add.graphics().setDepth(LayerDepth.INTERACTION);
-        this.scene.hud!.add(this.graphics);
     }
 
     public dragStart() {
+        this.sprite.setAlpha(0.85);
+
         this.graphics.fillStyle(0x000000);
         this.graphics.setAlpha(0.2);
-        this.graphics.fillCircle(this.sprite.x, this.sprite.y, this.params.radius);
+        this.graphics.fillRect(this.sprite.x, this.sprite.y, 64, 64);
 
-        this.graphics.lineStyle(3, 0xff0000);
-        this.graphics.strokeCircle(this.sprite.x, this.sprite.y, this.params.maxDistance);
-
-        this.graphics2.fillStyle(0x000000);
-        this.graphics2.setAlpha(0.2);
-        this.graphics2.fillRect(this.sprite.x, this.sprite.y, 64, 64);
+        this.graphics.lineStyle(3, 0x000000);
+        this.graphics.strokeCircle(this.sprite.x + 32, this.sprite.y + 32, this.params.maxDistance);
     }
 
     public drag(pointer: Phaser.Input.Pointer, x: number, y: number) {
         const tile = this.scene.getTileAtWorldXY(pointer.worldX, pointer.worldY);
 
         if (tile && tile.index !== 74) {
-            this.graphics2.setPosition(tile.x * 64, tile.y * 64);
+            this.graphics.setPosition(tile.x * 64, tile.y * 64).setDepth(LayerDepth.INTERACTION);
+        } else {
+            this.graphics.setDepth(-1);
         }
         
         this.sprite.setPosition(x, y);
-        this.graphics.setPosition(this.sprite.getCenter().x, this.sprite.getCenter().y);
 
-        this.hasCollisions(this.scene.checkCollision(pointer.worldX, pointer.worldY, this.params.radius));
+        this.hasCollisions(this.scene.checkCollision(tile!));
     }
 
 
@@ -71,27 +67,15 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         const tile = this.scene.getTileAtWorldXY(pointer.worldX, pointer.worldY);
 
         if (Phaser.Math.Distance.Between(this.sprite.x, this.sprite.y, this.defaultPosition.x, this.defaultPosition.y) > 5) {
-            if (this.scene.checkCollision(pointer.worldX, pointer.worldY, this.params.radius)) {
-                const text = this.scene.add.text(this.scene.cameras.main.width / 2, 16, "Turret can't placed here", {
-                    font: "18px monospace",
-                    padding: { x: 20, y: 10 },
-                    backgroundColor: "#000000"
-                  }).setOrigin(0.5, 0).setDepth(LayerDepth.UI_ITEM);
-            
-                  setTimeout(() => {
-                    text.destroy();
-                  }, 2500);
-            } else {
-                if (tile && tile.index !== 74) {
-                    this.scene.placeTurret(tile)
-                }
+            if (tile && !this.scene.checkCollision(tile) && tile.index !== 74) {
+                this.scene.placeTurret(tile);
             }
         }
 
+        this.sprite.setAlpha(1);
         this.sprite.setPosition(this.sprite.input?.dragStartX, this.sprite.input?.dragStartY);
         this.hasCollisions(false);
         this.graphics.clear();
-        this.graphics2.clear();
     }
 
     public hasCollisions(hasCollisions: boolean) {

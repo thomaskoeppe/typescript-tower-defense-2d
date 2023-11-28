@@ -1,8 +1,7 @@
 import Matter from "matter-js";
-import Parser from "../lib/TextParser";
-import GameScene, { CollisionGroup } from "../scenes/GameScene";
+import GameScene from "../scenes/GameScene";
 import { CanDie, Enemy } from './GameObject';
-import { LayerDepth } from "../lib/LayerDepth";
+import { CollisionGroup, LayerDepth } from '../lib/Utils';
 
 export interface IBloon extends Enemy, CanDie {
     params: BloonParams;
