@@ -26,10 +26,10 @@ export default class Loader {
 
     public static loadTilemaps(scene: Scene) {
         // == Tilemap == //
-        scene.load.image("tiles-base", "./assets/tilesets/base.png");
-        scene.load.image("tiles-water", "./assets/tilesets/water.png");
-        scene.load.image("tiles-leaves", "./assets/tilesets/leaves.png");
-        scene.load.image("tiles-wind", "./assets/tilesets/wind.png");
+        scene.load.image("tiles-base", "./assets/sprites/maps/base.png");
+        scene.load.image("tiles-water", "./assets/sprites/maps/water.png");
+        scene.load.image("tiles-leaves", "./assets/sprites/maps/leaves.png");
+        scene.load.image("tiles-wind", "./assets/sprites/maps/wind.png");
         scene.load.tilemapTiledJSON("tilemap", "./assets/tilemaps/map-2.json");
     }
 

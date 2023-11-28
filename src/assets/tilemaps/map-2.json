@@ -210,7 +210,7 @@
         {
          "columns":16,
          "firstgid":1,
-         "image":"..\/tilesets\/base.png",
+         "image":"..\/sprites\/maps\/base.png",
          "imageheight":1024,
          "imagewidth":1024,
          "margin":0,
@@ -278,7 +278,7 @@
         {
          "columns":70,
          "firstgid":257,
-         "image":"..\/tilesets\/water.png",
+         "image":"..\/sprites\/maps\/water.png",
          "imageheight":448,
          "imagewidth":4480,
          "margin":0,
@@ -1744,7 +1744,7 @@
         {
          "columns":14,
          "firstgid":747,
-         "image":"..\/tilesets\/leaves.png",
+         "image":"..\/sprites\/maps\/leaves.png",
          "imageheight":32,
          "imagewidth":672,
          "margin":0,
@@ -1819,7 +1819,7 @@
         {
          "columns":14,
          "firstgid":761,
-         "image":"..\/tilesets\/wind.png",
+         "image":"..\/sprites\/maps\/wind.png",
          "imageheight":32,
          "imagewidth":896,
          "margin":0,
