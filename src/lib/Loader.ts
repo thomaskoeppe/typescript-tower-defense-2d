@@ -21,7 +21,7 @@ export default class Loader {
 
     public static loadImages(scene: Scene) {
         // == Turret Menu Images == //
-        scene.load.image("monkey-0", "./assets/images/monkey-0.png");
+        // scene.load.image("monkey-0", "./assets/images/monkey-0.png");
     }
 
     public static loadTilemaps(scene: Scene) {

@@ -1,9 +1,16 @@
+export type AnimatedTile = {
+    map: Phaser.Tilemaps.Tilemap,
+    animatedTiles: any[],
+    active: boolean,
+    rate: number,
+    activeLayer: boolean[]
+}
+
 export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
     public scene: Phaser.Scene | null;
 
     private totalTime: number;
-    private map: Phaser.Tilemaps.Tilemap | null;
-    private animatedTiles: any[];
+    private animatedTiles: AnimatedTile[];
     private rate: number;
     private active: boolean;
     private activeLayer: boolean[];
@@ -14,7 +21,6 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
 
         this.scene = scene;
         this.totalTime = 0;
-        this.map = null;
         this.animatedTiles = [];
         this.rate = 1;
         this.active = false;
@@ -28,6 +34,7 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
 
     public boot() {
         const eventEmitter = this.systems!.events;
+
         eventEmitter.on("postupdate", this.postUpdate, this);
         eventEmitter.on("shutdown", this.shutdown, this);
         eventEmitter.on("destroy", this.destroy, this);
@@ -35,13 +42,7 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
 
     public init(map, activeLayers: number[] = []) {
         let mapAnimData = this.getAnimatedTiles(map);
-        let animatedTiles: {
-            map: Phaser.Tilemaps.Tilemap;
-            animatedTiles: any[];
-            active: boolean;
-            rate: number;
-            activeLayer: boolean[];
-        } = {
+        let animatedTiles: AnimatedTile = {
             map,
             animatedTiles: mapAnimData,
             active: true,
@@ -55,8 +56,6 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         });
 
         this.animatedTiles.push(animatedTiles);
-
-        console.log(this.animatedTiles)
 
         if (this.animatedTiles.length === 1) {
             this.active = true;
@@ -114,7 +113,13 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
     }
 
     resume(layerIndex = null, mapIndex = null) {
-        let scope = mapIndex === null ? this : this.animatedTiles[mapIndex];
+        let scope;
+
+        if (mapIndex === null) {
+            scope = this;
+        } else {
+            scope = this.animatedTiles[mapIndex]
+        }
 
         if (layerIndex === null) {
             scope.active = true;
@@ -127,7 +132,13 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
     }
 
     pause(layerIndex = null, mapIndex = null) {
-        let scope = mapIndex === null ? this : this.animatedTiles[mapIndex];
+        let scope;
+
+        if (mapIndex === null) {
+            scope = this;
+        } else {
+            scope = this.animatedTiles[mapIndex]
+        }
 
         if (layerIndex === null) {
             scope.active = false;
