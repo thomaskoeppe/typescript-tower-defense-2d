@@ -2,3 +2,4 @@
 /dist
 .prettierrc
 .DS_Store
+package-lock.json
