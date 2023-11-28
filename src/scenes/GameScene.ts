@@ -1,29 +1,19 @@
-import { Scene, Curves, Tilemaps, Input, GameObjects, Physics } from "phaser";
 import { IBloon } from "../objects/Bloon";
 import { RedBloon } from "../objects/Bloons/RedBloon";
-import { isEmpty, range, take, zip } from 'lodash';
-import { product } from '../lib/Array';
 import { ITower } from "../objects/Tower";
 import { DartMonkey } from "../objects/Towers/DartMonkey";
 import Loader from "../lib/Loader";
 import AutoRemoveList from "../lib/AutoRemoveList";
-import Pathfinding from "../lib/Pathfinding";
 import { IProjectile } from "~/objects/Projectile";
-import { LayerDepth } from "../lib/LayerDepth";
 import { DartMonkeyIcon } from "../objects/TowerIcons/DartMonkey";
-import { ITowerIcons } from "~/objects/TowerIcons";
-
-export enum CollisionGroup {
-  BULLET = -1,
-  ENEMY = -2
-}
+import { LayerDepth, Utils } from "../lib/Utils";
 
 export type PlacedTurret = {
   sprite: ITower,
-  tile: Tilemaps.Tile
+  tile: Phaser.Tilemaps.Tile
 }
 
-export default class GameScene extends Scene {
+export default class GameScene extends Phaser.Scene {
   private spawn: Phaser.Math.Vector2 = Phaser.Math.Vector2.ZERO;
   private goal: Phaser.Math.Vector2 = Phaser.Math.Vector2.ZERO;
 
@@ -35,16 +25,15 @@ export default class GameScene extends Scene {
   private enemiesSpawned: number = 0;
   private nextEnemy: number = 0;
 
-  private text: GameObjects.Text | undefined;
+  private text: Phaser.GameObjects.Text | undefined;
 
   private money: number = 0;
   private lifes: number = 10;
 
-  private path: Curves.Path | undefined;
-  private world: Tilemaps.Tilemap | undefined;
+  private path: Phaser.Curves.Path | undefined;
+  private world: Phaser.Tilemaps.Tilemap | undefined;
 
-  public hud: GameObjects.Container | undefined;
-  private _tempDragObject: GameObjects.Image | undefined;
+  public hud: Phaser.GameObjects.Container | undefined;
 
   public enemies: AutoRemoveList<IBloon>;
   public projectiles: AutoRemoveList<IProjectile>;
@@ -66,44 +55,14 @@ export default class GameScene extends Scene {
   }
 
   public create() {
-    this.world = this.make.tilemap({ key: "tilemap" });
-
-    const baseTiles = this.world.addTilesetImage("tiles-base");
-    const waterTiles = this.world.addTilesetImage("tiles-water");
-    const leavesTiles = this.world.addTilesetImage("tiles-leaves");
-    const windTiles = this.world.addTilesetImage("tiles-wind");
-
-    const groundLayer = this.world.createLayer("Ground", [baseTiles!], 0, 0);
-    const waterLayer = this.world.createLayer("Water", [waterTiles!], 0, 0);
-    const pathLayer = this.world.createLayer("Path", [baseTiles!], 0, 0);
-    const decorationsLayer = this.world.createLayer("Decorations", [baseTiles!], 0, 0);
-    const animationsLayer = this.world.createLayer("Animations", [leavesTiles!, windTiles!], 0, 0);
-    const interactionLayer = this.world.createLayer("Interaction", [baseTiles!], 0, 0);
-
-    groundLayer!.setDepth(LayerDepth.GROUND);
-    waterLayer!.setDepth(LayerDepth.WATER);
-    pathLayer!.setDepth(LayerDepth.PATH);
-    decorationsLayer!.setDepth(LayerDepth.DECORATIONS);
-    animationsLayer!.setDepth(LayerDepth.ANIMATIONS);
-    interactionLayer!.setDepth(LayerDepth.INTERACTION);
-
-    interactionLayer!.forEachTile((tile: Tilemaps.Tile) => {
-      if (tile.index === -1) {
-        tile.index = 72;
-      }
-    });
-
-    this.world.setLayer(interactionLayer!);
-    this.world.setCollisionByProperty({ isBlocked: true });
-    this.animatedTiles.init(this.world, [this.world.getLayerIndex(animationsLayer!), this.world.getLayerIndex(waterLayer!)]);
-    this.animatedTiles.setRate(0.5);
+    this.world = Utils.renderMap(this);
 
     this.mapdata = this.cache.json.get("mapdata");
     this.matter.world.setBounds(0, 0, this.world.widthInPixels, this.world.heightInPixels);
 
     this.spawn = new Phaser.Math.Vector2(this.mapdata.spawn.x, this.mapdata.spawn.y);
     this.goal = new Phaser.Math.Vector2(this.mapdata.goal.x, this.mapdata.goal.y);
-    this.path = Pathfinding.create(this.path!, this.mapdata.path, this.spawn, this.goal);
+    this.path = Utils.createPath(this.path!, this.mapdata.path, this.spawn, this.goal);
 
     this.text = this.add.text(16, 16, `Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}`, {
       font: "18px monospace",
@@ -118,21 +77,6 @@ export default class GameScene extends Scene {
     this.hud.add(backgroundColor);
 
     DartMonkeyIcon.create(this);
-
-    // this.input.on("dragstart", (pointer: Input.Pointer, gameObject: ITowerIcons) => {
-    //   console.log(gameObject)
-    //   gameObject.dragStart();
-    // });
-
-    // this.input.on("drag", (pointer: Input.Pointer, gameObject: ITowerIcons, dragX: number, dragY: number) => {
-    //   gameObject.moveTo(dragX, dragY);
-    // });
-
-    // this.input.on("dragend", (pointer: Input.Pointer, gameObject: ITowerIcons, dragX: number, dragY: number) => {
-    //   gameObject.dragEnd();
-    //   // gameObject.x = gameObject.input!.dragStartX;
-    //   // gameObject.y = gameObject.input!.dragStartY;
-    // });
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;
@@ -199,7 +143,7 @@ export default class GameScene extends Scene {
 
   public updateSubscriptions() {
     this.projectileSubscriptions.length > 0 && this.projectileSubscriptions.forEach((fn) => { fn() });
-    this.projectileSubscriptions = product(this.enemies, this.projectiles).map(([enemy, projectile]) => {
+    this.projectileSubscriptions = Utils.product(this.enemies, this.projectiles).map(([enemy, projectile]) => {
       return this.matterCollision.addOnCollideStart({
         objectA: projectile.getSprite(),
         objectB: enemy.getSprite(),
@@ -270,53 +214,33 @@ export default class GameScene extends Scene {
     this.projectiles.add(projectile);
   }
 
-  public checkCollision(x: number, y: number, r: number): boolean {
-    const tiles = this.world!.getTilesWithinShape(new Phaser.Geom.Circle(x, y, r));
+  public checkCollision(tile: Phaser.Tilemaps.Tile): boolean {
+    const tile2 = this.world!.getTileAt(tile.x, tile.y-1);
 
-    if (tiles === null) {
-      return false;
+    if (tile.collides) {
+      return true;
     }
 
-    return tiles.some((v: Tilemaps.Tile) => { return v.collides });
+    if (this.turrets.some((v: PlacedTurret) => {
+      const v2 = this.world!.getTileAt(v.tile.x, v.tile.y-1);
+
+      return v2 === tile || v2 === tile2 || v.tile === tile || v.tile === tile2;
+    })) {
+      return true;
+    }
+
+    return false;
   }
 
   public placeTurret(tile: Phaser.Tilemaps.Tile): void {
-    if (this.turrets.some((v: PlacedTurret) => { console.log(v); return v.tile === tile })) {
-      const text = this.add.text(this.cameras.main.width / 2, 16, "Turret already placed here", {
-        font: "18px monospace",
-        padding: { x: 20, y: 10 },
-        backgroundColor: "#000000"
-      }).setOrigin(0.5, 0).setDepth(LayerDepth.UI_ITEM);
-
-      setTimeout(() => {
-        text.destroy();
-      }, 2500);
-
-      return;
-    }
-
-    if (tile && tile.properties.collides) {
-      const text = this.add.text(this.cameras.main.width / 2, 16, "Cannot place turret here", {
-        font: "18px monospace",
-        padding: { x: 20, y: 10 },
-        backgroundColor: "#000000"
-      }).setOrigin(0.5, 0).setDepth(LayerDepth.UI_ITEM);
-
-      setTimeout(() => {
-        text.destroy();
-      }, 2500);
-
-      return;
-    }
-
     const turret = DartMonkey.create(this, { x: tile.pixelX, y: tile.pixelY }, {
       sprite: "turrets-0"
     });
 
-    this.turrets.push({ sprite: turret, tile: tile as Tilemaps.Tile });
+    this.turrets.push({ sprite: turret, tile: tile as Phaser.Tilemaps.Tile });
   }
 
-  public getTileAtWorldXY(x: number, y: number): Tilemaps.Tile | null {
+  public getTileAtWorldXY(x: number, y: number): Phaser.Tilemaps.Tile | null {
     return this.world!.getTileAtWorldXY(x, y);
   }
 }
