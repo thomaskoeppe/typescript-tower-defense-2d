@@ -54,7 +54,6 @@ export abstract class AbstractTower implements ITower {
 
         if (this.lockedEnemy) {
             const { x, y } = this.lockedEnemy.getXY();
-            this.sprite.setAngle(Math2.Angle.Between(this.sprite.x, this.sprite.y, x, y) * 180 / Math.PI);
 
             this.debugGraphics.lineBetween(this.sprite.x, this.sprite.y, x, y);
 

@@ -11,9 +11,9 @@ export class RedBloon extends AbstractBloon {
             speed: 1,
             reward: 1,
             takesHealth: 1,
-            sprite: 'bloons-0',
-            frame: '1',
-            scale: 0.5,
+            sprite: 'enemies-0',
+            frame: 'd-0',
+            scale: 1,
             radius: 20,
         });
     }

@@ -3,12 +3,7 @@ import { Scene } from "phaser";
 export default class Loader {
     public static loadSpritesheets(scene: Scene) {
         // == Bloons == //
-        scene.load.atlas('bloons-0', './assets/sprites/bloons/0/spritesheet.png', './assets/sprites/bloons/0/spritesheet.json');
-        scene.load.atlas('bloons-1', './assets/sprites/bloons/1/spritesheet.png', './assets/sprites/bloons/1/spritesheet.json');
-        scene.load.atlas('bloons-2', './assets/sprites/bloons/2/spritesheet.png', './assets/sprites/bloons/2/spritesheet.json');
-        scene.load.atlas('bloons-3', './assets/sprites/bloons/3/spritesheet.png', './assets/sprites/bloons/3/spritesheet.json');
-        scene.load.atlas('bloons-4', './assets/sprites/bloons/4/spritesheet.png', './assets/sprites/bloons/4/spritesheet.json');
-
+        scene.load.atlas('enemies-0', './assets/sprites/enemies/7/spritesheet.png', './assets/sprites/enemies/7/spritesheet.json');
         // == Turrets == //
         scene.load.atlas('towers-0', './assets/sprites/towers/0/spritesheet.png', './assets/sprites/towers/0/spritesheet.json');
 
@@ -45,6 +40,33 @@ export default class Loader {
 
     public static loadFonts(scene: Scene) {
 
+    }
+
+    public static generateAnimations(scene: Scene) {
+        console.log("Generating animations...");
+        console.log("walk-down frames:")
+        console.log(scene.anims.generateFrameNames('enemies-0', { prefix: 'd-', start: 0, end: 23 }));
+
+        scene.anims.create({
+            key: 'enemies-0-walk-down',
+            frames: scene.anims.generateFrameNames('enemies-0', { prefix: 'd-', start: 8, end: 15 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'enemies-0-walk-up',
+            frames: scene.anims.generateFrameNames('enemies-0', { prefix: 'u-', start: 8, end: 15 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'enemies-0-walk-lr',
+            frames: scene.anims.generateFrameNames('enemies-0', { prefix: 'lr-', start: 8, end: 15 }),
+            frameRate: 8,
+            repeat: -1
+        });
     }
 
     public static initiate(scene: Scene) {

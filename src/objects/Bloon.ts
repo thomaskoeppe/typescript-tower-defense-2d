@@ -61,7 +61,7 @@ export abstract class AbstractBloon implements IBloon {
 
         this.sprite.setExistingBody(this.body.create({
             parts: [this.bodies.rectangle(0, 0, this.sprite.width, this.sprite.height, { chamfer: { radius: this.params.radius } })]
-        })).setCollisionGroup(CollisionGroup.ENEMY).setPosition(v.x, v.y).setScale(this.params.scale);
+        })).setCollisionGroup(CollisionGroup.ENEMY).setPosition(v.x, v.y).setScale(this.params.scale).setAngle(0);
 
         this.sprite.setStatic(true);
         
@@ -84,10 +84,46 @@ export abstract class AbstractBloon implements IBloon {
     
     public update(time, delta)
     {
-        this.follower.t += (1/20000) * delta * this.params.speed;
+        //this.follower.t += (1/20000) * delta * this.params.speed;
+        this.follower.t += (1/200000) * delta * this.params.speed;
 
         this.path!.getPoint(this.follower.t, this.follower.vec);
+
+        const angle = Math.atan2(this.follower.vec.y - this.sprite.y, this.follower.vec.x - this.sprite.x) * 180 / Math.PI;
+
+        if (angle >= -44 && angle <= 45) {
+            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== "enemies-0-walk-lr") {
+                this.sprite.anims.play("enemies-0-walk-lr");
+            }
+
+            this.sprite.flipX = true;
+            this.sprite.setAngle(angle);
+        } else if (angle >= 46 && angle < 135) {
+            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== "enemies-0-walk-down") {
+                this.sprite.anims.play("enemies-0-walk-down");
+            }
+
+            this.sprite.flipX = false;
+            this.sprite.setAngle(angle-90);
+        } else if (angle >= 135 || angle < -135) {
+            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== "enemies-0-walk-lr") {
+                this.sprite.anims.play("enemies-0-walk-lr");
+            }
+
+            this.sprite.flipX = false;
+            this.sprite.setAngle(angle+180);
+        } else if (angle >= -135 && angle < -46) {
+            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== "enemies-0-walk-up") {
+                this.sprite.anims.play("enemies-0-walk-up");
+            }
+
+            this.sprite.flipX = false;
+            this.sprite.setAngle(angle+90);
+        }
+
+
         
+
         this.sprite.setPosition(this.follower.vec.x, this.follower.vec.y);
 
         // this.debugText.setPosition(this.sprite.x+32, this.sprite.y+32);

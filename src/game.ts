@@ -32,6 +32,9 @@ const config: Phaser.Types.Core.GameConfig = {
       gravity: { y: 0 },
     },
   },
+  fps: {
+    target: 30
+  },
   scene: [GameScene],
   plugins: {
     scene: [

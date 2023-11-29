@@ -39,7 +39,7 @@ export default class GameScene extends Phaser.Scene {
   public projectiles: AutoRemoveList<IProjectile>;
   public turrets: PlacedTurret[];
 
-  private projectileSubscriptions: (() => void)[]
+  private projectileSubscriptions: (() => void)[];
 
   constructor() {
     super({ key: "game", active: true, visible: true });
@@ -76,6 +76,8 @@ export default class GameScene extends Phaser.Scene {
     backgroundColor.fillRect(0, 0, 128, 128);
     this.hud.add(backgroundColor);
 
+    Loader.generateAnimations(this);
+
     DartMonkeyIcon.create(this);
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
@@ -87,16 +89,16 @@ export default class GameScene extends Phaser.Scene {
       this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
     }
 
-    // if (this.enemies.active < 20 && this.nextEnemy < time) {
-    //   const enemy = RedBloon.create(this, {
-    //     x: this.spawn.x,
-    //     y: this.spawn.y
-    //   });
-    //   enemy.startOnPath(this.path);
-    //   this.enemies.add(enemy);
+    if (this.enemies.active < 1 && this.nextEnemy < time) {
+      const enemy = RedBloon.create(this, {
+        x: this.spawn.x,
+        y: this.spawn.y
+      });
+      enemy.startOnPath(this.path);
+      this.enemies.add(enemy);
 
-    //   this.nextEnemy = time + 200;
-    // }
+      this.nextEnemy = time + 200;
+    }
 
     this.updateSubscriptions();
 
