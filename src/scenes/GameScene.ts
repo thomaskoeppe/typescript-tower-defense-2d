@@ -1,3 +1,4 @@
+import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 import { IBloon } from "../objects/Bloon";
 import { RedBloon } from "../objects/Bloons/RedBloon";
 import { ITower } from "../objects/Tower";
@@ -68,7 +69,7 @@ export default class GameScene extends Phaser.Scene {
       font: "18px monospace",
       padding: { x: 20, y: 10 },
       backgroundColor: "#000000"
-    });
+    }).setDepth(LayerDepth.UI);
 
     this.hud = this.add.container(this.cameras.main.width - 64, 16).setDepth(LayerDepth.UI);
     let backgroundColor = this.add.graphics();
@@ -80,6 +81,8 @@ export default class GameScene extends Phaser.Scene {
 
     DartMonkeyIcon.create(this);
 
+    this.input.mouse!.disableContextMenu();
+
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;
   }
@@ -89,7 +92,7 @@ export default class GameScene extends Phaser.Scene {
       this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
     }
 
-    if (this.enemies.active < 10 && this.nextEnemy < time) {
+    if (this.enemies.active < 1 && this.nextEnemy < time) {
       const enemy = RedBloon.create(this, {
         x: this.spawn.x,
         y: this.spawn.y
@@ -97,7 +100,7 @@ export default class GameScene extends Phaser.Scene {
       enemy.startOnPath(this.path);
       this.enemies.add(enemy);
 
-      this.nextEnemy = time + 1000;
+      this.nextEnemy = time + 4000;
     }
 
     this.updateSubscriptions();
@@ -139,7 +142,7 @@ export default class GameScene extends Phaser.Scene {
     // }
 
     this.enemies.update(time, delta);
-    this.projectiles.update(time, delta)
+    this.projectiles.update(time, delta);
     this.turrets.forEach(({sprite}) => { sprite.update(time, delta) });
   }
 
@@ -151,15 +154,17 @@ export default class GameScene extends Phaser.Scene {
         objectB: enemy.getSprite(),
         context: this,
         callback: (collision) => {
-          const { gameObjectA, gameObjectB } = collision;
+          const { gameObjectB } = collision;
+
           if (gameObjectB instanceof Phaser.Physics.Matter.Sprite) {
             const { x, y } = gameObjectB as Phaser.Physics.Matter.Sprite;
 
             enemy.getHit(projectile.params.damage);
+            projectile.onCollide();
             projectile.destroy();
             this.projectiles.remove(projectile);
 
-            const explosion = this.add.sprite(x, y, "effects-0", "0").setDepth(LayerDepth.INTERACTION).setScale(1.5);
+            const explosion = this.add.sprite(x, y, "effects-0", "0").setDepth(LayerDepth.INTERACTION);
             explosion.anims.play("projectiles-0-lvl-0-hit");
             explosion.on("animationcomplete", () => {
               explosion.destroy();
@@ -173,7 +178,7 @@ export default class GameScene extends Phaser.Scene {
   public loseHealth(enemy: IBloon) {
     this.lifes -= enemy.params.takesHealth;
     enemy.destroy();
-    this.enemies.remove(enemy);
+    // this.enemies.remove(enemy);
 
     if (this.lifes <= 0) {
       // this.scene.stop("game");

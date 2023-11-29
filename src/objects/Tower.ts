@@ -37,6 +37,8 @@ export abstract class AbstractTower implements ITower {
 
     private weapon: Phaser.Physics.Matter.Sprite;
 
+    private menu;
+
     abstract shoot({ x, y }: { x: number, y: number }): void;
 
     constructor(scene: GameScene, v, params: TowerParams) {
@@ -52,6 +54,27 @@ export abstract class AbstractTower implements ITower {
         this.lastFired = 0;
 
         this.debugGraphics = this.scene.add.graphics();
+
+        this.weapon.on("animationupdate", (anim, frame) => {
+            if (!this.lockedEnemy) {
+                this.isShooting = false;
+                return;
+            }
+
+            if (frame.index == 2) {
+                this.shoot(this.lockedEnemy.getCoords());
+                this.isShooting = false;
+            }
+        });
+
+        this.menu = "";
+
+        this.sprite.setInteractive();
+        this.sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+            if (pointer.rightButtonDown() || pointer.rightButtonReleased()) {
+                // TODO: Implement Menu https://codepen.io/rexrainbow/pen/PxOEBr
+            }
+        });
     }
 
     public update(time, delta) {
@@ -72,14 +95,6 @@ export abstract class AbstractTower implements ITower {
 
                 this.weapon.anims.play('weapons-0-lvl-0-shoot');
 
-                this.weapon.on("animationupdate", (anim, frame) => {
-                    if (frame.index == 3 && this.lockedEnemy) {
-                        this.shoot(this.lockedEnemy.getCoords());
-                        this.isShooting = false;
-                    }
-                });
-
-                // this.shoot(this.lockedEnemy.getCoords());
                 this.lastFired = time + this.params.cooldown;
             }
         }

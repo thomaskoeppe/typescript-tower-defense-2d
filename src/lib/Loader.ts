@@ -47,10 +47,6 @@ export default class Loader {
     }
 
     public static generateAnimations(scene: Scene) {
-        console.log("Generating animations...");
-        console.log("walk-down frames:")
-        console.log(scene.anims.generateFrameNames('enemies-0', { prefix: 'd-', start: 0, end: 23 }));
-
         scene.anims.create({
             key: 'enemies-0-walk-down',
             frames: scene.anims.generateFrameNames('enemies-0', { prefix: 'd-', start: 8, end: 15 }),

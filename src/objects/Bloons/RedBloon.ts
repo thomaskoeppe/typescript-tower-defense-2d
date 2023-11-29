@@ -7,7 +7,7 @@ export class RedBloon extends AbstractBloon {
 
     static create(scene, v) {
         return new RedBloon(scene, v, {
-            hp: 1,
+            hp: 4,
             speed: 1,
             reward: 1,
             takesHealth: 1,

@@ -5,10 +5,10 @@ import { CollisionGroup, LayerDepth } from '../lib/Utils';
 export interface IProjectile extends CanDie {
     params: ProjectileParams;
 
+    onCollide: (collision: any) => void;
     destroy: () => void;
     getSprite: () => Phaser.Physics.Matter.Sprite;
     setAngle: (angle: number) => void;
-    onCollide: (collision) => void;
 }
 
 export type ProjectileParams = {
@@ -22,9 +22,7 @@ export type ProjectileParams = {
 export abstract class AbstractProjectile implements IProjectile {
     protected scene: GameScene;
     protected sprite: Phaser.Physics.Matter.Sprite;
-    private collided: boolean = false;
-
-    private line: Phaser.Geom.Line;
+    private collided: boolean;
 
     private body: MatterJS.BodyFactory;
     private bodies: MatterJS.BodiesFactory;
@@ -34,6 +32,8 @@ export abstract class AbstractProjectile implements IProjectile {
     constructor(scene, source, target, params) {
         this.scene = scene;
         this.params = params;
+
+        this.collided = false;
 
         this.body = this.scene.matter.body;
         this.bodies = this.scene.matter.bodies;
@@ -46,8 +46,6 @@ export abstract class AbstractProjectile implements IProjectile {
             friction: 0.0,
             frictionStatic: 0.0,
         })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(source.x, source.y).setAngle((Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI)+90).setScale(this.params.scale);
-        
-        // this.sprite.thrust(0.0005);
 
         this.scene.matterCollision.addOnCollideStart({
             objectA: this.sprite,
@@ -55,9 +53,8 @@ export abstract class AbstractProjectile implements IProjectile {
             context: this
         });
 
-        this.sprite.applyForce(new Phaser.Math.Vector2(target.x - source.x, target.y - source.y).normalize().scale(0.01));
-
-        this.line = new Phaser.Geom.Line(source.x, source.y, target.x, target.y);
+        
+        this.sprite.applyForce(new Phaser.Math.Vector2((target.x - source.x) === 0 ? 1 : target.x - source.x, (target.y - source.y) === 0 ? 1 : target.y - source.y).normalize().scale(0.01));
 
         this.sprite.anims.play('projectiles-0-lvl-0-shoot');
     }
@@ -99,7 +96,7 @@ export abstract class AbstractProjectile implements IProjectile {
         }
     }
 
-    onCollide(collision) {
+    onCollide() {
         this.collided = true;
     }
 }
