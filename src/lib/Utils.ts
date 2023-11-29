@@ -44,7 +44,7 @@ export class Utils {
         const gL = w.createLayer("Ground", [bT!], 0, 0);
         const wL = w.createLayer("Water", [wT!], 0, 0);
         const pL = w.createLayer("Path", [bT!], 0, 0);
-        const dL = w.createLayer("Decorations", [wT!], 0, 0);
+        const dL = w.createLayer("Decorations", [bT!, wT!], 0, 0);
         const aL = w.createLayer("Animations", [lT!, wT2!], 0, 0);
         const iL = w.createLayer("Interaction", [bT!], 0, 0);
 

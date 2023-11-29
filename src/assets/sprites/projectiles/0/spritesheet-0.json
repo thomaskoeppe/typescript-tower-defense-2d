@@ -1,0 +1,75 @@
+{
+  "frames": {
+    "0": {
+      "frame": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 40
+      }
+    },
+    "1": {
+      "frame": {
+        "x": 8,
+        "y": 0,
+        "w": 8,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 0,
+        "w": 8,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 40
+      }
+    },
+    "2": {
+      "frame": {
+        "x": 16,
+        "y": 0,
+        "w": 8,
+        "h": 40
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 16,
+        "y": 0,
+        "w": 8,
+        "h": 40
+      },
+      "sourceSize": {
+        "w": 24,
+        "h": 40
+      }
+    }
+  },
+  "meta": {
+    "app": "sprite-sheet-to-json",
+    "version": "1.0.0",
+    "image": "spritesheet-0.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 24,
+      "h": 40
+    },
+    "scale": "1"
+  }
+}

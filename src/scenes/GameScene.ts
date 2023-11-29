@@ -89,7 +89,7 @@ export default class GameScene extends Phaser.Scene {
       this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
     }
 
-    if (this.enemies.active < 1 && this.nextEnemy < time) {
+    if (this.enemies.active < 10 && this.nextEnemy < time) {
       const enemy = RedBloon.create(this, {
         x: this.spawn.x,
         y: this.spawn.y
@@ -97,7 +97,7 @@ export default class GameScene extends Phaser.Scene {
       enemy.startOnPath(this.path);
       this.enemies.add(enemy);
 
-      this.nextEnemy = time + 200;
+      this.nextEnemy = time + 500;
     }
 
     this.updateSubscriptions();
@@ -159,10 +159,11 @@ export default class GameScene extends Phaser.Scene {
 
             const { x, y } = collision.gameObjectB as Phaser.Physics.Matter.Sprite;
 
-            const explosion = this.add.sprite(x, y, 'effects-0', Math.floor(Math.random() * 3) + 1).setScale(1.5);
-            setTimeout(() => {
-                explosion.destroy();
-            }, 50);
+            const explosion = this.add.sprite(x, y, "effects-0", "0").setDepth(LayerDepth.INTERACTION);
+            explosion.anims.play("projectiles-0-lvl-0-hit");
+            explosion.on("animationcomplete", () => {
+              explosion.destroy();
+            });
           }
         }
       });

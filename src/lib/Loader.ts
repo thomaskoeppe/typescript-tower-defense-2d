@@ -2,14 +2,18 @@ import { Scene } from "phaser";
 
 export default class Loader {
     public static loadSpritesheets(scene: Scene) {
-        // == Bloons == //
+        // == Enemies == //
         scene.load.atlas('enemies-0', './assets/sprites/enemies/7/spritesheet.png', './assets/sprites/enemies/7/spritesheet.json');
-        // == Turrets == //
+        
+        // == Towers == //
         scene.load.atlas('towers-0', './assets/sprites/towers/0/spritesheet.png', './assets/sprites/towers/0/spritesheet.json');
 
         // == Projectiles == //
-        scene.load.atlas('projectiles-0', './assets/sprites/projectiles/0/spritesheet.png', './assets/sprites/projectiles/0/spritesheet.json');
+        scene.load.atlas('projectiles-0-lvl-0', './assets/sprites/projectiles/0/spritesheet-0.png', './assets/sprites/projectiles/0/spritesheet-0.json');
 
+        // == Weapons == //
+        scene.load.atlas('weapons-0-lvl-0', './assets/sprites/weapons/0/spritesheet-0.png', './assets/sprites/weapons/0/spritesheet-0.json')
+    
         // == Effects == //
         scene.load.atlas('effects-0', './assets/sprites/effects/0/spritesheet.png', './assets/sprites/effects/0/spritesheet.json');
     }
@@ -66,6 +70,27 @@ export default class Loader {
             frames: scene.anims.generateFrameNames('enemies-0', { prefix: 'lr-', start: 8, end: 15 }),
             frameRate: 8,
             repeat: -1
+        });
+
+        scene.anims.create({
+            key: "weapons-0-lvl-0-shoot",
+            frames: scene.anims.generateFrameNames('weapons-0-lvl-0', { frames: [1, 2, 3, 4, 5, 0]}),
+            frameRate: 8,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: "projectiles-0-lvl-0-shoot",
+            frames: scene.anims.generateFrameNames('projectiles-0-lvl-0', { start: 0, end: 2 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: "projectiles-0-lvl-0-hit",
+            frames: scene.anims.generateFrameNames('effects-0', { start: 0, end: 5 }),
+            frameRate: 8,
+            repeat: 0
         });
     }
 

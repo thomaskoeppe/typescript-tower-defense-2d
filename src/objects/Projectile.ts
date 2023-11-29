@@ -1,6 +1,6 @@
 import { CanDie } from './GameObject';
 import GameScene from '../scenes/GameScene';
-import { CollisionGroup } from '../lib/Utils';
+import { CollisionGroup, LayerDepth } from '../lib/Utils';
 
 export interface IProjectile extends CanDie {
     params: ProjectileParams;
@@ -24,6 +24,8 @@ export abstract class AbstractProjectile implements IProjectile {
     protected sprite: Phaser.Physics.Matter.Sprite;
     private collided: boolean = false;
 
+    private line: Phaser.Geom.Line;
+
     private body: MatterJS.BodyFactory;
     private bodies: MatterJS.BodiesFactory;
 
@@ -43,15 +45,21 @@ export abstract class AbstractProjectile implements IProjectile {
             frictionAir: 0.0,
             friction: 0.0,
             frictionStatic: 0.0,
-        })).setCollisionGroup(CollisionGroup.BULLET).setPosition(source.x, source.y).setAngle(Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI).setScale(this.params.scale);
+        })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(source.x, source.y).setAngle((Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI)+90).setScale(this.params.scale);
 
-        this.sprite.thrust(0.005);
+        // this.sprite.thrust(0.0005);
 
         this.scene.matterCollision.addOnCollideStart({
             objectA: this.sprite,
             callback: this.onCollide,
             context: this
         });
+
+        this.sprite.applyForce(new Phaser.Math.Vector2(target.x - source.x, target.y - source.y).normalize().scale(0.01));
+
+        this.line = new Phaser.Geom.Line(source.x, source.y, target.x, target.y);
+
+        this.sprite.anims.play('projectiles-0-lvl-0-shoot');
     }
 
     getSprite() {
