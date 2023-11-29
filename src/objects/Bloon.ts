@@ -60,7 +60,7 @@ export abstract class AbstractBloon implements IBloon {
         this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
 
         this.sprite.setExistingBody(this.body.create({
-            parts: [this.bodies.rectangle(0, 0, this.sprite.width, this.sprite.height, { chamfer: { radius: this.params.radius } })]
+            parts: [this.bodies.rectangle(0, 0, this.sprite.width-(this.sprite.width/3), this.sprite.height-(this.sprite.width/6), { chamfer: { radius: this.params.radius } })]
         })).setCollisionGroup(CollisionGroup.ENEMY).setPosition(v.x, v.y).setScale(this.params.scale).setAngle(0);
 
         this.sprite.setStatic(true);

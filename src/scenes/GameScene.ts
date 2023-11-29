@@ -97,7 +97,7 @@ export default class GameScene extends Phaser.Scene {
       enemy.startOnPath(this.path);
       this.enemies.add(enemy);
 
-      this.nextEnemy = time + 500;
+      this.nextEnemy = time + 1000;
     }
 
     this.updateSubscriptions();
@@ -153,13 +153,13 @@ export default class GameScene extends Phaser.Scene {
         callback: (collision) => {
           const { gameObjectA, gameObjectB } = collision;
           if (gameObjectB instanceof Phaser.Physics.Matter.Sprite) {
+            const { x, y } = gameObjectB as Phaser.Physics.Matter.Sprite;
+
             enemy.getHit(projectile.params.damage);
             projectile.destroy();
             this.projectiles.remove(projectile);
 
-            const { x, y } = collision.gameObjectB as Phaser.Physics.Matter.Sprite;
-
-            const explosion = this.add.sprite(x, y, "effects-0", "0").setDepth(LayerDepth.INTERACTION);
+            const explosion = this.add.sprite(x, y, "effects-0", "0").setDepth(LayerDepth.INTERACTION).setScale(1.5);
             explosion.anims.play("projectiles-0-lvl-0-hit");
             explosion.on("animationcomplete", () => {
               explosion.destroy();

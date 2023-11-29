@@ -46,7 +46,7 @@ export abstract class AbstractProjectile implements IProjectile {
             friction: 0.0,
             frictionStatic: 0.0,
         })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(source.x, source.y).setAngle((Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI)+90).setScale(this.params.scale);
-
+        
         // this.sprite.thrust(0.0005);
 
         this.scene.matterCollision.addOnCollideStart({

@@ -28,6 +28,7 @@ export abstract class AbstractTower implements ITower {
     public params: TowerParams;
 
     private lockedEnemy: IBloon | undefined;
+    private isShooting: boolean;
     private lastFired: number;
 
     private level: number = 1;
@@ -47,6 +48,7 @@ export abstract class AbstractTower implements ITower {
         this.sprite.setStatic(true);
         this.weapon.setStatic(true);
 
+        this.isShooting = false;
         this.lastFired = 0;
 
         this.debugGraphics = this.scene.add.graphics();
@@ -65,11 +67,19 @@ export abstract class AbstractTower implements ITower {
 
             this.weapon.setAngle((Math2.Angle.Between(this.sprite.x, this.sprite.y, x, y) * 180 / Math.PI)+90);
 
-            this.debugGraphics.lineBetween(this.sprite.x, this.sprite.y, x, y);
+            if (time > this.lastFired && !this.isShooting) {
+                this.isShooting = true;
 
-            if (time > this.lastFired) {
                 this.weapon.anims.play('weapons-0-lvl-0-shoot');
-                this.shoot(this.lockedEnemy.getCoords());
+
+                this.weapon.on("animationupdate", (anim, frame) => {
+                    if (frame.index == 3 && this.lockedEnemy) {
+                        this.shoot(this.lockedEnemy.getCoords());
+                        this.isShooting = false;
+                    }
+                });
+
+                // this.shoot(this.lockedEnemy.getCoords());
                 this.lastFired = time + this.params.cooldown;
             }
         }
