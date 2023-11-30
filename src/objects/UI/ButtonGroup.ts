@@ -48,8 +48,6 @@ export class ButtonGroup extends Phaser.GameObjects.Container {
         this.x -= width/2;
 
         this.hide();
-
-        // TODO: https://calebtaylor.ca/Phaser3UI/
     }
 
     public show() {
