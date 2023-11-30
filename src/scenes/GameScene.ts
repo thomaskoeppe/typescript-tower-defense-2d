@@ -81,6 +81,22 @@ export default class GameScene extends Phaser.Scene {
     DartMonkeyIcon.create(this);
 
     this.input.mouse!.disableContextMenu();
+    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+      if (pointer.leftButtonDown()) {
+        this.turrets.forEach((v: PlacedTurret) => {
+          if (!v.sprite.isMenuShown()) {
+            return;
+          }
+
+          const { x, y } = pointer;
+          const { x: mx, y: my } = v.sprite.getMenuXY();
+
+          if (Phaser.Math.Distance.Between(x, y, mx, my) > 144) {
+            v.sprite.hideMenu();
+          }
+        });
+      }
+    });
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;

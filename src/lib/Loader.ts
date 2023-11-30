@@ -46,6 +46,13 @@ export default class Loader {
 
     }
 
+    public static loadIcons(scene: Scene) {
+        //spritesheet-0 to 2
+        scene.load.atlas('icons-0', './assets/icons/spritesheet-0.png', './assets/icons/spritesheet-0.json');
+        scene.load.atlas('icons-1', './assets/icons/spritesheet-1.png', './assets/icons/spritesheet-1.json');
+        scene.load.atlas('icons-2', './assets/icons/spritesheet-2.png', './assets/icons/spritesheet-2.json');
+    }
+
     public static generateAnimations(scene: Scene) {
         scene.anims.create({
             key: 'enemies-0-walk-down',
@@ -93,6 +100,7 @@ export default class Loader {
     public static initiate(scene: Scene) {
         this.loadSpritesheets(scene);
         this.loadImages(scene);
+        this.loadIcons(scene);
         this.loadTilemaps(scene);
         this.loadWavedata(scene);
         this.loadAudio(scene);

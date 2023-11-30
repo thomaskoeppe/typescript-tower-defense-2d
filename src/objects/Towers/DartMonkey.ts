@@ -4,7 +4,7 @@ import { AbstractTower } from "../Tower";
 
 export class DartMonkey extends AbstractTower {
     constructor(scene, v, tv) {
-        super(scene, v, {cooldown: 1000, sprite: 'towers-0', maxDistance: 250});
+        super(scene, v, {cooldown: 1000, sprite: 'towers-0', maxDistance: 250, maxLevel: 3});
     }
 
     static create(scene, v, tv) {

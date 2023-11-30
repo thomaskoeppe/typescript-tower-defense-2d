@@ -12,13 +12,17 @@ export type ITower = {
     getCenter: () => { x: number, y: number };
     getCoords: () => Phaser.Math.Vector2;
     getLevel: () => number;
-    upgrade: () => void
+    upgrade: () => void;
+    isMenuShown: () => boolean;
+    hideMenu: () => void;
+    getMenuXY: () => { x: number, y: number };
 }
 
 export type TowerParams = {
     cooldown: number,
     sprite: string,
     maxDistance: number,
+    maxLevel: number
 }
 
 export abstract class AbstractTower implements ITower {
@@ -31,9 +35,9 @@ export abstract class AbstractTower implements ITower {
     private isShooting: boolean;
     private lastFired: number;
 
-    private level: number = 1;
+    private level: number;
 
-    private debugGraphics: GameObjects.Graphics;
+    private radius: GameObjects.Graphics;
 
     private weapon: Phaser.Physics.Matter.Sprite;
 
@@ -44,6 +48,7 @@ export abstract class AbstractTower implements ITower {
     constructor(scene: GameScene, v, params: TowerParams) {
         this.scene = scene;
         this.params = params;
+        this.level = 1;
         this.sprite = this.scene.matter.add.sprite(v.x+32, v.y, this.params.sprite, this.level.toString()).setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
         this.weapon = this.scene.matter.add.sprite(v.x+32, v.y-8, 'weapons-0-lvl-0', '0').setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
         
@@ -53,8 +58,8 @@ export abstract class AbstractTower implements ITower {
         this.isShooting = false;
         this.lastFired = 0;
 
-        this.debugGraphics = this.scene.add.graphics();
-
+        this.radius = this.scene.add.graphics().lineStyle(2, 0x000000, 0.5).setAlpha(0.5).strokeCircle(this.sprite.getCenter().x!, this.sprite.getCenter().y!, this.params.maxDistance).setDepth(LayerDepth.UI).setVisible(false);
+        
         this.weapon.on("animationupdate", (anim, frame) => {
             if (!this.lockedEnemy) {
                 this.isShooting = false;
@@ -71,27 +76,34 @@ export abstract class AbstractTower implements ITower {
             {
                 name: 'upgrade',
                 title: 'Upgrade',
-                image: 'upgrade',
+                icon: 'icons-0',
+                texture: '15',
                 onClick: (pointer) => {
-                    console.log("Upgrade");
-                    // this.upgrade();
+                    if (this.hasMaxLevel()) {
+                        return;
+                    }
+                    
+                    this.hideMenu();
+                    this.upgrade();
                 }
             },
             {
                 name: 'sell',
                 title: 'Sell',
-                image: 'sell',
+                icon: 'icons-0',
+                texture: '14',
                 onClick: (pointer) => {
-                    console.log("Sell");
+                    this.hideMenu();
                     // this.sell();
                 }
             },
             {
                 name: 'sell',
                 title: 'Sell',
-                image: 'sell',
+                icon: 'icons-0',
+                texture: '13',
                 onClick: (pointer) => {
-                    console.log("Sell");
+                    this.hideMenu();
                     // this.sell();
                 }
             }
@@ -99,24 +111,17 @@ export abstract class AbstractTower implements ITower {
 
         this.sprite.setInteractive();
         this.sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-            if (pointer.rightButtonDown() || pointer.rightButtonReleased()) {
-                if (this.menu.isShown) {
-                    this.menu.hide();
+            if (pointer.leftButtonDown()) {
+                if (this.isMenuShown()) {
+                    this.hideMenu();
                 } else {
-                    this.menu.show();
+                    this.showMenu();;
                 }
             }
         });
-
-        // TODO: hide menu when clicked somewhere else - or show when hover sprite, but dont close when hover buttons
     }
 
     public update(time, delta) {
-        this.debugGraphics.clear();
-        this.debugGraphics.lineStyle(1, 0x00ff00);
-        this.debugGraphics.strokeCircle(this.sprite.x, this.sprite.y, this.params.maxDistance);
-        this.debugGraphics.setDepth(LayerDepth.INTERACTION);
-
         this.lockedEnemy = this.scene.getNearestBloon(new Phaser.Math.Vector2(this.sprite.x, this.sprite.y), this.params.maxDistance);
 
         if (this.lockedEnemy) {
@@ -154,7 +159,29 @@ export abstract class AbstractTower implements ITower {
     }
     
     upgrade() {
-        // TODO: Build animation and update texture, weapon & stats
-        this.sprite.setTexture((this.level+1).toString());
+        this.level++;
+        this.sprite.setTexture(this.params.sprite, (this.level).toString());
+    }
+
+    hasMaxLevel(): boolean {
+        return this.level === this.params.maxLevel;
+    }
+
+    isMenuShown() {
+        return this.menu.isShown;
+    }
+
+    hideMenu() {
+        this.menu.hide();
+        this.radius.setVisible(false);
+    }
+
+    showMenu() {
+        this.menu.show();
+        this.radius.setVisible(true);
+    }
+
+    getMenuXY() {
+        return this.menu.getXY();
     }
 }

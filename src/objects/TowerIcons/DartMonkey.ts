@@ -9,7 +9,7 @@ export class DartMonkeyIcon extends AbstractTowerIcons {
         return new DartMonkeyIcon(scene, {
             sprite: 'monkey-0',
             radius: 32,
-            maxDistance: 200
+            maxDistance: 250
         });
     }
 }
