@@ -1,8 +1,8 @@
 import { GameObjects, Math as Math2 } from "phaser";
 import GameScene from "../scenes/GameScene";
 import { IBloon } from "./Bloon";
-import { IProjectile } from "./Projectile";
 import { CollisionGroup, LayerDepth } from '../lib/Utils';
+import { ButtonGroup } from "./UI/ButtonGroup";
 
 export type ITower = {
     params: TowerParams;
@@ -37,7 +37,7 @@ export abstract class AbstractTower implements ITower {
 
     private weapon: Phaser.Physics.Matter.Sprite;
 
-    private menu;
+    private menu: ButtonGroup;
 
     abstract shoot({ x, y }: { x: number, y: number }): void;
 
@@ -67,14 +67,48 @@ export abstract class AbstractTower implements ITower {
             }
         });
 
-        this.menu = "";
+        this.menu = new ButtonGroup(this.scene, {x: this.sprite.getCenter().x!, y: this.sprite.getCenter().y!}, {w: 100, h: 100}, [
+            {
+                name: 'upgrade',
+                title: 'Upgrade',
+                image: 'upgrade',
+                onClick: (pointer) => {
+                    console.log("Upgrade");
+                    // this.upgrade();
+                }
+            },
+            {
+                name: 'sell',
+                title: 'Sell',
+                image: 'sell',
+                onClick: (pointer) => {
+                    console.log("Sell");
+                    // this.sell();
+                }
+            },
+            {
+                name: 'sell',
+                title: 'Sell',
+                image: 'sell',
+                onClick: (pointer) => {
+                    console.log("Sell");
+                    // this.sell();
+                }
+            }
+        ], {});
 
         this.sprite.setInteractive();
         this.sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             if (pointer.rightButtonDown() || pointer.rightButtonReleased()) {
-                // TODO: Implement Menu https://codepen.io/rexrainbow/pen/PxOEBr
+                if (this.menu.isShown) {
+                    this.menu.hide();
+                } else {
+                    this.menu.show();
+                }
             }
         });
+
+        // TODO: hide menu when clicked somewhere else - or show when hover sprite, but dont close when hover buttons
     }
 
     public update(time, delta) {

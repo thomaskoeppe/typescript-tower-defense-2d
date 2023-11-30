@@ -1,4 +1,3 @@
-import RexUIPlugin from 'phaser3-rex-plugins/templates/ui/ui-plugin.js';
 import { IBloon } from "../objects/Bloon";
 import { RedBloon } from "../objects/Bloons/RedBloon";
 import { ITower } from "../objects/Tower";

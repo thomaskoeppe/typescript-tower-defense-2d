@@ -1,5 +1,4 @@
 import PhaserMatterCollisionPlugin from "phaser-matter-collision-plugin";
-import RexUIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin.js";
 import { AnimatedTiles } from "./lib/AnimatedTiles";
 import GameScene from "./scenes/GameScene";
 
@@ -7,14 +6,12 @@ declare module "phaser" {
   interface Scene {
     ["matterCollision"]: PhaserMatterCollisionPlugin;
     ["animatedTiles"]: AnimatedTiles;
-    ["rexUI"]: RexUIPlugin;
   }
 
   namespace Scenes {
     interface Systems {
       ["matterCollision"]: PhaserMatterCollisionPlugin;
       ["animatedTiles"]: AnimatedTiles;
-      ["rexUI"]: RexUIPlugin;
     }
   }
 }
@@ -50,12 +47,7 @@ const config: Phaser.Types.Core.GameConfig = {
         plugin: AnimatedTiles,
         key: "animatedTiles",
         mapping: "animatedTiles",
-      },
-      {
-        plugin: RexUIPlugin,
-        key: "rexuiplugin",
-        mapping: "rexUI",
-      },
+      }
     ],
   },
 };
