@@ -16,6 +16,9 @@ export default class Loader {
     
         // == Effects == //
         scene.load.atlas('effects-0', './assets/sprites/effects/0/spritesheet.png', './assets/sprites/effects/0/spritesheet.json');
+
+        // == Animations == //
+        scene.load.atlas('tower-animations', './assets/sprites/anims/1/spritesheet.png', './assets/sprites/anims/1/spritesheet.json');
     }
 
     public static loadImages(scene: Scene) {
@@ -94,6 +97,13 @@ export default class Loader {
             frames: scene.anims.generateFrameNames('effects-0', { start: 0, end: 5 }),
             frameRate: 8,
             repeat: 0
+        });
+
+        scene.anims.create({
+            key: "tower-build-0",
+            frames: scene.anims.generateFrameNames('tower-animations', { start: 0, end: 5 }),
+            frameRate: 8,
+            repeat: -1
         });
     }
 

@@ -78,6 +78,10 @@ export default class GameScene extends Phaser.Scene {
 
     Loader.generateAnimations(this);
 
+    //create debug animation
+    const debugAnimation = this.add.sprite(128, 128, "tower-animations", "0").setDepth(LayerDepth.UI);
+    debugAnimation.anims.play("tower-build-0");
+
     DartMonkeyIcon.create(this);
 
     this.input.mouse!.disableContextMenu();
