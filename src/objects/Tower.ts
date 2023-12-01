@@ -18,6 +18,38 @@ export type ITower = {
     getMenuXY: () => { x: number, y: number };
 }
 
+export type TowerConfig = {
+    offsetX: number,
+    offsetY: number,
+    maxLevel: number,
+    economy: {
+        buildCost: number,
+        sellPercentage: number
+    },
+    level: {
+        [key: string]: {
+            weapon: {
+                sprite: string,
+                shootAnim: string,
+                shootFrame: number,
+                offsetX: number,
+                offsetY: number,
+                cooldown: number,
+                distance: number,
+                shoot: (source: Phaser.Math.Vector2, target: Phaser.Math.Vector2) => void
+            },
+            sprite: string,
+            upgradeCost: number,
+            build: {
+                buildAnim: string,
+                finishAnim: string,
+                duration: number
+            }
+        }
+    }
+
+}
+
 export type TowerParams = {
     cooldown: number,
     sprite: string,
