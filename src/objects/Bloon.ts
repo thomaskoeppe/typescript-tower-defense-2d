@@ -6,6 +6,7 @@ import { HealthBar } from "./UI/HealthBar";
 
 export interface IBloon extends Enemy, CanDie {
     params: BloonParams;
+    debugUid: string;
 
     startOnPath: (path: Phaser.Curves.Path) => void;
     update: (time, delta) => void;
@@ -53,7 +54,7 @@ export abstract class AbstractBloon implements IBloon {
 
     private healthBar: HealthBar;
 
-    private debugUid: string;
+    public debugUid: string;
     // private debugText: Phaser.GameObjects.Text;
 
     constructor(scene: GameScene, v, params: BloonParams) {
@@ -74,14 +75,14 @@ export abstract class AbstractBloon implements IBloon {
         })).setCollisionGroup(CollisionGroup.ENEMY).setPosition(v.x, v.y).setScale(this.params.scale).setAngle(0);
 
         this.sprite.setStatic(true);
-        
-        //setdepth
         this.sprite.setDepth(LayerDepth.ENEMY);
 
         this.healthBar = new HealthBar(this.scene, v.x, v.y, this.params.hp);
 
         this.debugUid = Math.random().toString(36).substr(2, 3).toUpperCase();
         // this.debugText = this.scene.add.text(v.x, v.y, "N/A", { color: "#ffffff", backgroundColor: "#000000", font: "18px monospace", padding: { x: 20, y: 10 } }).setDepth(LayerDepth.UI);
+
+        this.scene.createEnemy(this);
     }
 
     public startOnPath(path)

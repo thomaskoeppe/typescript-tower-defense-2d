@@ -4,8 +4,9 @@ import { CollisionGroup, LayerDepth } from '../lib/Utils';
 
 export interface IProjectile extends CanDie {
     params: ProjectileParams;
+    debugUid: string;
 
-    onCollide: (collision: any) => void;
+    onCollide: () => void;
     destroy: () => void;
     getSprite: () => Phaser.Physics.Matter.Sprite;
     setAngle: (angle: number) => void;
@@ -29,6 +30,9 @@ export abstract class AbstractProjectile implements IProjectile {
 
     public params: ProjectileParams;
 
+    public debugUid: string;
+    public debugText: Phaser.GameObjects.Text;
+
     constructor(scene, source, target, params) {
         this.scene = scene;
         this.params = params;
@@ -40,6 +44,9 @@ export abstract class AbstractProjectile implements IProjectile {
 
         this.sprite = this.scene.matter.add.sprite(source.x, source.y, params.sprite, params.frame);
 
+        this.debugUid = Math.random().toString(36).substr(2, 3).toUpperCase();
+        this.debugText = this.scene.add.text(source.x, source.y, this.debugUid, { fontSize: '14px', backgroundColor: '#000000' }).setDepth(LayerDepth.UI);
+
         this.sprite.setExistingBody(this.body.create({
             parts: [this.bodies.rectangle(0, 0, this.sprite.width, this.sprite.height, { chamfer: { radius: this.params.radius } })],
             frictionAir: 0.0,
@@ -47,16 +54,11 @@ export abstract class AbstractProjectile implements IProjectile {
             frictionStatic: 0.0,
         })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(source.x, source.y).setAngle((Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI)+90).setScale(this.params.scale);
 
-        this.scene.matterCollision.addOnCollideStart({
-            objectA: this.sprite,
-            callback: this.onCollide,
-            context: this
-        });
-
-        
         this.sprite.applyForce(new Phaser.Math.Vector2((target.x - source.x) === 0 ? 1 : target.x - source.x, (target.y - source.y) === 0 ? 1 : target.y - source.y).normalize().scale(0.01));
 
         this.sprite.anims.play('projectiles-0-lvl-0-shoot');
+
+        this.scene.createProjectile(this);
     }
 
     getSprite() {
@@ -88,12 +90,11 @@ export abstract class AbstractProjectile implements IProjectile {
 
     destroy() {
         this.sprite.destroy();
+        this.debugText.destroy();
     }
 
     update(time, delta) {
-        if(Math.abs((this.sprite.body as MatterJS.BodyType).velocity.x) <= 0.001 && Math.abs((this.sprite.body as MatterJS.BodyType).velocity.x) <= 0.001) {
-            this.collided = true;
-        }
+        this.debugText.setPosition(this.sprite.x, this.sprite.y);
     }
 
     onCollide() {

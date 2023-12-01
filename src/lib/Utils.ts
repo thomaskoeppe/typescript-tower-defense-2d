@@ -3,7 +3,8 @@ import GameScene from '../scenes/GameScene';
 
 export enum CollisionGroup {
     BULLET = -1,
-    ENEMY = -2
+    ENEMY = -2,
+    TOWER = -3,
 }
 
 export enum LayerDepth {
@@ -32,7 +33,7 @@ export class Utils {
     }
 
     public static parseText(m: string, v: { [key: string]: any }): string {
-        return m.replace(/%\w+%/g, (all) => v[all.replace(/%/g, "")].toString() || "N/A");
+        return m.replace(/%\w+%/g, (all) => v[all.replace(/%/g, "")] || "N/A");
     }
 
     static renderMap(s: GameScene): Phaser.Tilemaps.Tilemap {
