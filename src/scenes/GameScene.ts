@@ -272,9 +272,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public placeTurret(tile: Phaser.Tilemaps.Tile): void {
-    const turret = CrossBowTower.create(this, { x: tile.pixelX, y: tile.pixelY }, {
-      sprite: "turrets-0"
-    }).then((turret) => {
+    const turret = CrossBowTower.create(this, { x: tile.pixelX+32, y: tile.pixelY }).then((turret) => {
       this.turrets.push({ sprite: turret, tile: tile as Phaser.Tilemaps.Tile });
     });
   }

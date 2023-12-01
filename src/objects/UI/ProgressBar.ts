@@ -7,7 +7,7 @@ export class ProgressBar {
     private frame: Phaser.GameObjects.Graphics;
     private bar: Phaser.GameObjects.Graphics;
 
-    constructor(scene: GameScene, x: number, y: number, width: number, height: number, color: number, time: number, callback: () => void) {
+    constructor(scene: GameScene, x: number, y: number, time: number, callback: () => void) {
         this.scene = scene;
 
         x -= 26;
