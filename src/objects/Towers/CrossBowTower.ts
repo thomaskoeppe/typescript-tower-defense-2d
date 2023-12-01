@@ -33,7 +33,7 @@ export class CrossBowTower extends AbstractTower {
                     frame: "0",
                     buildAnim: "tower-build-0",
                     finishAnim: "tower-build-0-finish",
-                    duration: 10000
+                    duration: 5000
                 }
             }
         }
