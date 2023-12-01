@@ -1,10 +1,10 @@
-import { IBloon } from "../objects/Bloon";
+import { AbstractBloon, IBloon } from "../objects/Bloon";
 import { Scorpion } from "../objects/Enemies/Scorpion";
 import { ITower } from "../objects/Tower";
 import { CrossBowTower } from "../objects/Towers/CrossBowTower";
 import Loader from "../lib/Loader";
 import AutoRemoveList from "../lib/AutoRemoveList";
-import { IProjectile } from "~/objects/Projectile";
+import { AbstractProjectile, IProjectile } from "~/objects/Projectile";
 import { DartMonkeyIcon } from "../objects/TowerIcons/DartMonkey";
 import { LayerDepth, Utils } from "../lib/Utils";
 import { Larvae } from "../objects/Enemies/Larvae";
@@ -109,7 +109,7 @@ export default class GameScene extends Phaser.Scene {
       this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
     }
 
-    if (this.enemies.active < 10 && this.nextEnemy < time) {
+    if (this.enemies.active < 2 && this.nextEnemy < time) {
       let enemy;
 
       if (this.lastEnemy == "scorpion") {
@@ -118,7 +118,7 @@ export default class GameScene extends Phaser.Scene {
           y: this.spawn.y
         });
 
-        this.lastEnemy = "larvae";
+        // this.lastEnemy = "larvae";
       } else {
         enemy = Scorpion.create(this, {
           x: this.spawn.x,
@@ -129,12 +129,9 @@ export default class GameScene extends Phaser.Scene {
       }
 
       enemy.startOnPath(this.path);
-      this.enemies.add(enemy);
 
-      this.nextEnemy = time + 4000;
+      this.nextEnemy = time + 6000;
     }
-
-    this.updateSubscriptions();
 
     // if (this.enemiesLeft === 0 && this.enemies!.countActive() === 0) {
     //   this.wave++;
@@ -177,9 +174,10 @@ export default class GameScene extends Phaser.Scene {
     this.turrets.forEach(({sprite}) => { sprite.update(time, delta) });
   }
 
-  public updateSubscriptions() {
-    this.projectileSubscriptions.length > 0 && this.projectileSubscriptions.forEach((fn) => { fn() });
-    this.projectileSubscriptions = Utils.product(this.enemies, this.projectiles).map(([enemy, projectile]) => {
+  public createEnemy(enemy: AbstractBloon) {
+    this.enemies.add(enemy);
+
+    this.projectiles.forEach((projectile: AbstractProjectile) => {
       return this.matterCollision.addOnCollideStart({
         objectA: projectile.getSprite(),
         objectB: enemy.getSprite(),
@@ -191,9 +189,8 @@ export default class GameScene extends Phaser.Scene {
             const { x, y } = gameObjectB as Phaser.Physics.Matter.Sprite;
 
             enemy.getHit(projectile.params.damage);
-            projectile.onCollide();
-            projectile.destroy();
-            this.projectiles.remove(projectile);
+            
+            this.removeProjectile(projectile);
 
             const explosion = this.add.sprite(x, y, "effects-0", "0").setDepth(LayerDepth.INTERACTION);
             explosion.anims.play("projectiles-0-lvl-0-hit");
@@ -204,6 +201,45 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
+  }
+
+  public createProjectile(projectile: AbstractProjectile) {
+    this.projectiles.add(projectile);
+
+    this.enemies.forEach((enemy: AbstractBloon) => {
+      return this.matterCollision.addOnCollideStart({
+        objectA: projectile.getSprite(),
+        objectB: enemy.getSprite(),
+        context: this,
+        callback: (collision) => {
+          const { gameObjectB } = collision;
+
+          if (gameObjectB instanceof Phaser.Physics.Matter.Sprite) {
+            const { x, y } = gameObjectB as Phaser.Physics.Matter.Sprite;
+
+            enemy.getHit(projectile.params.damage);
+            
+            this.removeProjectile(projectile);
+
+            const explosion = this.add.sprite(x, y, "effects-0", "0").setDepth(LayerDepth.INTERACTION);
+            explosion.anims.play("projectiles-0-lvl-0-hit");
+            explosion.on("animationcomplete", () => {
+              explosion.destroy();
+            });
+          }
+        }
+      });
+    });
+  }
+
+  public removeProjectile(projectile: IProjectile) {
+    this.matterCollision.removeOnCollideStart({
+      objectA: projectile.getSprite()
+    });
+
+    this.projectiles.remove(projectile);
+    projectile.onCollide();
+    projectile.destroy();
   }
 
   public loseHealth(enemy: IBloon) {

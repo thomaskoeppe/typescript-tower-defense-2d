@@ -60,7 +60,8 @@ export abstract class AbstractTower implements ITower {
     private lockedEnemy: IBloon | undefined;
     private isShooting: boolean;
     private lastFired: number;
-
+    private body: MatterJS.BodyFactory;
+    private bodies: MatterJS.BodiesFactory;
     private level: number;
 
     private radius: GameObjects.Graphics;
@@ -99,11 +100,25 @@ export abstract class AbstractTower implements ITower {
         this.level = 1;
         this.levelData = this.params.level[this.level.toString()];
 
-        this.sprite = this.scene.matter.add.sprite(v.x, v.y, this.levelData.sprite, this.level.toString()).setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
+        this.body = this.scene.matter.body;
+        this.bodies = this.scene.matter.bodies;
+
+        this.sprite = this.scene.matter.add.sprite(v.x, v.y, this.levelData.sprite, this.level.toString()).setAngle(0);
         this.weapon = this.scene.matter.add.sprite(v.x + this.levelData.weapon.offsetX, v.y + this.levelData.weapon.offsetY, this.levelData.weapon.sprite, '0').setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
 
-        this.sprite.setStatic(true);
-        this.weapon.setStatic(true);
+        this.sprite.setExistingBody(this.body.create({
+            parts: [this.bodies.rectangle(0, 0, 8, 8)],
+            frictionAir: 0.0,
+            friction: 0.0,
+            frictionStatic: 0.0,
+        })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(v.x, v.y).setAngle(0).setStatic(true);
+
+        this.weapon.setExistingBody(this.body.create({
+            parts: [this.bodies.rectangle(0, 0, 8, 8)],
+            frictionAir: 0.0,
+            friction: 0.0,
+            frictionStatic: 0.0,
+        })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(v.x + this.levelData.weapon.offsetX, v.y + this.levelData.weapon.offsetY).setAngle(0).setStatic(true);
 
         this.isShooting = false;
         this.lastFired = 0;
