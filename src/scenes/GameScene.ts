@@ -1,12 +1,13 @@
 import { IBloon } from "../objects/Bloon";
-import { RedBloon } from "../objects/Bloons/RedBloon";
+import { Scorpion } from "../objects/Enemies/Scorpion";
 import { ITower } from "../objects/Tower";
-import { DartMonkey } from "../objects/Towers/DartMonkey";
+import { CrossBowTower } from "../objects/Towers/CrossBowTower";
 import Loader from "../lib/Loader";
 import AutoRemoveList from "../lib/AutoRemoveList";
 import { IProjectile } from "~/objects/Projectile";
 import { DartMonkeyIcon } from "../objects/TowerIcons/DartMonkey";
 import { LayerDepth, Utils } from "../lib/Utils";
+import { Larvae } from "../objects/Enemies/Larvae";
 
 export type PlacedTurret = {
   sprite: ITower,
@@ -24,6 +25,7 @@ export default class GameScene extends Phaser.Scene {
   public enemiesLeft: number = 0;
   private enemiesSpawned: number = 0;
   private nextEnemy: number = 0;
+  private lastEnemy: string = "scorpion";
 
   private text: Phaser.GameObjects.Text | undefined;
 
@@ -78,10 +80,6 @@ export default class GameScene extends Phaser.Scene {
 
     Loader.generateAnimations(this);
 
-    //create debug animation
-    const debugAnimation = this.add.sprite(128, 128, "tower-animations", "0").setDepth(LayerDepth.UI);
-    debugAnimation.anims.play("tower-build-0");
-
     DartMonkeyIcon.create(this);
 
     this.input.mouse!.disableContextMenu();
@@ -111,11 +109,25 @@ export default class GameScene extends Phaser.Scene {
       this.text.setText(`Wave ${this.wave+1}/${this.cache.json.get("wavedata").length}\nMoney $${this.money}\nLifes ${this.lifes}`);
     }
 
-    if (this.enemies.active < 1 && this.nextEnemy < time) {
-      const enemy = RedBloon.create(this, {
-        x: this.spawn.x,
-        y: this.spawn.y
-      });
+    if (this.enemies.active < 10 && this.nextEnemy < time) {
+      let enemy;
+
+      if (this.lastEnemy == "scorpion") {
+        enemy = Larvae.create(this, {
+          x: this.spawn.x,
+          y: this.spawn.y
+        });
+
+        this.lastEnemy = "larvae";
+      } else {
+        enemy = Scorpion.create(this, {
+          x: this.spawn.x,
+          y: this.spawn.y
+        });
+
+        this.lastEnemy = "scorpion";
+      }
+
       enemy.startOnPath(this.path);
       this.enemies.add(enemy);
 
@@ -260,11 +272,11 @@ export default class GameScene extends Phaser.Scene {
   }
 
   public placeTurret(tile: Phaser.Tilemaps.Tile): void {
-    const turret = DartMonkey.create(this, { x: tile.pixelX, y: tile.pixelY }, {
+    const turret = CrossBowTower.create(this, { x: tile.pixelX, y: tile.pixelY }, {
       sprite: "turrets-0"
+    }).then((turret) => {
+      this.turrets.push({ sprite: turret, tile: tile as Phaser.Tilemaps.Tile });
     });
-
-    this.turrets.push({ sprite: turret, tile: tile as Phaser.Tilemaps.Tile });
   }
 
   public getTileAtWorldXY(x: number, y: number): Phaser.Tilemaps.Tile | null {

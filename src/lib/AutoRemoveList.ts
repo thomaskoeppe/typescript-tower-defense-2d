@@ -1,6 +1,5 @@
 import { flatten, partition } from 'lodash';
 import { CanDie } from '../objects/GameObject';
-import { RedBloon } from '../objects/Bloons/RedBloon';
 
 export interface List<T> {
     forEach: (callback: () => void) => void

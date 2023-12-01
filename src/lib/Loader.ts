@@ -3,8 +3,9 @@ import { Scene } from "phaser";
 export default class Loader {
     public static loadSpritesheets(scene: Scene) {
         // == Enemies == //
-        scene.load.atlas('enemies-0', './assets/sprites/enemies/7/spritesheet.png', './assets/sprites/enemies/7/spritesheet.json');
-        
+        scene.load.atlas('enemies-7', './assets/sprites/enemies/7/spritesheet.png', './assets/sprites/enemies/7/spritesheet.json');
+        scene.load.atlas('enemies-5', './assets/sprites/enemies/5/spritesheet.png', './assets/sprites/enemies/5/spritesheet.json');
+
         // == Towers == //
         scene.load.atlas('towers-0', './assets/sprites/towers/0/spritesheet.png', './assets/sprites/towers/0/spritesheet.json');
 
@@ -58,22 +59,43 @@ export default class Loader {
 
     public static generateAnimations(scene: Scene) {
         scene.anims.create({
-            key: 'enemies-0-walk-down',
-            frames: scene.anims.generateFrameNames('enemies-0', { prefix: 'd-', start: 8, end: 15 }),
+            key: 'enemies-7-walk-down',
+            frames: scene.anims.generateFrameNames('enemies-7', { prefix: 'd-', start: 8, end: 15 }),
             frameRate: 8,
             repeat: -1
         });
 
         scene.anims.create({
-            key: 'enemies-0-walk-up',
-            frames: scene.anims.generateFrameNames('enemies-0', { prefix: 'u-', start: 8, end: 15 }),
+            key: 'enemies-7-walk-up',
+            frames: scene.anims.generateFrameNames('enemies-7', { prefix: 'u-', start: 8, end: 15 }),
             frameRate: 8,
             repeat: -1
         });
 
         scene.anims.create({
-            key: 'enemies-0-walk-lr',
-            frames: scene.anims.generateFrameNames('enemies-0', { prefix: 'lr-', start: 8, end: 15 }),
+            key: 'enemies-7-walk-lr',
+            frames: scene.anims.generateFrameNames('enemies-7', { prefix: 'lr-', start: 8, end: 15 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'enemies-5-walk-down',
+            frames: scene.anims.generateFrameNames('enemies-5', { prefix: 'd-', start: 8, end: 15 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'enemies-5-walk-up',
+            frames: scene.anims.generateFrameNames('enemies-5', { prefix: 'u-', start: 8, end: 15 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'enemies-5-walk-lr',
+            frames: scene.anims.generateFrameNames('enemies-5', { prefix: 'lr-', start: 8, end: 15 }),
             frameRate: 8,
             repeat: -1
         });
@@ -104,6 +126,13 @@ export default class Loader {
             frames: scene.anims.generateFrameNames('tower-animations', { start: 0, end: 5 }),
             frameRate: 8,
             repeat: -1
+        });
+
+        scene.anims.create({
+            key: "tower-build-0-finish",
+            frames: scene.anims.generateFrameNames('tower-animations', { start: 35, end: 30 }),
+            frameRate: 8,
+            repeat: 0,
         });
     }
 
