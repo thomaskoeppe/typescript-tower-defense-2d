@@ -32,6 +32,9 @@ export type BloonParams = {
     sprite: string,
     frame: string,
     radius: number,
+    canFly: boolean,
+    flipX?: boolean,
+    animSet: {[key: string]: string}
 }
 
 export abstract class AbstractBloon implements IBloon {
@@ -101,32 +104,32 @@ export abstract class AbstractBloon implements IBloon {
         const angle = Math.atan2(this.follower.vec.y - this.sprite.y, this.follower.vec.x - this.sprite.x) * 180 / Math.PI;
 
         if (angle >= -44 && angle <= 45) {
-            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== "enemies-0-walk-lr") {
-                this.sprite.anims.play("enemies-0-walk-lr");
+            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== this.params.animSet["walk-lr"]) {
+                this.sprite.anims.play(this.params.animSet["walk-lr"]);
             }
 
-            this.sprite.flipX = true;
+            this.sprite.flipX = this.params.flipX || false;
             this.sprite.setAngle(angle);
             this.body.setAngle(this.collisionBody, angle+90, false);
         } else if (angle >= 46 && angle < 135) {
-            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== "enemies-0-walk-down") {
-                this.sprite.anims.play("enemies-0-walk-down");
+            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== this.params.animSet["walk-down"]) {
+                this.sprite.anims.play(this.params.animSet["walk-down"]);
             }
 
             this.sprite.flipX = false;
             this.sprite.setAngle(angle-90);
             this.body.setAngle(this.collisionBody, angle-90, false);
         } else if (angle >= 135 || angle < -135) {
-            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== "enemies-0-walk-lr") {
-                this.sprite.anims.play("enemies-0-walk-lr");
+            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== this.params.animSet["walk-lr"]) {
+                this.sprite.anims.play(this.params.animSet["walk-lr"]);
             }
 
             this.sprite.flipX = false;
             this.sprite.setAngle(angle+180);
             this.body.setAngle(this.collisionBody, angle+180, false);
         } else if (angle >= -135 && angle < -46) {
-            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== "enemies-0-walk-up") {
-                this.sprite.anims.play("enemies-0-walk-up");
+            if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== this.params.animSet["walk-up"]) {
+                this.sprite.anims.play(this.params.animSet["walk-up"]);
             }
 
             this.sprite.flipX = false;

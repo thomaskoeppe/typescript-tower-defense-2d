@@ -49,8 +49,8 @@ export abstract class AbstractTower implements ITower {
         this.scene = scene;
         this.params = params;
         this.level = 1;
-        this.sprite = this.scene.matter.add.sprite(v.x+32, v.y, this.params.sprite, this.level.toString()).setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
-        this.weapon = this.scene.matter.add.sprite(v.x+32, v.y-8, 'weapons-0-lvl-0', '0').setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
+        this.sprite = this.scene.matter.add.sprite(v.x, v.y, this.params.sprite, this.level.toString()).setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
+        this.weapon = this.scene.matter.add.sprite(v.x, v.y-8, 'weapons-0-lvl-0', '0').setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
         
         this.sprite.setStatic(true);
         this.weapon.setStatic(true);
