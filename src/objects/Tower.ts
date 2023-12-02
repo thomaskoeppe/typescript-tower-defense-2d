@@ -1,103 +1,39 @@
-import { GameObjects, Math as Math2 } from 'phaser';
 import GameScene from '../scenes/GameScene';
 import { IEnemy } from './Enemy';
 import { CollisionGroup, LayerDepth } from '../lib/Utils';
 import { ButtonGroup } from './UI/ButtonGroup';
-
-export type ITower = {
-    params: TowerParams;
-
-    update: (time, delta) => void;
-    getXY: () => { x: number, y: number };
-    getCenter: () => { x: number, y: number };
-    getCoords: () => Phaser.Math.Vector2;
-    getLevel: () => number;
-    upgrade: () => void;
-    isMenuShown: () => boolean;
-    hideMenu: () => void;
-    getMenuXY: () => { x: number, y: number };
-}
-
-export type TowerParams = {
-    offsetX: number,
-    offsetY: number,
-    maxLevel: number,
-    economy: {
-        buildCost: number,
-        sellPercentage: number
-    },
-    level: {
-        [key: string]: {
-            weapon: {
-                sprite: string,
-                shootAnim: string,
-                shootFrame: number,
-                offsetX: number,
-                offsetY: number,
-                cooldown: number,
-                distance: number,
-                shoot: (scene: GameScene, source: Phaser.Math.Vector2, target: Phaser.Math.Vector2) => void
-            },
-            sprite: string,
-            upgradeCost: number,
-            build: {
-                sprite: string,
-                frame: number,
-                buildAnim: string,
-                finishAnim: string,
-                duration: number
-            }
-        }
-    }
-}
+import { TowerParams, TowerLevel } from '../types/';
+import { ITower } from '../interfaces';
+import { ProgressBar } from './UI/ProgressBar';
 
 export abstract class AbstractTower implements ITower {
+    public params: TowerParams;
+
     protected scene: GameScene;
     protected sprite: Phaser.Physics.Matter.Sprite;
 
-    public params: TowerParams;
-
     private lockedEnemy: IEnemy | undefined;
-    private isShooting: boolean;
-    private lastFired: number;
+    private isShooting: boolean = false;
+    private lastFired: number = 0;
     private body: MatterJS.BodyFactory;
     private bodies: MatterJS.BodiesFactory;
     private level: number;
-
-    private radius: GameObjects.Graphics;
-
+    private levelData: TowerLevel;
+    private radius: Phaser.GameObjects.Graphics;
     private weapon: Phaser.Physics.Matter.Sprite;
-
     private menu: ButtonGroup;
-
-    private levelData: {
-        weapon: {
-            sprite: string,
-            shootAnim: string,
-            shootFrame: number,
-            offsetX: number,
-            offsetY: number,
-            cooldown: number,
-            distance: number,
-            shoot: (scene: GameScene, source: Phaser.Math.Vector2, target: Phaser.Math.Vector2) => void
-        },
-        sprite: string,
-        upgradeCost: number,
-        build: {
-            sprite: string,
-            frame: number,
-            buildAnim: string,
-            finishAnim: string,
-            duration: number
-        }
-    };
+    private isBuilding: boolean = false;
+    private costs: number = 0;
+    private destroyed: boolean = false;
 
     abstract shoot({ x, y }: { x: number, y: number }): void;
 
     constructor (scene: GameScene, v, params: TowerParams) {
         this.scene = scene;
         this.params = params;
+
         this.level = 1;
+        this.costs = this.params.economy.buildCost;
         this.levelData = this.params.level[this.level.toString()];
 
         this.body = this.scene.matter.body;
@@ -120,13 +56,9 @@ export abstract class AbstractTower implements ITower {
             frictionStatic: 0.0
         })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(v.x + this.levelData.weapon.offsetX, v.y + this.levelData.weapon.offsetY).setAngle(0).setStatic(true);
 
-        this.isShooting = false;
-        this.lastFired = 0;
-
         this.radius = this.scene.add.graphics().lineStyle(2, 0x000000, 0.5).setAlpha(0.5).strokeCircle(this.sprite.getCenter().x!, this.sprite.getCenter().y!, this.levelData.weapon.distance).setDepth(LayerDepth.UI).setVisible(false);
 
         this.weapon.on('animationupdate', (anim, frame) => {
-
             if (!this.lockedEnemy) {
                 this.isShooting = false;
                 return;
@@ -149,6 +81,10 @@ export abstract class AbstractTower implements ITower {
                         return;
                     }
 
+                    if (this.scene.getMoney() < this.levelData.upgradeCost) {
+                        return;
+                    }
+
                     this.hideMenu();
                     this.upgrade();
                 }
@@ -160,8 +96,7 @@ export abstract class AbstractTower implements ITower {
                 texture: '14',
                 onClick: (pointer) => {
                     this.hideMenu();
-
-                    // this.sell();
+                    this.sell();
                 }
             },
             {
@@ -190,12 +125,16 @@ export abstract class AbstractTower implements ITower {
     }
 
     public update (time, delta) {
+        if (this.isBuilding) {
+            return;
+        }
+
         this.lockedEnemy = this.scene.getNearestBloon(new Phaser.Math.Vector2(this.sprite.x, this.sprite.y), this.levelData.weapon.distance);
 
         if (this.lockedEnemy) {
             const { x: x, y: y } = this.lockedEnemy.getXY();
 
-            this.weapon.setAngle((Math2.Angle.Between(this.sprite.x, this.sprite.y, x, y) * 180 / Math.PI) + 90);
+            this.weapon.setAngle((Phaser.Math.Angle.Between(this.sprite.x, this.sprite.y, x, y) * 180 / Math.PI) + 90);
 
             if (time > this.lastFired && !this.isShooting) {
                 this.isShooting = true;
@@ -226,17 +165,74 @@ export abstract class AbstractTower implements ITower {
         return this.level;
     }
 
+    isDestroyed (): boolean {
+        return this.destroyed;
+    }
+
+    sell () {
+        const refund = Math.floor(this.costs * this.params.economy.sellPercentage);
+
+        const buildAnimation = this.scene.add.sprite(this.sprite.x, this.sprite.y, 'tower-destroy-animations', '0').setDepth(LayerDepth.UI);
+        buildAnimation.anims.play('tower-destroy');
+
+        buildAnimation.on('animationupdate', (anim, frame) => {
+            if (frame.index === 2) {
+                this.destroyed = true;
+                this.sprite.destroy();
+                this.weapon.destroy();
+                this.radius.destroy();
+                this.menu.destroy();
+            }
+        });
+
+        buildAnimation.on('animationcomplete', () => {
+            buildAnimation.destroy();
+            this.scene.addMoney(refund);
+        });
+    }
+
     upgrade () {
         this.level++;
         this.levelData = this.params.level[this.level.toString()];
 
-        this.sprite.setTexture(this.levelData.sprite, (this.level).toString());
+        this.isBuilding = true;
+        
+        this.weapon.setVisible(false);
+        this.sprite.setVisible(false);
+
+        new Promise((resolve, reject) => {
+            const buildAnimation4 = this.scene.add.sprite(this.sprite.x, this.sprite.y, this.levelData.build.sprite, this.levelData.build.frame).setDepth(LayerDepth.UI);
+            buildAnimation4.anims.play(this.levelData.build.buildAnim);
+
+            new ProgressBar(this.scene, this.sprite.x, this.sprite.y, this.levelData.build.duration, () => {
+                const buildAnimation5 = this.scene.add.sprite(this.sprite.x, this.sprite.y, this.levelData.build.sprite, this.levelData.build.frame).setDepth(LayerDepth.UI);
+                buildAnimation5.anims.play(this.levelData.build.finishAnim);
+
+                buildAnimation5.on('animationcomplete', () => {
+                    buildAnimation4.destroy();
+                    buildAnimation5.destroy();
+                    resolve(null);
+                });
+            });
+        }).then(() => {
+            this.radius.clear().lineStyle(2, 0x000000, 0.5).setAlpha(0.5).strokeCircle(this.sprite.getCenter().x!, this.sprite.getCenter().y!, this.levelData.weapon.distance);
+            this.costs += this.levelData.upgradeCost;
+    
+            this.sprite.setTexture(this.levelData.sprite, (this.level).toString());
+            this.weapon.setTexture(this.levelData.weapon.sprite, this.levelData.weapon.frame);
+            this.weapon.setPosition(this.sprite.x + this.levelData.weapon.offsetX, this.sprite.y + this.levelData.weapon.offsetY);
+            this.weapon.setVisible(true);
+            this.sprite.setVisible(true);
+
+            this.isBuilding = false;
+        });
     }
 
     hasMaxLevel (): boolean {
         return this.level === this.params.maxLevel;
     }
 
+    // == BUTTON ACTIONS == //
     isMenuShown () {
         return this.menu.isShown;
     }

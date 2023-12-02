@@ -1,6 +1,5 @@
 import { AbstractEnemy, IEnemy } from '../objects/Enemy';
 import { Scorpion } from '../objects/Enemies/Scorpion';
-import { ITower } from '../objects/Tower';
 import { CrossBowTower } from '../objects/Towers/CrossBowTower';
 import Loader from '../lib/Loader';
 import AutoRemoveList from '../lib/AutoRemoveList';
@@ -8,9 +7,10 @@ import { AbstractProjectile, IProjectile } from '~/objects/Projectile';
 import { DartMonkeyIcon } from '../objects/TowerIcons/DartMonkey';
 import { LayerDepth, Utils } from '../lib/Utils';
 import { Larvae } from '../objects/Enemies/Larvae';
+import { AbstractTower } from '~/objects/Tower';
 
 export type PlacedTurret = {
-  sprite: ITower,
+  sprite: AbstractTower,
   tile: Phaser.Tilemaps.Tile
 }
 
@@ -22,6 +22,7 @@ export default class GameScene extends Phaser.Scene {
 
     private wave: number = 0;
     private waveData: any;
+    private money: number = 0;
     public enemiesLeft: number = 0;
     private enemiesSpawned: number = 0;
     private nextEnemy: number = 0;
@@ -29,7 +30,6 @@ export default class GameScene extends Phaser.Scene {
 
     private text: Phaser.GameObjects.Text | undefined;
 
-    private money: number = 0;
     private lifes: number = 10;
 
     private path: Phaser.Curves.Path | undefined;
@@ -109,7 +109,7 @@ export default class GameScene extends Phaser.Scene {
             this.text.setText(`Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}\nMoney $${this.money}\nLifes ${this.lifes}`);
         }
 
-        if (this.enemies.active < 20 && this.nextEnemy < time) {
+        if (this.enemies.active < 2 && this.nextEnemy < time) {
             let enemy;
 
             if (this.lastEnemy === 'scorpion') {
@@ -171,7 +171,25 @@ export default class GameScene extends Phaser.Scene {
 
         this.enemies.update(time, delta);
         this.projectiles.update(time, delta);
-        this.turrets.forEach(({sprite}) => { sprite.update(time, delta); });
+
+        for (let i = 0; i < this.turrets.length; i++) {
+            const turret = this.turrets[i];
+
+            if (turret.sprite.isDestroyed()) {
+                this.turrets.splice(i, 1);
+                i--;
+            } else {
+                turret.sprite.update(time, delta);
+            }
+        }
+
+        // this.turrets.forEach(({ sprite }) => {
+        //     if (sprite.isDestroyed()) {
+        //         this.turrets.splice(this.turrets.indexOf(sprite), 1);
+        //     }
+
+        //     sprite.update(time, delta);
+        // });
     }
 
     public createEnemy (enemy: AbstractEnemy) {
@@ -193,7 +211,7 @@ export default class GameScene extends Phaser.Scene {
                         this.removeProjectile(projectile);
 
                         const explosion = this.add.sprite(x, y, 'effects-0', '0').setDepth(LayerDepth.INTERACTION);
-                        explosion.anims.play('projectiles-0-lvl-0-hit');
+                        explosion.anims.play('projectiles-0-hit');
                         explosion.on('animationcomplete', () => {
                             explosion.destroy();
                         });
@@ -222,7 +240,7 @@ export default class GameScene extends Phaser.Scene {
                         this.removeProjectile(projectile);
 
                         const explosion = this.add.sprite(x, y, 'effects-0', '0').setDepth(LayerDepth.INTERACTION);
-                        explosion.anims.play('projectiles-0-lvl-0-hit');
+                        explosion.anims.play('projectiles-0-hit');
                         explosion.on('animationcomplete', () => {
                             explosion.destroy();
                         });
@@ -273,6 +291,18 @@ export default class GameScene extends Phaser.Scene {
         return nearestEnemy;
     }
 
+    public addMoney (money: number) {
+        this.money += money;
+    }
+
+    public removeMoney (money: number) {
+        this.money -= money;
+    }
+
+    public getMoney (): number {
+        return this.money;
+    }
+
     // public removeLife(lifes) {
     //   this.lifes -= lifes;
 
@@ -311,6 +341,8 @@ export default class GameScene extends Phaser.Scene {
     public placeTurret (tile: Phaser.Tilemaps.Tile): void {
         CrossBowTower.create(this, { x: tile.pixelX + 32, y: tile.pixelY }).then((turret) => {
             this.turrets.push({ sprite: turret, tile: tile as Phaser.Tilemaps.Tile });
+        }).catch((e) => {
+            console.log(e);
         });
     }
 

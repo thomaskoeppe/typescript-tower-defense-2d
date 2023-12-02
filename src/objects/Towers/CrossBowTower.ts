@@ -1,6 +1,8 @@
 import { Dart } from '../Projectiles/Dart';
-import { AbstractTower, ITower, TowerParams } from '../Tower';
+import { AbstractTower } from '../Tower';
 import { LayerDepth } from '../../lib/Utils';
+import { TowerParams } from '../../types';
+import { ITower } from '../../interfaces';
 import { ProgressBar } from '../UI/ProgressBar';
 
 export class CrossBowTower extends AbstractTower {
@@ -16,6 +18,7 @@ export class CrossBowTower extends AbstractTower {
             1: {
                 weapon: {
                     sprite: 'weapons-0-lvl-0',
+                    frame: 0,
                     shootAnim: 'weapons-0-lvl-0-shoot',
                     shootFrame: 2,
                     offsetX: 0,
@@ -27,13 +30,40 @@ export class CrossBowTower extends AbstractTower {
                     }
                 },
                 sprite: 'towers-0',
-                upgradeCost: 50,
+                frame: 0,
+                upgradeCost: 0,
                 build: {
                     sprite: 'tower-animations',
                     frame: 0,
                     buildAnim: 'tower-build-0',
                     finishAnim: 'tower-build-0-finish',
                     duration: 5000
+                }
+            },
+            2: {
+                weapon: {
+                    sprite: 'weapons-0-lvl-1',
+                    frame: 0,
+                    shootAnim: 'weapons-0-lvl-1-shoot',
+                    shootFrame: 2,
+                    offsetX: 0,
+                    offsetY: -24,
+                    cooldown: 1500,
+                    distance: 350,
+                    shoot: function (scene, source, target) {
+                        scene.spawnProjectile(Dart.create(scene, source, target));
+                    }
+                },
+                sprite: 'towers-0',
+                frame: 1,
+                upgradeCost: 100,
+                build: {
+                    sprite: 'tower-animations',
+                    frame: 1,
+                    buildAnim: 'tower-build-1',
+                    startAnim: 'tower-build-1-start',
+                    finishAnim: 'tower-build-1-finish',
+                    duration: 10000
                 }
             }
         }
@@ -43,10 +73,14 @@ export class CrossBowTower extends AbstractTower {
         super(scene, v, CrossBowTower.config);
     }
 
-    static create (scene, v): Promise<ITower> {
+    static create (scene, v): Promise<AbstractTower> {
         const buildConfig = CrossBowTower.config.level['1'].build;
 
         return new Promise(function (resolve, reject) {
+            if (scene.getMoney() < CrossBowTower.config.economy.buildCost) {
+                return reject('Not enough money');
+            }
+
             const buildAnimation = scene.add.sprite(v.x, v.y, buildConfig.sprite, buildConfig.frame).setDepth(LayerDepth.UI);
             buildAnimation.anims.play(buildConfig.buildAnim);
 
