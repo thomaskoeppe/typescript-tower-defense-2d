@@ -1,11 +1,11 @@
-import { AbstractBloon } from "../Bloon";
+import { AbstractEnemy } from '../Enemy';
 
-export class Larvae extends AbstractBloon {
-    constructor(scene, v, params) {
+export class Larvae extends AbstractEnemy {
+    constructor (scene, v, params) {
         super(scene, v, params);
     }
 
-    static create(scene, v) {
+    static create (scene, v) {
         return new Larvae(scene, v, {
             hp: 10,
             speed: 0.5,
@@ -17,9 +17,9 @@ export class Larvae extends AbstractBloon {
             scale: 1,
             radius: 20,
             animSet: {
-                "walk-down": "enemies-5-walk-down",
-                "walk-up": "enemies-5-walk-up",
-                "walk-lr": "enemies-5-walk-lr"
+                'walk-down': 'enemies-5-walk-down',
+                'walk-up': 'enemies-5-walk-up',
+                'walk-lr': 'enemies-5-walk-lr'
             }
         });
     }

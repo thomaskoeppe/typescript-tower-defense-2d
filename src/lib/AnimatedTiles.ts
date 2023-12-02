@@ -16,8 +16,8 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
     private activeLayer: boolean[];
     private followTimeScale: boolean;
 
-    constructor(scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
-        super(scene, pluginManager, "AnimatedTiles");
+    constructor (scene: Phaser.Scene, pluginManager: Phaser.Plugins.PluginManager) {
+        super(scene, pluginManager, 'AnimatedTiles');
 
         this.scene = scene;
         this.totalTime = 0;
@@ -28,29 +28,29 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         this.followTimeScale = true;
 
         if (!scene.sys.settings.isBooted) {
-            scene.sys.events.once("boot", this.boot, this);
+            scene.sys.events.once('boot', this.boot, this);
         }
     }
 
-    public boot() {
+    public boot () {
         const eventEmitter = this.systems!.events;
 
-        eventEmitter.on("postupdate", this.postUpdate, this);
-        eventEmitter.on("shutdown", this.shutdown, this);
-        eventEmitter.on("destroy", this.destroy, this);
+        eventEmitter.on('postupdate', this.postUpdate, this);
+        eventEmitter.on('shutdown', this.shutdown, this);
+        eventEmitter.on('destroy', this.destroy, this);
     }
 
-    public init(map, activeLayers: number[] = []) {
-        let mapAnimData = this.getAnimatedTiles(map);
-        let animatedTiles: AnimatedTile = {
-            map,
+    public init (map, activeLayers: number[] = []) {
+        const mapAnimData = this.getAnimatedTiles(map);
+        const animatedTiles: AnimatedTile = {
+            map: map,
             animatedTiles: mapAnimData,
             active: true,
             rate: 1,
-            activeLayer: [],
+            activeLayer: []
         };
 
-        map.layers.forEach((i) => {
+        map.layers.forEach(function (i) {
             const index = map.layers.indexOf(i);
             animatedTiles.activeLayer.push(activeLayers.indexOf(index) > -1);
         });
@@ -61,10 +61,10 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
             this.active = true;
         }
 
-        this.syncNewTiles(animatedTiles)
+        this.syncNewTiles(animatedTiles);
     }
 
-    setRate(rate, gid = null, map = null) {
+    setRate (rate, gid = null, map = null) {
         if (gid === null) {
             if (map === null) {
                 this.rate = rate;
@@ -73,8 +73,8 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
             }
         } else {
 
-            let loopThrough = (animatedTiles) => {
-                animatedTiles.forEach((animatedTile) => {
+            const loopThrough = function (animatedTiles) {
+                animatedTiles.forEach(function (animatedTile) {
                     if (animatedTile.index === gid) {
                         animatedTile.rate = rate;
                     }
@@ -82,7 +82,7 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
             };
 
             if (map === null) {
-                this.animatedTiles.forEach((animatedTiles) => {
+                this.animatedTiles.forEach(function (animatedTiles) {
                     loopThrough(animatedTiles.animatedTiles);
                 });
             } else {
@@ -91,83 +91,27 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         }
     }
 
-    resetRates(mapIndex = null) {
-        if (mapIndex === null) {
-            this.rate = 1;
-
-            this.animatedTiles.forEach((mapAnimData) => {
-                mapAnimData.rate = 1;
-                mapAnimData.animatedTiles.forEach((tileAnimData) => {
-                    tileAnimData.rate = 1;
-                });
-            });
-        } else {
-            this.animatedTiles[mapIndex].rate = 1;
-
-            this.animatedTiles[mapIndex].animatedTiles.forEach(
-                (tileAnimData) => {
-                    tileAnimData.rate = 1;
-                }
-            );
-        }
-    }
-
-    resume(layerIndex = null, mapIndex = null) {
-        let scope;
-
-        if (mapIndex === null) {
-            scope = this;
-        } else {
-            scope = this.animatedTiles[mapIndex]
-        }
-
-        if (layerIndex === null) {
-            scope.active = true;
-        } else {
-            scope.activeLayer[layerIndex] = true;
-            scope.animatedTiles.forEach((animatedTile) => {
-                this.updateLayer(animatedTile, animatedTile.tiles[layerIndex]);
-            });
-        }
-    }
-
-    pause(layerIndex = null, mapIndex = null) {
-        let scope;
-
-        if (mapIndex === null) {
-            scope = this;
-        } else {
-            scope = this.animatedTiles[mapIndex]
-        }
-
-        if (layerIndex === null) {
-            scope.active = false;
-        } else {
-            scope.activeLayer[layerIndex] = false;
-        }
-    }
-
-    postUpdate(time, delta) {
+    postUpdate (time, delta) {
         if (!this.active) {
             return;
         }
 
         this.totalTime += delta;
 
-        let globalElapsedTime = delta * this.rate * (this.followTimeScale ? this.scene!.time.timeScale : 1);
+        const globalElapsedTime = delta * this.rate * (this.followTimeScale ? this.scene!.time.timeScale : 1);
 
         this.animatedTiles.forEach((mapAnimData) => {
             if (!mapAnimData.active) {
                 return;
             }
 
-            let elapsedTime = globalElapsedTime * mapAnimData.rate;
+            const elapsedTime = globalElapsedTime * mapAnimData.rate;
             mapAnimData.animatedTiles.forEach((animatedTile) => {
                 animatedTile.next -= elapsedTime * animatedTile.rate;
 
                 if (animatedTile.next < 0) {
-                    let currentIndex = animatedTile.currentFrame;
-                    let oldTileId = animatedTile.frames[currentIndex].tileid;
+                    const currentIndex = animatedTile.currentFrame;
+                    const oldTileId = animatedTile.frames[currentIndex].tileid;
                     let newIndex = currentIndex + 1;
 
                     if (newIndex > animatedTile.frames.length - 1) {
@@ -189,20 +133,20 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         });
     }
 
-    syncNewTiles(animatedTilesData) {
+    syncNewTiles (animatedTilesData) {
         const globalElapsedTime = this.totalTime * this.rate * (this.followTimeScale ? this.scene!.time.timeScale : 1);
 
         animatedTilesData.animatedTiles.forEach((animatedTile) => {
             const elapsedTime = globalElapsedTime * animatedTile.rate;
-            const cycleDuration = this.getAnimationDuration(animatedTile)
+            const cycleDuration = this.getAnimationDuration(animatedTile);
             
             animatedTile.next = -(elapsedTime - Math.floor(elapsedTime / cycleDuration) * cycleDuration);
 
-            let currentIndex = animatedTile.currentFrame;
-            let oldTileId = animatedTile.frames[currentIndex].tileid;
+            const currentIndex = animatedTile.currentFrame;
+            const oldTileId = animatedTile.frames[currentIndex].tileid;
 
             while (animatedTile.next < 0) {
-                let newIndex = (animatedTile.currentFrame + 1) % animatedTile.frames.length;
+                const newIndex = (animatedTile.currentFrame + 1) % animatedTile.frames.length;
 
                 animatedTile.next += animatedTile.frames[newIndex].duration;
                 animatedTile.currentFrame = newIndex;
@@ -218,21 +162,21 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         });
     }
 
-    getAnimationDuration(animatedTile){
+    getAnimationDuration (animatedTile) {
         let duration = 0;
 
-        for(const frame of animatedTile.frames){
-            duration += frame.duration
+        for (const frame of animatedTile.frames) {
+            duration += frame.duration;
         }
 
-        return duration
+        return duration;
     }
 
-    updateLayer(animatedTile, layer, oldTileId = -1) {
-        let tilesToRemove = [] as Phaser.Tilemaps.Tile[];
-        let tileId = animatedTile.frames[animatedTile.currentFrame].tileid;
+    updateLayer (animatedTile, layer, oldTileId = -1) {
+        const tilesToRemove = [] as Phaser.Tilemaps.Tile[];
+        const tileId = animatedTile.frames[animatedTile.currentFrame].tileid;
 
-        layer.forEach((tile) => {
+        layer.forEach(function (tile) {
             if (oldTileId > -1 && (tile === null || tile.index !== oldTileId)) {
                 tilesToRemove.push(tile);
             } else {
@@ -240,82 +184,82 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
             }
         });
 
-        tilesToRemove.forEach((tile) => {
-            let pos = layer.indexOf(tile);
+        tilesToRemove.forEach(function (tile) {
+            const pos = layer.indexOf(tile);
 
             if (pos > -1) {
                 layer.splice(pos, 1);
             } else {
-                console.error("This shouldn't happen. Not at all. Blame Phaser Animated Tiles plugin. You'll be fine though.");
+                console.error('This shouldn\'t happen. Not at all. Blame Phaser Animated Tiles plugin. You\'ll be fine though.');
             }
         });
     }
 
-    shutdown() {
+    shutdown () {
         this.scene = null;
         this.animatedTiles.length = 0;
     }
 
-    removeMap(map) {
+    removeMap (map) {
         const index = this.animatedTiles.findIndex(
-            (data) => data.map === map
+            function (data) { return data.map === map; }
         );
 
         if (index === -1) {
-            console.error("Removing animated tiles from the map was unsuccessful: map wasn't found!")
-            return
-        };
+            console.error('Removing animated tiles from the map was unsuccessful: map wasn\'t found!');
+            return;
+        }
 
-        this.animatedTiles.splice(index, 1)
+        this.animatedTiles.splice(index, 1);
     }
 
-    destroy() {
+    destroy () {
         this.shutdown();
     }
 
-    getAnimatedTiles(map) {
-        let animatedTiles = [] as any[];
+    getAnimatedTiles (map) {
+        const animatedTiles = [] as any[];
 
-        map.tilesets.forEach((tileset) => {
-            let tileData = tileset.tileData;
+        map.tilesets.forEach(function (tileset) {
+            const tileData = tileset.tileData;
 
-            Object.keys(tileData).forEach((i) => {
+            Object.keys(tileData).forEach(function (i) {
                 const index = parseInt(i);
 
-                if (tileData[index].hasOwnProperty("animation")) {
-                    let animatedTileData = {
+                if (tileData[index].hasOwnProperty('animation')) {
+                    const animatedTileData = {
                         index: index + tileset.firstgid,
                         frames: [] as any[],
                         currentFrame: 0,
                         tiles: [] as any[],
                         rate: 1,
-                        next: 0,
+                        next: 0
                     };
 
-                    tileData[index].animation.forEach((frameData) => {
-                        let frame = {
+                    tileData[index].animation.forEach(function (frameData) {
+                        const frame = {
                             duration: frameData.duration,
-                            tileid: frameData.tileid + tileset.firstgid,
+                            tileid: frameData.tileid + tileset.firstgid
                         };
 
                         animatedTileData.frames.push(frame);
                     });
 
                     animatedTileData.next = animatedTileData.frames[0].duration;
-                    animatedTileData.currentFrame = animatedTileData.frames.findIndex((f) => f.tileid === index + tileset.firstgid);
+                    animatedTileData.currentFrame = animatedTileData.frames.findIndex(function (f) { return f.tileid === index + tileset.firstgid; });
 
-                    map.layers.forEach((layer) => {
+                    map.layers.forEach(function (layer) {
                         if (layer.tilemapLayer && layer.tilemapLayer.type) {
-                            if (layer.tilemapLayer.type === "StaticTilemapLayer") {
+                            if (layer.tilemapLayer.type === 'StaticTilemapLayer') {
                                 animatedTileData.tiles.push([]);
                                 return;
                             }
                         }
 
-                        let tiles = [] as Phaser.Tilemaps.Tile[];
+                        const tiles = [] as Phaser.Tilemaps.Tile[];
 
-                        layer.data.forEach((tileRow) => {
-                            tileRow.forEach((tile) => {
+                        layer.data.forEach(function (tileRow) {
+                            tileRow.forEach(function (tile) {
                                 if (tile.index - tileset.firstgid === index) {
                                     tiles.push(tile);
                                 }
@@ -327,7 +271,7 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
 
                     animatedTiles.push(animatedTileData);
                 }
-            });   
+            });
         });
 
         map.layers.forEach((layer, layerIndex) => {
@@ -337,35 +281,41 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         return animatedTiles;
     }
 
-    updateAnimatedTiles() {
-        let x = null, y = null, w = null, h = null, container: any[] | null = null;
+    updateAnimatedTiles () {
+        const x = null,
+            y = null,
+            w = null,
+            h = null;
+
+        let container: any[] | null = null;
+
         if (container === null) {
             container = [];
 
-            this.animatedTiles.forEach((mapAnimData) => {
+            this.animatedTiles.forEach(function (mapAnimData) {
                 container!.push(mapAnimData);
             });
         }
 
-        container.forEach((mapAnimData) => {
-            let chkX = x !== null ? x : 0;
-            let chkY = y !== null ? y : 0;
-            let chkW = w !== null ? mapAnimData.map.width : 10;
-            let chkH = h !== null ? mapAnimData.map.height : 10;
+        container.forEach(function (mapAnimData) {
+            const chkX = x !== null ? x : 0;
+            const chkY = y !== null ? y : 0;
+            const chkW = w !== null ? mapAnimData.map.width : 10;
+            const chkH = h !== null ? mapAnimData.map.height : 10;
 
-            mapAnimData.animatedTiles.forEach((tileAnimData) => {
-                tileAnimData.tiles.forEach((tiles, layerIndex) => {
-                    let layer = mapAnimData.map.layers[layerIndex];
+            mapAnimData.animatedTiles.forEach(function (tileAnimData) {
+                tileAnimData.tiles.forEach(function (tiles, layerIndex) {
+                    const layer = mapAnimData.map.layers[layerIndex];
 
-                    if (layer.type && layer.type === "StaticTilemapLayer") {
+                    if (layer.type && layer.type === 'StaticTilemapLayer') {
                         return;
                     }
 
                     for (let x = chkX; x < chkX + chkW; x++) {
                         for (let y = chkY; y < chkY + chkH; y++) {
-                            let tile = mapAnimData.map.layers[layerIndex].data[x][y];
+                            const tile = mapAnimData.map.layers[layerIndex].data[x][y];
 
-                            if (tile.index == tileAnimData.index) {
+                            if (tile.index === tileAnimData.index) {
                                 if (tiles.indexOf(tile) === -1) {
                                     tiles.push(tile);
                                 }
@@ -379,7 +329,7 @@ export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
         });
     }
 
-    static register(PluginManager) {
-        PluginManager.register("AnimatedTiles", AnimatedTiles, "animatedTiles");
+    static register (PluginManager) {
+        PluginManager.register('AnimatedTiles', AnimatedTiles, 'animatedTiles');
     }
 }

@@ -1,11 +1,11 @@
-import { AbstractBloon } from "../Bloon";
+import { AbstractEnemy } from '../Enemy';
 
-export class Scorpion extends AbstractBloon {
-    constructor(scene, v, params) {
+export class Scorpion extends AbstractEnemy {
+    constructor (scene, v, params) {
         super(scene, v, params);
     }
 
-    static create(scene, v) {
+    static create (scene, v) {
         return new Scorpion(scene, v, {
             hp: 4,
             speed: 1,
@@ -18,9 +18,9 @@ export class Scorpion extends AbstractBloon {
             radius: 20,
             flipX: true,
             animSet: {
-                "walk-down": "enemies-7-walk-down",
-                "walk-up": "enemies-7-walk-up",
-                "walk-lr": "enemies-7-walk-lr"
+                'walk-down': 'enemies-7-walk-down',
+                'walk-up': 'enemies-7-walk-up',
+                'walk-lr': 'enemies-7-walk-lr'
             }
         });
     }

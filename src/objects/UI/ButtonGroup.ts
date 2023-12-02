@@ -1,9 +1,5 @@
-import { LayerDepth } from "../../lib/Utils";
-import GameScene from "../../scenes/GameScene"
-
-export type ButtonGroupOptions = {
-    
-}
+import { LayerDepth } from '../../lib/Utils';
+import GameScene from '../../scenes/GameScene';
 
 export type Button = {
     name: string,
@@ -21,17 +17,16 @@ export class ButtonGroup extends Phaser.GameObjects.Container {
     public scene: GameScene;
 
     private buttons: Button[];
-    private buttonGroup: any;
 
-    constructor(scene: GameScene, {x, y}: {x: number, y: number}, {w, h}: {w: number, h: number}, buttons: Button[], options: ButtonGroupOptions) {
-        super(scene, x, y+48);
+    constructor (scene: GameScene, {x: x, y: y}: {x: number, y: number}, {w: w, h: h}: {w: number, h: number}, buttons: Button[]) {
+        super(scene, x, y + 48);
 
         this.scene = scene;
         this.buttons = buttons;
 
         this.scene.add.existing(this);
 
-        this.setDepth(LayerDepth.UI)
+        this.setDepth(LayerDepth.UI);
 
         let width = 0;
         this.buttons.forEach((button, index) => {
@@ -40,18 +35,18 @@ export class ButtonGroup extends Phaser.GameObjects.Container {
             width += index > 0 ? button.sprite.width + 16 : button.sprite.width;
             
             button.sprite.setInteractive();
-            button.sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+            button.sprite.on('pointerdown', function (pointer: Phaser.Input.Pointer) {
                 if (pointer.leftButtonDown() || pointer.leftButtonReleased()) {
                     button.onClick(pointer);
                 }
             });
 
-            button.sprite.on('pointerover', (pointer: Phaser.Input.Pointer) => {
+            button.sprite.on('pointerover', function (pointer: Phaser.Input.Pointer) {
                 button.sprite!.setAlpha(0.75);
                 button.border!.setAlpha(0.75);
             });
 
-            button.sprite.on('pointerout', (pointer: Phaser.Input.Pointer) => {
+            button.sprite.on('pointerout', function (pointer: Phaser.Input.Pointer) {
                 button.sprite!.setAlpha(1);
                 button.border!.setAlpha(1);
             });
@@ -60,32 +55,32 @@ export class ButtonGroup extends Phaser.GameObjects.Container {
             this.add(button.border);
         });
 
-        this.x -= width/2;
+        this.x -= width / 2;
 
         this.hide();
     }
 
-    public show() {
+    public show () {
         this.setVisible(true);
     }
 
-    public hide() {
+    public hide () {
         this.setVisible(false);
     }
 
-    get isShown() {
+    get isShown () {
         return this.visible;
     }
 
-    getXY() {
+    getXY () {
         return {x: this.x, y: this.y};
     }
 
-    getButtons() {
+    getButtons () {
         return this.buttons;
     }
 
-    getSize() {
+    getSize () {
         return {w: this.width, h: this.height};
     }
 }

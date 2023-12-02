@@ -8,48 +8,47 @@ export interface List<T> {
 }
 
 export default class AutoRemoveList<T extends CanDie> implements List<T> {
-    public list: T[]
+    public list: T[];
 
-    constructor(...es) {
-        this.list = flatten(es)
+    constructor (...es) {
+        this.list = flatten(es);
     }
 
     [Symbol.iterator] = function* (this) {
-        yield* this.list
+        yield* this.list;
+    };
+
+    add (...es) {
+        this.list = flatten([ ...es, ...this.list ]);
     }
 
-    add(...es) {
-        this.list = flatten([...es, ...this.list])
-        return this
+    forEach (callback) {
+        return this.list.forEach(callback);
     }
 
-    forEach(callback) {
-        return this.list.forEach(callback)
+    map (callback: (v: T, i: number, arr: T[]) => T) {
+        return this.list.map(callback);
     }
 
-    map(callback: (v: T, i: number, arr: T[]) => T) {
-        return this.list.map(callback)
+    reduce<S> (callback: (acc: S, x: T) => S, acc: S) {
+        return this.list.reduce(callback, acc);
     }
 
-    reduce<S>(callback: (acc: S, x: T) => S, acc: S) {
-        return this.list.reduce(callback, acc)
-    }
-
-    update(time: number, delta: number) {
-        this.list.forEach(e => e.update(time, delta))
+    update (time: number, delta: number) {
+        this.list.forEach(function (e) { return e.update(time, delta); });
         
-        const [dead, alive] = partition(this.list, e => e.isDead())
+        const [ dead, alive ] = partition(this.list, function (e) { return e.isDead(); });
 
-        dead.forEach(e => e.destroy())
+        dead.forEach(function (e) { return e.destroy(); });
         
-        this.list = alive
+        this.list = alive;
     }
 
-    remove(e: T) {
-        this.list = this.list.filter(x => x !== e)
+    remove (e: T) {
+        this.list = this.list.filter(function (x) { return x !== e; });
     }
 
-    get active() {
-        return this.list.filter(e => !e.isDead()).length
+    get active () {
+        return this.list.filter(function (e) { return !e.isDead(); }).length;
     }
 }

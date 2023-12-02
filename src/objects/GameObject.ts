@@ -1,4 +1,4 @@
-export default interface GameObject {
+interface GameObject {
     getXY: () => { x: number, y: number }
     getVelXY: () => { velX: number, velY: number }
     getSprite: () => Phaser.Physics.Matter.Sprite
@@ -6,11 +6,14 @@ export default interface GameObject {
     update: (time: number, delta: number) => void
 }
 
-export interface CanDie extends GameObject {
+interface CanDie extends GameObject {
     isDead: () => boolean
 }
 
-export interface Enemy extends CanDie {
+interface Enemy extends CanDie {
     getHit: (damage: number) => void
     hasReachedEnd: () => boolean
 }
+
+export default GameObject;
+export { CanDie, Enemy };

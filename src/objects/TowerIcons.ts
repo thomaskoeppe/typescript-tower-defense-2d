@@ -1,5 +1,5 @@
-import { LayerDepth } from "../lib/Utils";
-import GameScene from "../scenes/GameScene";
+import { LayerDepth } from '../lib/Utils';
+import GameScene from '../scenes/GameScene';
 
 export interface ITowerIcons {
     drag: (pointer: Phaser.Input.Pointer, x: number, y: number) => void;
@@ -21,7 +21,7 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
     protected sprite: Phaser.GameObjects.Image;
     protected graphics: Phaser.GameObjects.Graphics;
 
-    constructor(scene: GameScene, params: TowerIconsParams) {
+    constructor (scene: GameScene, params: TowerIconsParams) {
         this.scene = scene;
         this.params = params;
 
@@ -31,13 +31,13 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         this.scene.hud!.add(this.sprite);
         this.scene.input.setDraggable(this.sprite);
 
-        this.sprite.on('dragstart', () => this.dragStart());
-        this.sprite.on('drag', (pointer, dragX, dragY) => this.drag(pointer, dragX, dragY));
-        this.sprite.on('dragend', (pointer) => this.dragEnd(pointer));
+        this.sprite.on('dragstart', () => { return this.dragStart(); });
+        this.sprite.on('drag', (pointer, dragX, dragY) => { return this.drag(pointer, dragX, dragY); });
+        this.sprite.on('dragend', (pointer) => { return this.dragEnd(pointer); });
         this.graphics = this.scene.add.graphics().setDepth(LayerDepth.INTERACTION);
     }
 
-    public dragStart() {
+    public dragStart () {
         this.sprite.setAlpha(0.85);
 
         this.graphics.fillStyle(0x000000);
@@ -48,7 +48,7 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         this.graphics.strokeCircle(this.sprite.x + 32, this.sprite.y + 32, this.params.maxDistance);
     }
 
-    public drag(pointer: Phaser.Input.Pointer, x: number, y: number) {
+    public drag (pointer: Phaser.Input.Pointer, x: number, y: number) {
         const tile = this.scene.getTileAtWorldXY(pointer.worldX, pointer.worldY);
 
         if (tile && tile.index !== 74) {
@@ -63,7 +63,7 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
     }
 
 
-    public dragEnd(pointer: Phaser.Input.Pointer) {
+    public dragEnd (pointer: Phaser.Input.Pointer) {
         const tile = this.scene.getTileAtWorldXY(pointer.worldX, pointer.worldY);
 
         if (Phaser.Math.Distance.Between(this.sprite.x, this.sprite.y, this.defaultPosition.x, this.defaultPosition.y) > 5) {
@@ -78,7 +78,7 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         this.graphics.clear();
     }
 
-    public hasCollisions(hasCollisions: boolean) {
+    public hasCollisions (hasCollisions: boolean) {
         if (hasCollisions) {
             this.sprite.setTint(0xff0000);
         } else {

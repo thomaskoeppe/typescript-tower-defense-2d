@@ -1,7 +1,7 @@
-import { AbstractProjectile } from "../Projectile";
+import { AbstractProjectile } from '../Projectile';
 
 export class Dart extends AbstractProjectile {
-    static create(scene, source, target) {
+    static create (scene, source, target) {
         return new Dart(scene, source, target, {
             sprite: 'projectiles-0-lvl-0',
             frame: '0',

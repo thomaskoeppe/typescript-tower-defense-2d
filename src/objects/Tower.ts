@@ -1,8 +1,8 @@
-import { GameObjects, Math as Math2 } from "phaser";
-import GameScene from "../scenes/GameScene";
-import { IBloon } from "./Bloon";
+import { GameObjects, Math as Math2 } from 'phaser';
+import GameScene from '../scenes/GameScene';
+import { IEnemy } from './Enemy';
 import { CollisionGroup, LayerDepth } from '../lib/Utils';
-import { ButtonGroup } from "./UI/ButtonGroup";
+import { ButtonGroup } from './UI/ButtonGroup';
 
 export type ITower = {
     params: TowerParams;
@@ -31,7 +31,7 @@ export type TowerParams = {
             weapon: {
                 sprite: string,
                 shootAnim: string,
-                shootFrame: string,
+                shootFrame: number,
                 offsetX: number,
                 offsetY: number,
                 cooldown: number,
@@ -42,7 +42,7 @@ export type TowerParams = {
             upgradeCost: number,
             build: {
                 sprite: string,
-                frame: string,
+                frame: number,
                 buildAnim: string,
                 finishAnim: string,
                 duration: number
@@ -57,7 +57,7 @@ export abstract class AbstractTower implements ITower {
 
     public params: TowerParams;
 
-    private lockedEnemy: IBloon | undefined;
+    private lockedEnemy: IEnemy | undefined;
     private isShooting: boolean;
     private lastFired: number;
     private body: MatterJS.BodyFactory;
@@ -74,7 +74,7 @@ export abstract class AbstractTower implements ITower {
         weapon: {
             sprite: string,
             shootAnim: string,
-            shootFrame: string,
+            shootFrame: number,
             offsetX: number,
             offsetY: number,
             cooldown: number,
@@ -85,16 +85,16 @@ export abstract class AbstractTower implements ITower {
         upgradeCost: number,
         build: {
             sprite: string,
-            frame: string,
+            frame: number,
             buildAnim: string,
             finishAnim: string,
             duration: number
         }
-    }
+    };
 
     abstract shoot({ x, y }: { x: number, y: number }): void;
 
-    constructor(scene: GameScene, v, params: TowerParams) {
+    constructor (scene: GameScene, v, params: TowerParams) {
         this.scene = scene;
         this.params = params;
         this.level = 1;
@@ -107,17 +107,17 @@ export abstract class AbstractTower implements ITower {
         this.weapon = this.scene.matter.add.sprite(v.x + this.levelData.weapon.offsetX, v.y + this.levelData.weapon.offsetY, this.levelData.weapon.sprite, '0').setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
 
         this.sprite.setExistingBody(this.body.create({
-            parts: [this.bodies.rectangle(0, 0, 8, 8)],
+            parts: [ this.bodies.rectangle(0, 0, 8, 8) ],
             frictionAir: 0.0,
             friction: 0.0,
-            frictionStatic: 0.0,
+            frictionStatic: 0.0
         })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(v.x, v.y).setAngle(0).setStatic(true);
 
         this.weapon.setExistingBody(this.body.create({
-            parts: [this.bodies.rectangle(0, 0, 8, 8)],
+            parts: [ this.bodies.rectangle(0, 0, 8, 8) ],
             frictionAir: 0.0,
             friction: 0.0,
-            frictionStatic: 0.0,
+            frictionStatic: 0.0
         })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(v.x + this.levelData.weapon.offsetX, v.y + this.levelData.weapon.offsetY).setAngle(0).setStatic(true);
 
         this.isShooting = false;
@@ -125,13 +125,14 @@ export abstract class AbstractTower implements ITower {
 
         this.radius = this.scene.add.graphics().lineStyle(2, 0x000000, 0.5).setAlpha(0.5).strokeCircle(this.sprite.getCenter().x!, this.sprite.getCenter().y!, this.levelData.weapon.distance).setDepth(LayerDepth.UI).setVisible(false);
 
-        this.weapon.on("animationupdate", (anim, frame) => {
+        this.weapon.on('animationupdate', (anim, frame) => {
+
             if (!this.lockedEnemy) {
                 this.isShooting = false;
                 return;
             }
 
-            if (frame.index == this.levelData.weapon.shootFrame) {
+            if (frame.index === this.levelData.weapon.shootFrame) {
                 this.levelData.weapon.shoot(this.scene, new Phaser.Math.Vector2(this.weapon.getCenter().x, this.weapon.getCenter().y), this.lockedEnemy.getCoords());
                 this.isShooting = false;
             }
@@ -159,6 +160,7 @@ export abstract class AbstractTower implements ITower {
                 texture: '14',
                 onClick: (pointer) => {
                     this.hideMenu();
+
                     // this.sell();
                 }
             },
@@ -169,10 +171,11 @@ export abstract class AbstractTower implements ITower {
                 texture: '13',
                 onClick: (pointer) => {
                     this.hideMenu();
+
                     // this.sell();
                 }
             }
-        ], {});
+        ]);
 
         this.sprite.setInteractive();
         this.sprite.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -180,17 +183,17 @@ export abstract class AbstractTower implements ITower {
                 if (this.isMenuShown()) {
                     this.hideMenu();
                 } else {
-                    this.showMenu();;
+                    this.showMenu();
                 }
             }
         });
     }
 
-    public update(time, delta) {
+    public update (time, delta) {
         this.lockedEnemy = this.scene.getNearestBloon(new Phaser.Math.Vector2(this.sprite.x, this.sprite.y), this.levelData.weapon.distance);
 
         if (this.lockedEnemy) {
-            const { x, y } = this.lockedEnemy.getXY();
+            const { x: x, y: y } = this.lockedEnemy.getXY();
 
             this.weapon.setAngle((Math2.Angle.Between(this.sprite.x, this.sprite.y, x, y) * 180 / Math.PI) + 90);
 
@@ -204,51 +207,51 @@ export abstract class AbstractTower implements ITower {
         }
     }
 
-    getXY(): { x: number, y: number } {
+    getXY (): { x: number, y: number } {
         return {
             x: this.sprite.x,
             y: this.sprite.y
         };
     }
 
-    getCoords(): Phaser.Math.Vector2 {
+    getCoords (): Phaser.Math.Vector2 {
         return new Phaser.Math.Vector2(this.sprite.x, this.sprite.y);
     }
 
-    getCenter(): { x: number, y: number } {
+    getCenter (): { x: number, y: number } {
         return this.sprite.getCenter();
     }
 
-    getLevel(): number {
+    getLevel (): number {
         return this.level;
     }
 
-    upgrade() {
+    upgrade () {
         this.level++;
         this.levelData = this.params.level[this.level.toString()];
 
         this.sprite.setTexture(this.levelData.sprite, (this.level).toString());
     }
 
-    hasMaxLevel(): boolean {
+    hasMaxLevel (): boolean {
         return this.level === this.params.maxLevel;
     }
 
-    isMenuShown() {
+    isMenuShown () {
         return this.menu.isShown;
     }
 
-    hideMenu() {
+    hideMenu () {
         this.menu.hide();
         this.radius.setVisible(false);
     }
 
-    showMenu() {
+    showMenu () {
         this.menu.show();
         this.radius.setVisible(true);
     }
 
-    getMenuXY() {
+    getMenuXY () {
         return this.menu.getXY();
     }
 }

@@ -1,7 +1,7 @@
-import { Scene } from "phaser";
+import { Scene } from 'phaser';
 
 export default class Loader {
-    public static loadSpritesheets(scene: Scene) {
+    public static loadSpritesheets (scene: Scene) {
         // == Enemies == //
         scene.load.atlas('enemies-7', './assets/sprites/enemies/7/spritesheet.png', './assets/sprites/enemies/7/spritesheet.json');
         scene.load.atlas('enemies-5', './assets/sprites/enemies/5/spritesheet.png', './assets/sprites/enemies/5/spritesheet.json');
@@ -13,7 +13,7 @@ export default class Loader {
         scene.load.atlas('projectiles-0-lvl-0', './assets/sprites/projectiles/0/spritesheet-0.png', './assets/sprites/projectiles/0/spritesheet-0.json');
 
         // == Weapons == //
-        scene.load.atlas('weapons-0-lvl-0', './assets/sprites/weapons/0/spritesheet-0.png', './assets/sprites/weapons/0/spritesheet-0.json')
+        scene.load.atlas('weapons-0-lvl-0', './assets/sprites/weapons/0/spritesheet-0.png', './assets/sprites/weapons/0/spritesheet-0.json');
     
         // == Effects == //
         scene.load.atlas('effects-0', './assets/sprites/effects/0/spritesheet.png', './assets/sprites/effects/0/spritesheet.json');
@@ -22,42 +22,42 @@ export default class Loader {
         scene.load.atlas('tower-animations', './assets/sprites/anims/1/spritesheet.png', './assets/sprites/anims/1/spritesheet.json');
     }
 
-    public static loadImages(scene: Scene) {
+    public static loadImages (scene: Scene) {
         // == Turret Menu Images == //
         // scene.load.image("monkey-0", "./assets/images/monkey-0.png");
     }
 
-    public static loadTilemaps(scene: Scene) {
+    public static loadTilemaps (scene: Scene) {
         // == Tilemap == //
-        scene.load.image("tiles-base", "./assets/sprites/maps/base.png");
-        scene.load.image("tiles-water", "./assets/sprites/maps/water.png");
-        scene.load.image("tiles-leaves", "./assets/sprites/maps/leaves.png");
-        scene.load.image("tiles-wind", "./assets/sprites/maps/wind.png");
-        scene.load.tilemapTiledJSON("tilemap", "./assets/tilemaps/map-2.json");
+        scene.load.image('tiles-base', './assets/sprites/maps/base.png');
+        scene.load.image('tiles-water', './assets/sprites/maps/water.png');
+        scene.load.image('tiles-leaves', './assets/sprites/maps/leaves.png');
+        scene.load.image('tiles-wind', './assets/sprites/maps/wind.png');
+        scene.load.tilemapTiledJSON('tilemap', './assets/tilemaps/map-2.json');
     }
 
-    public static loadWavedata(scene: Scene) {
+    public static loadWavedata (scene: Scene) {
         // == Wave Data == //
-        scene.load.json("wavedata", "./config/wavedata/normal.json");
-        scene.load.json("mapdata", "./config/mapdata/map-2.json")
+        scene.load.json('wavedata', './config/wavedata/normal.json');
+        scene.load.json('mapdata', './config/mapdata/map-2.json');
     }
 
-    public static loadAudio(scene: Scene) {
-
-    }
-
-    public static loadFonts(scene: Scene) {
+    public static loadAudio (scene: Scene) {
 
     }
 
-    public static loadIcons(scene: Scene) {
-        //spritesheet-0 to 2
+    public static loadFonts (scene: Scene) {
+
+    }
+
+    public static loadIcons (scene: Scene) {
+        // spritesheet-0 to 2
         scene.load.atlas('icons-0', './assets/icons/spritesheet-0.png', './assets/icons/spritesheet-0.json');
         scene.load.atlas('icons-1', './assets/icons/spritesheet-1.png', './assets/icons/spritesheet-1.json');
         scene.load.atlas('icons-2', './assets/icons/spritesheet-2.png', './assets/icons/spritesheet-2.json');
     }
 
-    public static generateAnimations(scene: Scene) {
+    public static generateAnimations (scene: Scene) {
         scene.anims.create({
             key: 'enemies-7-walk-down',
             frames: scene.anims.generateFrameNames('enemies-7', { prefix: 'd-', start: 8, end: 15 }),
@@ -101,42 +101,42 @@ export default class Loader {
         });
 
         scene.anims.create({
-            key: "weapons-0-lvl-0-shoot",
-            frames: scene.anims.generateFrameNames('weapons-0-lvl-0', { frames: [1, 2, 3, 4, 5, 0]}),
+            key: 'weapons-0-lvl-0-shoot',
+            frames: scene.anims.generateFrameNames('weapons-0-lvl-0', { frames: [ 1, 2, 3, 4, 5, 0 ]}),
             frameRate: 8,
             repeat: 0
         });
 
         scene.anims.create({
-            key: "projectiles-0-lvl-0-shoot",
+            key: 'projectiles-0-lvl-0-shoot',
             frames: scene.anims.generateFrameNames('projectiles-0-lvl-0', { start: 0, end: 2 }),
             frameRate: 8,
             repeat: -1
         });
 
         scene.anims.create({
-            key: "projectiles-0-lvl-0-hit",
+            key: 'projectiles-0-lvl-0-hit',
             frames: scene.anims.generateFrameNames('effects-0', { start: 0, end: 5 }),
             frameRate: 8,
             repeat: 0
         });
 
         scene.anims.create({
-            key: "tower-build-0",
+            key: 'tower-build-0',
             frames: scene.anims.generateFrameNames('tower-animations', { start: 0, end: 5 }),
             frameRate: 8,
             repeat: -1
         });
 
         scene.anims.create({
-            key: "tower-build-0-finish",
+            key: 'tower-build-0-finish',
             frames: scene.anims.generateFrameNames('tower-animations', { start: 35, end: 30 }),
             frameRate: 8,
-            repeat: 0,
+            repeat: 0
         });
     }
 
-    public static initiate(scene: Scene) {
+    public static initiate (scene: Scene) {
         this.loadSpritesheets(scene);
         this.loadImages(scene);
         this.loadIcons(scene);

@@ -33,7 +33,7 @@ export abstract class AbstractProjectile implements IProjectile {
     public debugUid: string;
     public debugText: Phaser.GameObjects.Text;
 
-    constructor(scene, source, target, params) {
+    constructor (scene, source, target, params) {
         this.scene = scene;
         this.params = params;
 
@@ -48,11 +48,11 @@ export abstract class AbstractProjectile implements IProjectile {
         this.debugText = this.scene.add.text(source.x, source.y, this.debugUid, { fontSize: '14px', backgroundColor: '#000000' }).setDepth(LayerDepth.UI);
 
         this.sprite.setExistingBody(this.body.create({
-            parts: [this.bodies.rectangle(0, 0, this.sprite.width, this.sprite.height, { chamfer: { radius: this.params.radius } })],
+            parts: [ this.bodies.rectangle(0, 0, this.sprite.width, this.sprite.height, { chamfer: { radius: this.params.radius } }) ],
             frictionAir: 0.0,
             friction: 0.0,
-            frictionStatic: 0.0,
-        })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(source.x, source.y).setAngle((Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI)+90).setScale(this.params.scale);
+            frictionStatic: 0.0
+        })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(source.x, source.y).setAngle((Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI) + 90).setScale(this.params.scale);
 
         this.sprite.applyForce(new Phaser.Math.Vector2((target.x - source.x) === 0 ? 1 : target.x - source.x, (target.y - source.y) === 0 ? 1 : target.y - source.y).normalize().scale(0.01));
 
@@ -61,43 +61,43 @@ export abstract class AbstractProjectile implements IProjectile {
         this.scene.createProjectile(this);
     }
 
-    getSprite() {
+    getSprite () {
         return this.sprite;
     }
 
-    getXY() {
+    getXY () {
         return {
             x: this.sprite.x,
             y: this.sprite.y
-        }
+        };
     }
 
-    getVelXY() {
+    getVelXY () {
         return {
             velX: (this.sprite.body as MatterJS.BodyType).velocity.x,
             velY: (this.sprite.body as MatterJS.BodyType).velocity.y
-        }
+        };
     }
 
-    setAngle(angle){
+    setAngle (angle) {
         this.sprite.setAngle(angle);
         return this;
     }
 
-    isDead() {
+    isDead () {
         return this.collided;
     }
 
-    destroy() {
+    destroy () {
         this.sprite.destroy();
         this.debugText.destroy();
     }
 
-    update(time, delta) {
+    update (time, delta) {
         this.debugText.setPosition(this.sprite.x, this.sprite.y);
     }
 
-    onCollide() {
+    onCollide () {
         this.collided = true;
     }
 }

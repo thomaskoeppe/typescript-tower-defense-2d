@@ -1,11 +1,11 @@
-import { AbstractTowerIcons } from "../TowerIcons";
+import { AbstractTowerIcons } from '../TowerIcons';
 
 export class DartMonkeyIcon extends AbstractTowerIcons {
-    constructor(scene, params) {
+    constructor (scene, params) {
         super(scene, params);
     }
 
-    static create(scene) {
+    static create (scene) {
         return new DartMonkeyIcon(scene, {
             sprite: 'monkey-0',
             radius: 32,

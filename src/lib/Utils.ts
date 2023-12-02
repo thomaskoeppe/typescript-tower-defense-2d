@@ -20,34 +20,34 @@ export enum LayerDepth {
 }
 
 export class Utils {
-    public static product(arr1, arr2) {
-        return flatten(arr1.map(e1 => arr2.map(e2 => [e1, e2])))
+    public static product (arr1, arr2) {
+        return flatten(arr1.map(function (e1) { return arr2.map(function (e2) { return [ e1, e2 ]; }); }));
     }
 
-    public static createPath(p: Phaser.Curves.Path, w: Phaser.Math.Vector2[], s: Phaser.Math.Vector2, e: Phaser.Math.Vector2): Phaser.Curves.Path {
+    public static createPath (p: Phaser.Curves.Path, w: Phaser.Math.Vector2[], s: Phaser.Math.Vector2, e: Phaser.Math.Vector2): Phaser.Curves.Path {
         p = new Phaser.Curves.Path(s.x, s.y);
-        w.forEach((w2) => p.lineTo(w2.x, w2.y));
+        w.forEach(function (w2) { return p.lineTo(w2.x, w2.y); });
         p!.lineTo(e.x, e.y);
 
         return p;
     }
 
-    public static parseText(m: string, v: { [key: string]: any }): string {
-        return m.replace(/%\w+%/g, (all) => v[all.replace(/%/g, "")] || "N/A");
+    public static parseText (m: string, v: { [key: string]: any }): string {
+        return m.replace(/%\w+%/g, function (all) { return v[all.replace(/%/g, '')] || 'N/A'; });
     }
 
-    static renderMap(s: GameScene): Phaser.Tilemaps.Tilemap {
-        const w = s.make.tilemap({ key: "tilemap" });
-        const bT = w.addTilesetImage("tiles-base");
-        const wT = w.addTilesetImage("tiles-water");
-        const lT = w.addTilesetImage("tiles-leaves");
-        const wT2 = w.addTilesetImage("tiles-wind");
-        const gL = w.createLayer("Ground", [bT!], 0, 0);
-        const wL = w.createLayer("Water", [wT!], 0, 0);
-        const pL = w.createLayer("Path", [bT!], 0, 0);
-        const dL = w.createLayer("Decorations", [bT!, wT!], 0, 0);
-        const aL = w.createLayer("Animations", [lT!, wT2!], 0, 0);
-        const iL = w.createLayer("Interaction", [bT!], 0, 0);
+    static renderMap (s: GameScene): Phaser.Tilemaps.Tilemap {
+        const w = s.make.tilemap({ key: 'tilemap' });
+        const bT = w.addTilesetImage('tiles-base');
+        const wT = w.addTilesetImage('tiles-water');
+        const lT = w.addTilesetImage('tiles-leaves');
+        const wT2 = w.addTilesetImage('tiles-wind');
+        const gL = w.createLayer('Ground', [ bT! ], 0, 0);
+        const wL = w.createLayer('Water', [ wT! ], 0, 0);
+        const pL = w.createLayer('Path', [ bT! ], 0, 0);
+        const dL = w.createLayer('Decorations', [ bT!, wT! ], 0, 0);
+        const aL = w.createLayer('Animations', [ lT!, wT2! ], 0, 0);
+        const iL = w.createLayer('Interaction', [ bT! ], 0, 0);
 
         gL!.setDepth(LayerDepth.GROUND);
         wL!.setDepth(LayerDepth.WATER);
@@ -56,7 +56,7 @@ export class Utils {
         aL!.setDepth(LayerDepth.ANIMATIONS);
         iL!.setDepth(LayerDepth.INTERACTION);
 
-        iL!.forEachTile((t: Phaser.Tilemaps.Tile) => {
+        iL!.forEachTile(function (t: Phaser.Tilemaps.Tile) {
             if (t.index === -1) {
                 t.index = 72;
             }
@@ -64,7 +64,7 @@ export class Utils {
 
         w.setLayer(iL!);
         w.setCollisionByProperty({ isBlocked: true });
-        s.animatedTiles.init(w, [w.getLayerIndex(aL!), w.getLayerIndex(wL!)]);
+        s.animatedTiles.init(w, [ w.getLayerIndex(aL!), w.getLayerIndex(wL!) ]);
         s.animatedTiles.setRate(0.5);
 
         return w;

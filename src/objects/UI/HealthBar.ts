@@ -1,5 +1,5 @@
-import { LayerDepth } from "../../lib/Utils";
-import GameScene from "../../scenes/GameScene";
+import { LayerDepth } from '../../lib/Utils';
+import GameScene from '../../scenes/GameScene';
 
 export class HealthBar {
     public scene: GameScene;
@@ -9,7 +9,7 @@ export class HealthBar {
 
     private hideTimeout: number;
 
-    constructor(scene, x, y, maxHealth) {
+    constructor (scene, x, y, maxHealth) {
         this.scene = scene;
         this.maxHealth = maxHealth;
         this.currentHealth = maxHealth;
@@ -26,7 +26,7 @@ export class HealthBar {
         this.hideTimeout = 0;
     }
 
-    update(x, y, health) {        
+    update (x, y, health) {
         if (health < this.currentHealth) {
             this.setVisible(true);
             this.hideTimeout = this.scene.time.now + 2000;
@@ -40,15 +40,15 @@ export class HealthBar {
         this.setHealth(health);
     }
 
-    setPosition(x, y) {
+    setPosition (x, y) {
         this.bar.setPosition(x, y);
     }
 
-    setScale(scale: number) {
+    setScale (scale: number) {
         this.bar.setScale(scale);
     }
 
-    setHealth(health: number) {
+    setHealth (health: number) {
         let color = 0x00ff00;
 
         if (health <= this.maxHealth * 0.75) {
@@ -68,11 +68,11 @@ export class HealthBar {
         this.currentHealth = health;
     }
 
-    destroy() {
+    destroy () {
         this.bar.destroy();
     }
 
-    setVisible(visible: boolean) {
+    setVisible (visible: boolean) {
         this.bar.setVisible(visible);
     }
 }
