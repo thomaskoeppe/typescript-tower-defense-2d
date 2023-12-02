@@ -32,9 +32,35 @@ export type EnemyParams = {
     scale: number,
     sprite: string,
     frame: string,
-    radius: number,
     canFly: boolean,
     flipX?: boolean,
+    body: {
+        width: number,
+        height: number,
+        radius: number,
+        rotation: {
+            right: {
+                angle: number,
+                flipX?: boolean,
+                flipY?: boolean
+            },
+            down: {
+                angle: number,
+                flipX?: boolean,
+                flipY?: boolean
+            },
+            up: {
+                angle: number,
+                flipX?: boolean,
+                flipY?: boolean
+            },
+            left: {
+                angle: number,
+                flipX?: boolean,
+                flipY?: boolean
+            }
+        }
+    },
     animSet: {[key: string]: string}
 }
 
@@ -69,7 +95,7 @@ export abstract class AbstractEnemy implements IEnemy {
         this.sprite = this.scene.matter.add.sprite(v.x, v.y, this.params.sprite, this.params.frame);
         this.follower = { t: 0, vec: new Phaser.Math.Vector2() };
 
-        this.collisionBody = this.bodies.rectangle(0, 0, this.sprite.width - (this.sprite.width / 3), this.sprite.height - (this.sprite.width / 6), { chamfer: { radius: this.params.radius } });
+        this.collisionBody = this.bodies.rectangle(0, 0, this.params.body.width, this.params.body.height, { chamfer: { radius: this.params.body.radius } });
 
         this.sprite.setExistingBody(this.body.create({
             parts: [ this.collisionBody ]
@@ -109,33 +135,41 @@ export abstract class AbstractEnemy implements IEnemy {
                 this.sprite.anims.play(this.params.animSet['walk-lr']);
             }
 
-            this.sprite.flipX = this.params.flipX || false;
+            this.sprite.flipX = this.params.body.rotation.right.flipX || false;
+            this.sprite.flipY = this.params.body.rotation.right.flipY || false;
+
             this.sprite.setAngle(angle);
-            this.body.setAngle(this.collisionBody, angle + 90, false);
+            this.body.setAngle(this.collisionBody, this.params.body.rotation.right.angle, false);
         } else if (angle >= 46 && angle < 135) {
             if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== this.params.animSet['walk-down']) {
                 this.sprite.anims.play(this.params.animSet['walk-down']);
             }
 
-            this.sprite.flipX = false;
+            this.sprite.flipX = this.params.body.rotation.down.flipX || false;
+            this.sprite.flipY = this.params.body.rotation.down.flipY || false;
+
             this.sprite.setAngle(angle - 90);
-            this.body.setAngle(this.collisionBody, angle - 90, false);
+            this.body.setAngle(this.collisionBody, this.params.body.rotation.down.angle, false);
         } else if (angle >= 135 || angle < -135) {
             if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== this.params.animSet['walk-lr']) {
                 this.sprite.anims.play(this.params.animSet['walk-lr']);
             }
 
-            this.sprite.flipX = false;
-            this.sprite.setAngle(angle + 180);
-            this.body.setAngle(this.collisionBody, angle + 180, false);
+            this.sprite.flipX = this.params.body.rotation.left.flipX || false;
+            this.sprite.flipY = this.params.body.rotation.left.flipY || false;
+
+            this.sprite.setAngle(180);
+            this.body.setAngle(this.collisionBody, this.params.body.rotation.left.angle, false);
         } else if (angle >= -135 && angle < -46) {
             if (!this.sprite.anims.currentAnim || this.sprite.anims.currentAnim.key !== this.params.animSet['walk-up']) {
                 this.sprite.anims.play(this.params.animSet['walk-up']);
             }
 
-            this.sprite.flipX = false;
+            this.sprite.flipX = this.params.body.rotation.up.flipX || false;
+            this.sprite.flipY = this.params.body.rotation.up.flipY || false;
+
             this.sprite.setAngle(angle + 90);
-            this.body.setAngle(this.collisionBody, angle + 90, false);
+            this.body.setAngle(this.collisionBody, this.params.body.rotation.up.angle, false);
         }
 
         this.sprite.setPosition(this.follower.vec.x, this.follower.vec.y);

@@ -109,7 +109,7 @@ export default class GameScene extends Phaser.Scene {
             this.text.setText(`Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}\nMoney $${this.money}\nLifes ${this.lifes}`);
         }
 
-        if (this.enemies.active < 2 && this.nextEnemy < time) {
+        if (this.enemies.active < 20 && this.nextEnemy < time) {
             let enemy;
 
             if (this.lastEnemy === 'scorpion') {
@@ -118,7 +118,7 @@ export default class GameScene extends Phaser.Scene {
                     y: this.spawn.y
                 });
 
-                // this.lastEnemy = "larvae";
+                this.lastEnemy = 'larvae';
             } else {
                 enemy = Scorpion.create(this, {
                     x: this.spawn.x,
@@ -130,7 +130,7 @@ export default class GameScene extends Phaser.Scene {
 
             enemy.startOnPath(this.path);
 
-            this.nextEnemy = time + 6000;
+            this.nextEnemy = time + 2000;
         }
 
         // if (this.enemiesLeft === 0 && this.enemies!.countActive() === 0) {
