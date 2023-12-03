@@ -1,13 +1,11 @@
-import { AbstractEnemy, IEnemy } from '../objects/Enemy';
-import { Scorpion } from '../objects/Enemies/Scorpion';
-import { CrossBowTower } from '../objects/Towers/CrossBowTower';
-import Loader from '../lib/Loader';
-import AutoRemoveList from '../lib/AutoRemoveList';
-import { AbstractProjectile, IProjectile } from '~/objects/Projectile';
+import { AbstractEnemy } from '../objects/Enemy';
+import { Scorpion, Larvae } from '../objects/enemies';
+import { CrossBow } from '../objects/towers';
+import { AbstractProjectile, IProjectile } from '../objects/Projectile';
 import { DartMonkeyIcon } from '../objects/TowerIcons/DartMonkey';
-import { LayerDepth, Utils } from '../lib/Utils';
-import { Larvae } from '../objects/Enemies/Larvae';
-import { AbstractTower } from '~/objects/Tower';
+import { Loader, AutoRemoveList, LayerDepth, Utils } from '../lib';
+import { AbstractTower } from '../objects/Tower';
+import { IEnemy } from '../interfaces';
 
 export type PlacedTurret = {
   sprite: AbstractTower,
@@ -22,7 +20,7 @@ export default class GameScene extends Phaser.Scene {
 
     private wave: number = 0;
     private waveData: any;
-    private money: number = 0;
+    private money: number = 1000;
     public enemiesLeft: number = 0;
     private enemiesSpawned: number = 0;
     private nextEnemy: number = 0;
@@ -109,7 +107,7 @@ export default class GameScene extends Phaser.Scene {
             this.text.setText(`Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}\nMoney $${this.money}\nLifes ${this.lifes}`);
         }
 
-        if (this.enemies.active < 2 && this.nextEnemy < time) {
+        if (this.enemies.active < 20 && this.nextEnemy < time) {
             let enemy;
 
             if (this.lastEnemy === 'scorpion') {
@@ -260,11 +258,8 @@ export default class GameScene extends Phaser.Scene {
         projectile.destroy();
     }
 
-    public loseHealth (enemy: IEnemy) {
-        this.lifes -= enemy.params.takesHealth;
-        enemy.destroy();
-
-        // this.enemies.remove(enemy);
+    public loseHealth (enemy: IEnemy, takesHealth) {
+        this.lifes -= takesHealth;
 
         if (this.lifes <= 0) {
             // this.scene.stop("game");
@@ -339,7 +334,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     public placeTurret (tile: Phaser.Tilemaps.Tile): void {
-        CrossBowTower.create(this, { x: tile.pixelX + 32, y: tile.pixelY }).then((turret) => {
+        CrossBow.create(this, { x: tile.pixelX + 32, y: tile.pixelY }).then((turret) => {
             this.turrets.push({ sprite: turret, tile: tile as Phaser.Tilemaps.Tile });
         }).catch((e) => {
             console.log(e);

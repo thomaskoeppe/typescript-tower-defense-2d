@@ -1,4 +1,5 @@
-import { AbstractEnemy, EnemyParams } from '../Enemy';
+import { AbstractEnemy } from '../Enemy';
+import { EnemyParams } from '../../types';
 
 export class Larvae extends AbstractEnemy {
     constructor (scene, v, params: EnemyParams) {

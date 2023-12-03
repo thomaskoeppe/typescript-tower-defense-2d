@@ -1,9 +1,8 @@
 import GameScene from '../scenes/GameScene';
-import { IEnemy } from './Enemy';
-import { CollisionGroup, LayerDepth } from '../lib/Utils';
+import { CollisionGroup, LayerDepth } from '../lib';
 import { ButtonGroup } from './UI/ButtonGroup';
 import { TowerParams, TowerLevel } from '../types/';
-import { ITower } from '../interfaces';
+import { ITower, IEnemy } from '../interfaces';
 import { ProgressBar } from './UI/ProgressBar';
 
 export abstract class AbstractTower implements ITower {

@@ -1,4 +1,4 @@
-import { LayerDepth } from '../../lib/Utils';
+import { LayerDepth } from '../../lib';
 import GameScene from '../../scenes/GameScene';
 
 export type Button = {

@@ -1,5 +1,5 @@
 import GameScene from '../../scenes/GameScene';
-import { LayerDepth } from '../../lib/Utils';
+import { LayerDepth } from '../../lib';
 
 export class ProgressBar {
     public scene: GameScene;

@@ -1,5 +1,5 @@
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
-import { AnimatedTiles } from './lib/AnimatedTiles';
+import { AnimatedTiles } from './lib';
 import GameScene from './scenes/GameScene';
 
 declare module 'phaser' {

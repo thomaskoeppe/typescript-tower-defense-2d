@@ -1,7 +1,5 @@
-import { Scene } from 'phaser';
-
-export default class Loader {
-    public static loadSpritesheets (scene: Scene) {
+export class Loader {
+    public static loadSpritesheets (scene: Phaser.Scene) {
         // == Enemies == //
         scene.load.atlas('enemies-7', './assets/sprites/enemies/7/spritesheet.png', './assets/sprites/enemies/7/spritesheet.json');
         scene.load.atlas('enemies-5', './assets/sprites/enemies/5/spritesheet.png', './assets/sprites/enemies/5/spritesheet.json');
@@ -25,12 +23,12 @@ export default class Loader {
         scene.load.atlas('tower-animations', './assets/sprites/anims/1/spritesheet.png', './assets/sprites/anims/1/spritesheet.json');
     }
 
-    public static loadImages (scene: Scene) {
+    public static loadImages (scene: Phaser.Scene) {
         // == Turret Menu Images == //
         // scene.load.image("monkey-0", "./assets/images/monkey-0.png");
     }
 
-    public static loadTilemaps (scene: Scene) {
+    public static loadTilemaps (scene: Phaser.Scene) {
         // == Tilemap == //
         scene.load.image('tiles-base', './assets/sprites/maps/base.png');
         scene.load.image('tiles-water', './assets/sprites/maps/water.png');
@@ -39,28 +37,28 @@ export default class Loader {
         scene.load.tilemapTiledJSON('tilemap', './assets/tilemaps/map-2.json');
     }
 
-    public static loadWavedata (scene: Scene) {
+    public static loadWavedata (scene: Phaser.Scene) {
         // == Wave Data == //
         scene.load.json('wavedata', './config/wavedata/normal.json');
         scene.load.json('mapdata', './config/mapdata/map-2.json');
     }
 
-    public static loadAudio (scene: Scene) {
+    public static loadAudio (scene: Phaser.Scene) {
 
     }
 
-    public static loadFonts (scene: Scene) {
+    public static loadFonts (scene: Phaser.Scene) {
 
     }
 
-    public static loadIcons (scene: Scene) {
+    public static loadIcons (scene: Phaser.Scene) {
         // spritesheet-0 to 2
         scene.load.atlas('icons-0', './assets/icons/spritesheet-0.png', './assets/icons/spritesheet-0.json');
         scene.load.atlas('icons-1', './assets/icons/spritesheet-1.png', './assets/icons/spritesheet-1.json');
         scene.load.atlas('icons-2', './assets/icons/spritesheet-2.png', './assets/icons/spritesheet-2.json');
     }
 
-    public static generateAnimations (scene: Scene) {
+    public static generateAnimations (scene: Phaser.Scene) {
         scene.anims.create({
             key: 'enemies-7-walk-down',
             frames: scene.anims.generateFrameNames('enemies-7', { prefix: 'd-', start: 8, end: 15 }),
@@ -181,7 +179,7 @@ export default class Loader {
         });
     }
 
-    public static initiate (scene: Scene) {
+    public static initiate (scene: Phaser.Scene) {
         this.loadSpritesheets(scene);
         this.loadImages(scene);
         this.loadIcons(scene);

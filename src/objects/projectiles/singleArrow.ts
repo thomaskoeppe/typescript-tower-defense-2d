@@ -1,8 +1,8 @@
 import { AbstractProjectile } from '../Projectile';
 
-export class Dart extends AbstractProjectile {
+export class SingleArrow extends AbstractProjectile {
     static create (scene, source, target) {
-        return new Dart(scene, source, target, {
+        return new SingleArrow(scene, source, target, {
             sprite: 'projectiles-0-lvl-0',
             frame: '0',
             radius: 0,

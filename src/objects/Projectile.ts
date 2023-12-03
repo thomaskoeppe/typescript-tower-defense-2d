@@ -1,6 +1,6 @@
 import { CanDie } from './GameObject';
 import GameScene from '../scenes/GameScene';
-import { CollisionGroup, LayerDepth } from '../lib/Utils';
+import { CollisionGroup, LayerDepth } from '../lib';
 
 export interface IProjectile extends CanDie {
     params: ProjectileParams;

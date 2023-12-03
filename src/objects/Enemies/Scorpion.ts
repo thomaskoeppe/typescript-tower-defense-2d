@@ -1,7 +1,8 @@
 import { AbstractEnemy } from '../Enemy';
+import { EnemyParams } from '../../types';
 
 export class Scorpion extends AbstractEnemy {
-    constructor (scene, v, params) {
+    constructor (scene, v, params: EnemyParams) {
         super(scene, v, params);
     }
 
@@ -15,7 +16,6 @@ export class Scorpion extends AbstractEnemy {
             canFly: false,
             frame: 'd-0',
             scale: 1,
-            radius: 20,
             body: {
                 width: 40,
                 height: 56,

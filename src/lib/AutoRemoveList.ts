@@ -7,7 +7,7 @@ export interface List<T> {
     reduce: <S>(callback: (acc: S, x: T) => S, acc: S) => S
 }
 
-export default class AutoRemoveList<T extends CanDie> implements List<T> {
+export class AutoRemoveList<T extends CanDie> implements List<T> {
     public list: T[];
 
     constructor (...es) {
