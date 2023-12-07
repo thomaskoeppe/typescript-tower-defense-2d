@@ -1,4 +1,4 @@
-import { SingleArrow, DoubleArrow } from '../projectiles';
+import { SingleArrow, DoubleArrow, TripleArrow } from '../projectiles';
 import { AbstractTower } from '../Tower';
 import { LayerDepth } from '../../lib';
 import { TowerParams } from '../../types';
@@ -64,6 +64,32 @@ export class CrossBow extends AbstractTower {
                     finishAnim: 'tower-build-1-finish',
                     duration: 10000
                 }
+            },
+            3: {
+                weapon: {
+                    sprite: 'weapons-0-lvl-2',
+                    frame: 0,
+                    shootAnim: 'weapons-0-lvl-2-shoot',
+                    shootFrame: 2,
+                    offsetX: 0,
+                    offsetY: -32,
+                    cooldown: 2000,
+                    distance: 500,
+                    shoot: function (scene, source, target) {
+                        scene.spawnProjectile(TripleArrow.create(scene, source, target));
+                    }
+                },
+                sprite: 'towers-0',
+                frame: 1,
+                upgradeCost: 250,
+                build: {
+                    sprite: 'tower-animations',
+                    frame: 1,
+                    buildAnim: 'tower-build-2',
+                    startAnim: 'tower-build-2-start',
+                    finishAnim: 'tower-build-2-finish',
+                    duration: 15000
+                }
             }
         }
     };
@@ -94,9 +120,5 @@ export class CrossBow extends AbstractTower {
                 });
             });
         });
-    }
-
-    shoot (target) {
-        this.scene.spawnProjectile(SingleArrow.create(this.scene, new Phaser.Math.Vector2(this.sprite.getCenter().x, this.sprite.getCenter().y), target));
     }
 }

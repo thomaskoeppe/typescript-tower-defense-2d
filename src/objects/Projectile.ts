@@ -56,7 +56,7 @@ export abstract class AbstractProjectile implements IProjectile {
 
         this.sprite.applyForce(new Phaser.Math.Vector2((target.x - source.x) === 0 ? 1 : target.x - source.x, (target.y - source.y) === 0 ? 1 : target.y - source.y).normalize().scale(0.01));
 
-        this.sprite.anims.play('projectiles-0-lvl-0-shoot');
+        this.sprite.anims.play(`${ params.sprite }-shoot`);
 
         this.scene.createProjectile(this);
     }

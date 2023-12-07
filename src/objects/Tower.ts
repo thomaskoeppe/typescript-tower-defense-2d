@@ -25,8 +25,6 @@ export abstract class AbstractTower implements ITower {
     private costs: number = 0;
     private destroyed: boolean = false;
 
-    abstract shoot({ x, y }: { x: number, y: number }): void;
-
     constructor (scene: GameScene, v, params: TowerParams) {
         this.scene = scene;
         this.params = params;

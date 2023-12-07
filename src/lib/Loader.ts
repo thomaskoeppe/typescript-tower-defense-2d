@@ -10,10 +10,12 @@ export class Loader {
         // == Projectiles == //
         scene.load.atlas('projectiles-0-lvl-0', './assets/sprites/projectiles/0/spritesheet-0.png', './assets/sprites/projectiles/0/spritesheet-0.json');
         scene.load.atlas('projectiles-0-lvl-1', './assets/sprites/projectiles/0/spritesheet-1.png', './assets/sprites/projectiles/0/spritesheet-1.json');
+        scene.load.atlas('projectiles-0-lvl-2', './assets/sprites/projectiles/0/spritesheet-2.png', './assets/sprites/projectiles/0/spritesheet-2.json');
 
         // == Weapons == //
         scene.load.atlas('weapons-0-lvl-0', './assets/sprites/weapons/0/spritesheet-0.png', './assets/sprites/weapons/0/spritesheet-0.json');
         scene.load.atlas('weapons-0-lvl-1', './assets/sprites/weapons/0/spritesheet-1.png', './assets/sprites/weapons/0/spritesheet-1.json');
+        scene.load.atlas('weapons-0-lvl-2', './assets/sprites/weapons/0/spritesheet-2.png', './assets/sprites/weapons/0/spritesheet-2.json');
     
         // == Effects == //
         scene.load.atlas('effects-0', './assets/sprites/effects/0/spritesheet.png', './assets/sprites/effects/0/spritesheet.json');
@@ -136,6 +138,20 @@ export class Loader {
         });
 
         scene.anims.create({
+            key: 'weapons-0-lvl-2-shoot',
+            frames: scene.anims.generateFrameNames('weapons-0-lvl-2', { frames: [ 1, 2, 3, 4, 5, 0 ]}),
+            frameRate: 8,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'projectiles-0-lvl-2-shoot',
+            frames: scene.anims.generateFrameNames('projectiles-0-lvl-2', { start: 0, end: 2 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        scene.anims.create({
             key: 'tower-build-0',
             frames: scene.anims.generateFrameNames('tower-animations', { start: 0, end: 5 }),
             frameRate: 8,
@@ -165,6 +181,27 @@ export class Loader {
 
         scene.anims.create({
             key: 'tower-build-1-finish',
+            frames: scene.anims.generateFrameNames('tower-animations', { start: 11, end: 6 }),
+            frameRate: 8,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'tower-build-2',
+            frames: scene.anims.generateFrameNames('tower-animations', { start: 24, end: 29 }),
+            frameRate: 8,
+            repeat: -1
+        });
+
+        scene.anims.create({
+            key: 'tower-build-2-start',
+            frames: scene.anims.generateFrameNames('tower-animations', { start: 18, end: 23 }),
+            frameRate: 8,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'tower-build-2-finish',
             frames: scene.anims.generateFrameNames('tower-animations', { start: 11, end: 6 }),
             frameRate: 8,
             repeat: 0
