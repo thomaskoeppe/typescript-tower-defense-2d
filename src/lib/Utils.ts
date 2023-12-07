@@ -1,4 +1,4 @@
-import {flatten} from 'lodash';
+import { flatten } from 'lodash';
 import GameScene from '../scenes/GameScene';
 
 export enum CollisionGroup {

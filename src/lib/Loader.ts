@@ -52,7 +52,6 @@ export class Loader {
     }
 
     public static loadIcons (scene: Phaser.Scene) {
-        // spritesheet-0 to 2
         scene.load.atlas('icons-0', './assets/icons/spritesheet-0.png', './assets/icons/spritesheet-0.json');
         scene.load.atlas('icons-1', './assets/icons/spritesheet-1.png', './assets/icons/spritesheet-1.json');
         scene.load.atlas('icons-2', './assets/icons/spritesheet-2.png', './assets/icons/spritesheet-2.json');

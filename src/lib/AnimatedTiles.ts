@@ -1,10 +1,4 @@
-export type AnimatedTile = {
-    map: Phaser.Tilemaps.Tilemap,
-    animatedTiles: any[],
-    active: boolean,
-    rate: number,
-    activeLayer: boolean[]
-}
+import { AnimatedTile } from '../types';
 
 export class AnimatedTiles extends Phaser.Plugins.ScenePlugin {
     public scene: Phaser.Scene | null;

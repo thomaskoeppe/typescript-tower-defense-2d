@@ -39,15 +39,12 @@ export default class GameScene extends Phaser.Scene {
     public projectiles: AutoRemoveList<IProjectile>;
     public turrets: PlacedTurret[];
 
-    private projectileSubscriptions: (() => void)[];
-
     constructor () {
         super({ key: 'game', active: true, visible: true });
 
         this.enemies = new AutoRemoveList<IEnemy>();
         this.projectiles = new AutoRemoveList<IProjectile>();
         this.turrets = [];
-        this.projectileSubscriptions = [];
     }
 
     public preload () {

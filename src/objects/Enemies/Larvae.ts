@@ -1,12 +1,13 @@
 import { AbstractEnemy } from '../Enemy';
 import { EnemyParams } from '../../types';
+import GameScene from '../../scenes/GameScene';
 
 export class Larvae extends AbstractEnemy {
-    constructor (scene, v, params: EnemyParams) {
+    constructor (scene: GameScene, v, params: EnemyParams) {
         super(scene, v, params);
     }
 
-    static create (scene, v) {
+    static create (scene: GameScene, v) {
         return new Larvae(scene, v, {
             hp: 10,
             speed: 0.5,

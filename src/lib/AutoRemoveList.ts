@@ -1,13 +1,8 @@
 import { flatten, partition } from 'lodash';
 import { CanDie } from '../objects/GameObject';
+import { IList } from '../interfaces';
 
-export interface List<T> {
-    forEach: (callback: () => void) => void
-    map: (callback: (v: T) => T, i: number, arr: T[]) => T[]
-    reduce: <S>(callback: (acc: S, x: T) => S, acc: S) => S
-}
-
-export class AutoRemoveList<T extends CanDie> implements List<T> {
+export class AutoRemoveList<T extends CanDie> implements IList<T> {
     public list: T[];
 
     constructor (...es) {
