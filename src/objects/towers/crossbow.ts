@@ -5,7 +5,7 @@ import { TowerParams } from '../../types';
 import { ProgressBar } from '../UI/ProgressBar';
 
 export class CrossBow extends AbstractTower {
-    private static config: TowerParams = {
+    public static readonly config: TowerParams = {
         offsetX: 32,
         offsetY: 0,
         maxLevel: 3,
@@ -98,27 +98,7 @@ export class CrossBow extends AbstractTower {
         super(scene, v, CrossBow.config);
     }
 
-    static create (scene, v): Promise<AbstractTower> {
-        const buildConfig = CrossBow.config.level['1'].build;
-
-        return new Promise(function (resolve, reject) {
-            if (scene.getMoney() < CrossBow.config.economy.buildCost) {
-                return reject('Not enough money');
-            }
-
-            const buildAnimation = scene.add.sprite(v.x, v.y, buildConfig.sprite, buildConfig.frame).setDepth(LayerDepth.UI);
-            buildAnimation.anims.play(buildConfig.buildAnim);
-
-            new ProgressBar(scene, v.x, v.y, buildConfig.duration, function () {
-                const buildAnimation2 = scene.add.sprite(v.x, v.y, buildConfig.sprite, buildConfig.frame).setDepth(LayerDepth.UI);
-                buildAnimation2.anims.play(buildConfig.finishAnim);
-
-                buildAnimation2.on('animationcomplete', function () {
-                    buildAnimation.destroy();
-                    buildAnimation2.destroy();
-                    resolve(new CrossBow(scene, v));
-                });
-            });
-        });
+    static create (scene, v): AbstractTower {
+        return new CrossBow(scene, v);
     }
 }

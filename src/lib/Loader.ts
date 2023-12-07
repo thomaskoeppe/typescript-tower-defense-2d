@@ -6,6 +6,7 @@ export class Loader {
 
         // == Towers == //
         scene.load.atlas('towers-0', './assets/sprites/towers/0/spritesheet.png', './assets/sprites/towers/0/spritesheet.json');
+        scene.load.atlas('towers-2', './assets/sprites/towers/2/spritesheet.png', './assets/sprites/towers/2/spritesheet.json');
 
         // == Projectiles == //
         scene.load.atlas('projectiles-0-lvl-0', './assets/sprites/projectiles/0/spritesheet-0.png', './assets/sprites/projectiles/0/spritesheet-0.json');

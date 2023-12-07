@@ -21,7 +21,7 @@ export abstract class AbstractTower implements ITower {
     private radius: Phaser.GameObjects.Graphics;
     private weapon: Phaser.Physics.Matter.Sprite;
     private menu: ButtonGroup;
-    private isBuilding: boolean = false;
+    private isBuilding: boolean = true;
     private costs: number = 0;
     private destroyed: boolean = false;
 
@@ -36,8 +36,8 @@ export abstract class AbstractTower implements ITower {
         this.body = this.scene.matter.body;
         this.bodies = this.scene.matter.bodies;
 
-        this.sprite = this.scene.matter.add.sprite(v.x, v.y, this.levelData.sprite, this.level.toString()).setAngle(0);
-        this.weapon = this.scene.matter.add.sprite(v.x + this.levelData.weapon.offsetX, v.y + this.levelData.weapon.offsetY, this.levelData.weapon.sprite, '0').setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION);
+        this.sprite = this.scene.matter.add.sprite(v.x, v.y, this.levelData.sprite, this.level.toString()).setAngle(0).setVisible(false);
+        this.weapon = this.scene.matter.add.sprite(v.x + this.levelData.weapon.offsetX, v.y + this.levelData.weapon.offsetY, this.levelData.weapon.sprite, '0').setCollisionGroup(CollisionGroup.BULLET).setAngle(0).setDepth(LayerDepth.INTERACTION).setVisible(false);
 
         this.sprite.setExistingBody(this.body.create({
             parts: [ this.bodies.rectangle(0, 0, 8, 8) ],
@@ -118,6 +118,29 @@ export abstract class AbstractTower implements ITower {
                     this.showMenu();
                 }
             }
+        });
+    }
+
+    public build (): void {
+        new Promise((resolve, reject) => {
+            const buildAnimation = this.scene.add.sprite(this.sprite.x, this.sprite.y, this.levelData.build.sprite, this.levelData.build.frame).setDepth(LayerDepth.UI);
+            buildAnimation.anims.play(this.levelData.build.buildAnim);
+
+            new ProgressBar(this.scene, this.sprite.x, this.sprite.y, this.levelData.build.duration, () => {
+                const buildAnimation2 = this.scene.add.sprite(this.sprite.x, this.sprite.y, this.levelData.build.sprite, this.levelData.build.frame).setDepth(LayerDepth.UI);
+                buildAnimation2.anims.play(this.levelData.build.finishAnim);
+
+                buildAnimation2.on('animationcomplete', () => {
+                    buildAnimation.destroy();
+                    buildAnimation2.destroy();
+
+                    resolve(this);
+                });
+            });
+        }).then(() => {
+            this.sprite.setVisible(true);
+            this.sprite.setVisible(true);
+            this.isBuilding = false;
         });
     }
 

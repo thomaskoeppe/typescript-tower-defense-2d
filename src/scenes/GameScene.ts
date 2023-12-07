@@ -331,11 +331,12 @@ export default class GameScene extends Phaser.Scene {
     }
 
     public placeTurret (tile: Phaser.Tilemaps.Tile): void {
-        CrossBow.create(this, { x: tile.pixelX + 32, y: tile.pixelY }).then((turret) => {
-            this.turrets.push({ sprite: turret, tile: tile as Phaser.Tilemaps.Tile });
-        }).catch((e) => {
-            console.log(e);
-        });
+        if (this.getMoney() < CrossBow.config.economy.buildCost) {
+            console.log('Not enough money!');
+            return;
+        }
+
+        this.turrets.push({ sprite: CrossBow.create(this, { x: tile.pixelX + 32, y: tile.pixelY }), tile: tile as Phaser.Tilemaps.Tile });
     }
 
     public getTileAtWorldXY (x: number, y: number): Phaser.Tilemaps.Tile | null {
