@@ -18,6 +18,8 @@ export class Loader {
         scene.load.atlas('weapons-0-lvl-1', './assets/sprites/weapons/0/spritesheet-1.png', './assets/sprites/weapons/0/spritesheet-1.json');
         scene.load.atlas('weapons-0-lvl-2', './assets/sprites/weapons/0/spritesheet-2.png', './assets/sprites/weapons/0/spritesheet-2.json');
     
+        scene.load.atlas('weapons-2-lvl-0', './assets/sprites/weapons/2/spritesheet-0.png', './assets/sprites/weapons/2/spritesheet-0.json');
+
         // == Effects == //
         scene.load.atlas('effects-0', './assets/sprites/effects/0/spritesheet.png', './assets/sprites/effects/0/spritesheet.json');
 
@@ -106,6 +108,13 @@ export class Loader {
         scene.anims.create({
             key: 'weapons-0-lvl-0-shoot',
             frames: scene.anims.generateFrameNames('weapons-0-lvl-0', { frames: [ 1, 2, 3, 4, 5, 0 ]}),
+            frameRate: 8,
+            repeat: 0
+        });
+
+        scene.anims.create({
+            key: 'weapons-2-lvl-0-shoot',
+            frames: scene.anims.generateFrameNames('weapons-2-lvl-0', { frames: [ 1, 2, 3, 4, 5, 6, 7, 0 ]}),
             frameRate: 8,
             repeat: 0
         });

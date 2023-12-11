@@ -139,7 +139,7 @@ export abstract class AbstractTower implements ITower {
             });
         }).then(() => {
             this.sprite.setVisible(true);
-            this.sprite.setVisible(true);
+            this.weapon.setVisible(true);
             this.isBuilding = false;
         });
     }

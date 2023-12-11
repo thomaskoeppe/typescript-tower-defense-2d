@@ -17,7 +17,8 @@ export type ProjectileParams = {
     damage: number,
     radius: number,
     sprite: string,
-    frame: string
+    frame: string,
+    speed: number
 }
 
 export abstract class AbstractProjectile implements IProjectile {
@@ -54,7 +55,7 @@ export abstract class AbstractProjectile implements IProjectile {
             frictionStatic: 0.0
         })).setCollisionGroup(CollisionGroup.BULLET).setDepth(LayerDepth.INTERACTION).setPosition(source.x, source.y).setAngle((Math.atan2(target.y - source.y, target.x - source.x) * 180 / Math.PI) + 90).setScale(this.params.scale);
 
-        this.sprite.applyForce(new Phaser.Math.Vector2((target.x - source.x) === 0 ? 1 : target.x - source.x, (target.y - source.y) === 0 ? 1 : target.y - source.y).normalize().scale(0.01));
+        this.sprite.applyForce(new Phaser.Math.Vector2((target.x - source.x) === 0 ? 1 : target.x - source.x, (target.y - source.y) === 0 ? 1 : target.y - source.y).normalize().scale(this.params.speed));
 
         this.sprite.anims.play(`${ params.sprite }-shoot`);
 

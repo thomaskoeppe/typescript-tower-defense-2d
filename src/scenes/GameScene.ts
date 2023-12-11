@@ -2,7 +2,7 @@ import { AbstractEnemy } from '../objects/Enemy';
 import { Scorpion, Larvae } from '../objects/enemies';
 import { CrossBow } from '../objects/towers';
 import { AbstractProjectile, IProjectile } from '../objects/Projectile';
-import { DartMonkeyIcon } from '../objects/TowerIcons/DartMonkey';
+import { CrossbowIcon, CatapultIcon } from '../objects/icons';
 import { Loader, AutoRemoveList, LayerDepth, Utils } from '../lib';
 import { AbstractTower } from '../objects/Tower';
 import { IEnemy } from '../interfaces';
@@ -70,12 +70,13 @@ export default class GameScene extends Phaser.Scene {
         this.hud = this.add.container(this.cameras.main.width - 64, 16).setDepth(LayerDepth.UI);
         const backgroundColor = this.add.graphics();
         backgroundColor.fillStyle(0x000000, 1);
-        backgroundColor.fillRect(0, 0, 128, 128);
+        backgroundColor.fillRect(0, 0, 64, 256);
         this.hud.add(backgroundColor);
 
         Loader.generateAnimations(this);
 
-        DartMonkeyIcon.create(this);
+        CrossbowIcon.create(this, { x: 0, y: 0});
+        CatapultIcon.create(this, { x: 0, y: 128});
 
     this.input.mouse!.disableContextMenu();
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -312,7 +313,7 @@ export default class GameScene extends Phaser.Scene {
         this.projectiles.add(projectile);
     }
 
-    public checkCollision (tile: Phaser.Tilemaps.Tile): boolean {
+    public checkCollision (tile: Phaser.Tilemaps.Tile, offsetY): boolean {
         const tile2 = this.world!.getTileAt(tile.x, tile.y - 1);
 
         if (tile.collides) {
@@ -328,15 +329,6 @@ export default class GameScene extends Phaser.Scene {
         }
 
         return false;
-    }
-
-    public placeTurret (tile: Phaser.Tilemaps.Tile): void {
-        if (this.getMoney() < CrossBow.config.economy.buildCost) {
-            console.log('Not enough money!');
-            return;
-        }
-
-        this.turrets.push({ sprite: CrossBow.create(this, { x: tile.pixelX + 32, y: tile.pixelY }), tile: tile as Phaser.Tilemaps.Tile });
     }
 
     public getTileAtWorldXY (x: number, y: number): Phaser.Tilemaps.Tile | null {

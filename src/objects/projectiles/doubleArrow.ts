@@ -7,7 +7,8 @@ export class DoubleArrow extends AbstractProjectile {
             frame: '0',
             radius: 0,
             scale: 1,
-            damage: 1
+            damage: 2,
+            speed: 0.015
         });
     }
 }
