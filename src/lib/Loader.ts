@@ -53,7 +53,10 @@ export class Loader {
     }
 
     public static loadFonts (scene: Phaser.Scene) {
+        // https://github.com/photonstorm/phaser-examples/blob/master/examples/assets/fonts/bitmapFonts/carrier_command.png
+        // https://github.com/photonstorm/phaser-examples/blob/master/examples/assets/fonts/bitmapFonts/carrier_command.xml
 
+        scene.load.bitmapFont('carrier-command', './assets/fonts/carrier_command.png', './assets/fonts/carrier_command.xml');
     }
 
     public static loadIcons (scene: Phaser.Scene) {
