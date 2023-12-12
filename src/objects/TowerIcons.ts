@@ -68,7 +68,6 @@ export abstract class AbstractTowerIcons implements ITowerIcons {
         this.hasCollisions(this.scene.checkCollision(tile!, this.offsetY));
     }
 
-
     public dragEnd (pointer: Phaser.Input.Pointer) {
         const tile = this.scene.getTileAtWorldXY(pointer.worldX, pointer.worldY);
 

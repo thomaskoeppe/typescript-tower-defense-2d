@@ -72,6 +72,7 @@ export abstract class AbstractTower implements ITower {
                 name: 'upgrade',
                 title: 'Upgrade',
                 icon: 'icons-0',
+                needsBorder: true,
                 texture: '15',
                 onClick: (pointer) => {
                     if (this.hasMaxLevel()) {
@@ -89,22 +90,12 @@ export abstract class AbstractTower implements ITower {
             {
                 name: 'sell',
                 title: 'Sell',
-                icon: 'icons-0',
-                texture: '14',
+                icon: 'icons-1',
+                texture: '47',
+                needsBorder: true,
                 onClick: (pointer) => {
                     this.hideMenu();
                     this.sell();
-                }
-            },
-            {
-                name: 'sell',
-                title: 'Sell',
-                icon: 'icons-0',
-                texture: '13',
-                onClick: (pointer) => {
-                    this.hideMenu();
-
-                    // this.sell();
                 }
             }
         ]);
