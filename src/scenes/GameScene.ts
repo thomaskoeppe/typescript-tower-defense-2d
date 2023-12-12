@@ -92,14 +92,14 @@ export default class GameScene extends Phaser.Scene {
         }
     });
 
-    new Frame(this, 0, 0, 'icons-frames', [
-        [ '12', '13', '13', '13', '13', '14' ],
-        [ '31', '32', '32', '32', '32', '33' ],
-        [ '31', '32', '32', '32', '32', '33' ],
-        [ '50', '51', '51', '51', '51', '52' ]
+    new Frame(this, 0, 0, 'icons-frames-1', [
+        [ '0', '1', '2', '2', '3' ],
+        [ '4', '5', '5', '6', '7' ],
+        [ '8', '9', '10', '9', '11' ],
+        [ '12', '13', '13', '14', '15' ]
     ], 32);
-    new TextWithIcon(this, 22, 46, 'icons-frames', '160', '100', 32, 0x000000);
-    new TextWithIcon(this, 22, 92, 'icons-frames', '180', '1000', 32, 0x000000);
+    new TextWithIcon(this, 14, 46, 'icons-frames-0', '160', '100', 32, 0x000000);
+    new TextWithIcon(this, 14, 92, 'icons-frames-0', '180', '1000', 32, 0x000000);
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;
