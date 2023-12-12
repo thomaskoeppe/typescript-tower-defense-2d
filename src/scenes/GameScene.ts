@@ -26,7 +26,7 @@ export default class GameScene extends Phaser.Scene {
     private nextEnemy: number = 0;
     private lastEnemy: string = 'scorpion';
 
-    private text: Phaser.GameObjects.Text | undefined;
+    private text: Phaser.GameObjects.BitmapText | undefined;
 
     private lifes: number = 10;
 
@@ -61,11 +61,7 @@ export default class GameScene extends Phaser.Scene {
         this.goal = new Phaser.Math.Vector2(this.mapdata.goal.x, this.mapdata.goal.y);
         this.path = Utils.createPath(this.path!, this.mapdata.path, this.spawn, this.goal);
 
-        this.text = this.add.text(16, 16, `Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}`, {
-            font: '18px monospace',
-            padding: { x: 20, y: 10 },
-            backgroundColor: '#000000'
-        }).setDepth(LayerDepth.UI);
+        this.text = this.add.bitmapText(16, 16, 'carrier-command', `Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}`).setDepth(LayerDepth.UI).setFontSize(12);
 
         this.hud = this.add.container(this.cameras.main.width - 64, 16).setDepth(LayerDepth.UI);
         const backgroundColor = this.add.graphics();

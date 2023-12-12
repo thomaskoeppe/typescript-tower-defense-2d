@@ -18,7 +18,7 @@ export class ButtonGroup extends Phaser.GameObjects.Container {
     public scene: GameScene;
 
     private buttons: Button[];
-    private tooltip: Phaser.GameObjects.Text;
+    private tooltip: Phaser.GameObjects.BitmapText;
 
     constructor (scene: GameScene, {x: x, y: y}: {x: number, y: number}, {w: w, h: h}: {w: number, h: number}, buttons: Button[]) {
         super(scene, x, y + 48);
@@ -26,7 +26,7 @@ export class ButtonGroup extends Phaser.GameObjects.Container {
         this.scene = scene;
         this.buttons = buttons;
 
-        this.tooltip = this.scene.add.text(0, 0, '', { fontFamily: 'Arial', fontSize: 20, color: '#ffffff', align: 'center' }).setOrigin(0.5, 0.5).setDepth(LayerDepth.UI_ITEM).setVisible(false);
+        this.tooltip = this.scene.add.bitmapText(0, 0, 'carrier-command', '').setOrigin(0.5, 0.5).setDepth(LayerDepth.UI_ITEM).setVisible(false).setFontSize(12);
 
         this.scene.add.existing(this);
 
