@@ -70,7 +70,7 @@ export abstract class AbstractTower implements ITower {
         this.menu = new ButtonGroup(this.scene, { x: this.sprite.getCenter().x!, y: this.sprite.getCenter().y! }, { w: 100, h: 100 }, [
             {
                 name: 'upgrade',
-                title: 'Upgrade',
+                title: 'UPGRADE',
                 icon: 'icons-0',
                 needsBorder: true,
                 texture: '15',
@@ -89,7 +89,7 @@ export abstract class AbstractTower implements ITower {
             },
             {
                 name: 'sell',
-                title: 'Sell',
+                title: 'SELL',
                 icon: 'icons-1',
                 texture: '47',
                 needsBorder: true,
