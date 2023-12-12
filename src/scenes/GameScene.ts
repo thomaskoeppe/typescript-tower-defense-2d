@@ -1,11 +1,11 @@
 import { AbstractEnemy } from '../objects/Enemy';
 import { Scorpion, Larvae } from '../objects/enemies';
-import { CrossBow } from '../objects/towers';
 import { AbstractProjectile, IProjectile } from '../objects/Projectile';
 import { CrossbowIcon, CatapultIcon } from '../objects/icons';
 import { Loader, AutoRemoveList, LayerDepth, Utils } from '../lib';
 import { AbstractTower } from '../objects/Tower';
 import { IEnemy } from '../interfaces';
+import { TextWithIcon, Frame } from '../objects/UI';
 
 export type PlacedTurret = {
   sprite: AbstractTower,
@@ -26,7 +26,7 @@ export default class GameScene extends Phaser.Scene {
     private nextEnemy: number = 0;
     private lastEnemy: string = 'scorpion';
 
-    private text: Phaser.GameObjects.Text | undefined;
+    // private text: Phaser.GameObjects.Text | undefined;
 
     private lifes: number = 1;
 
@@ -61,7 +61,7 @@ export default class GameScene extends Phaser.Scene {
         this.goal = new Phaser.Math.Vector2(this.mapdata.goal.x, this.mapdata.goal.y);
         this.path = Utils.createPath(this.path!, this.mapdata.path, this.spawn, this.goal);
 
-        this.text = this.add.text(16, 16, `Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}`, { fontFamily: 'Public Pixel', fontSize: 16, color: '#ffffff', backgroundColor: '#000000', lineSpacing: 8, padding: {y: 4, x: 4} }).setDepth(LayerDepth.UI);
+        // this.text = this.add.text(16, 16, `Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}`, { fontFamily: 'Public Pixel', fontSize: 16, color: '#ffffff', backgroundColor: '#000000', lineSpacing: 8, padding: {y: 4, x: 4} }).setDepth(LayerDepth.UI);
 
         this.hud = this.add.container(this.cameras.main.width - 64, 16).setDepth(LayerDepth.UI);
         const backgroundColor = this.add.graphics();
@@ -92,27 +92,23 @@ export default class GameScene extends Phaser.Scene {
         }
     });
 
-    this.add.graphics()
-        .fillStyle(0x000000)
-        .fillRect(0, this.cameras.main.centerY - 192, this.cameras.main.width, 256)
-        .setDepth(LayerDepth.UI);
-
-    this.add.text(this.cameras.main.centerX - 64, this.cameras.main.centerY - 64, 'Game Over', {
-        fontFamily: 'Public Pixel',
-        fontSize: 128,
-        color: '#ffffff',
-        padding: { x: 16, y: 16 }
-    }).setDepth(LayerDepth.UI).setOrigin(0.5, 0.5);
-
+    new Frame(this, 0, 0, 'icons-frames', [
+        [ '12', '13', '13', '13', '13', '14' ],
+        [ '31', '32', '32', '32', '32', '33' ],
+        [ '31', '32', '32', '32', '32', '33' ],
+        [ '50', '51', '51', '51', '51', '52' ]
+    ], 32);
+    new TextWithIcon(this, 22, 46, 'icons-frames', '160', '100', 32, 0x000000);
+    new TextWithIcon(this, 22, 92, 'icons-frames', '180', '1000', 32, 0x000000);
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;
     }
 
     public update (time: number, delta: number): void {
-        if (this.text) {
-            this.text.setText(`Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}\nMoney $${this.money}\nLifes ${this.lifes}`);
-        }
+        // if (this.text) {
+        //     this.text.setText(`Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}\nMoney $${this.money}\nLifes ${this.lifes}`);
+        // }
 
         if (this.enemies.active < 20 && this.nextEnemy < time) {
             let enemy;
@@ -271,7 +267,13 @@ export default class GameScene extends Phaser.Scene {
         if (this.lifes <= 0) {
             this.scene.pause('game');
 
-            const gameoverText = this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 'Game Over', { fontFamily: 'Public Pixel', fontSize: 72, color: '#ff0000' }).setDepth(LayerDepth.UI).setOrigin(0.5, 0.5);
+            this.add.graphics().fillStyle(0x0b0b0b).fillRect(0, this.cameras.main.centerY - 192, this.cameras.main.width, 256).setDepth(LayerDepth.UI);
+            this.add.text(this.cameras.main.centerX - 64, this.cameras.main.centerY - 64, 'Game Over', {
+                fontFamily: 'Public Pixel',
+                fontSize: 128,
+                color: '#ffffff',
+                padding: { x: 16, y: 16 }
+            }).setDepth(LayerDepth.UI).setOrigin(0.5, 0.5);
         }
     }
 
