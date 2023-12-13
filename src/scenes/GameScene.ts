@@ -18,7 +18,7 @@ export default class GameScene extends Phaser.Scene {
 
     private mapdata: any;
 
-    private wave: number = 0;
+    private wave: number = 1;
     private waveData: any;
     private money: number = 1000;
     public enemiesLeft: number = 0;
@@ -38,6 +38,10 @@ export default class GameScene extends Phaser.Scene {
     public enemies: AutoRemoveList<IEnemy>;
     public projectiles: AutoRemoveList<IProjectile>;
     public turrets: PlacedTurret[];
+
+    private moneyText: TextWithIcon | undefined;
+    private healthText: TextWithIcon | undefined;
+    private waveText: TextWithIcon | undefined;
 
     constructor () {
         super({ key: 'game', active: true, visible: true });
@@ -63,7 +67,7 @@ export default class GameScene extends Phaser.Scene {
 
         // this.text = this.add.text(16, 16, `Wave ${this.wave + 1}/${this.cache.json.get('wavedata').length}`, { fontFamily: 'Public Pixel', fontSize: 16, color: '#ffffff', backgroundColor: '#000000', lineSpacing: 8, padding: {y: 4, x: 4} }).setDepth(LayerDepth.UI);
 
-        this.hud = this.add.container(this.cameras.main.width - 64, 16).setDepth(LayerDepth.UI);
+        this.hud = this.add.container(this.cameras.main.width - 64, 512).setDepth(LayerDepth.UI);
         const backgroundColor = this.add.graphics();
         backgroundColor.fillStyle(0x000000, 1);
         backgroundColor.fillRect(0, 0, 64, 256);
@@ -92,14 +96,21 @@ export default class GameScene extends Phaser.Scene {
         }
     });
 
-    new Frame(this, 0, 0, 'icons-frames-1', [
+    new Frame(this, this.cameras.main.width - 32 * 5 - 4, 4, 'icons-frames-1', [
+        [ '0', '1', '2', '2', '3' ],
+        [ '12', '13', '14', '13', '15' ]
+    ], 32);
+
+    new Frame(this, 4, 4, 'icons-frames-1', [
         [ '0', '1', '2', '2', '3' ],
         [ '4', '5', '5', '6', '7' ],
         [ '8', '9', '10', '9', '11' ],
         [ '12', '13', '13', '14', '15' ]
     ], 32);
-    new TextWithIcon(this, 14, 46, 'icons-frames-0', '160', '100', 32, 0x000000);
-    new TextWithIcon(this, 14, 92, 'icons-frames-0', '180', '1000', 32, 0x000000);
+
+    this.healthText = new TextWithIcon(this, 20, 46, 'icons-frames-0', '160', this.lifes.toString(), 32, 0x000000);
+    this.moneyText = new TextWithIcon(this, 20, 92, 'icons-frames-0', '180', this.money.toString(), 32, 0x000000);
+    this.waveText = new TextWithIcon(this, this.cameras.main.width - 32 * 5 + 20, 38, 'icons-frames-0', '167', this.wave.toString(), 32, 0x000000);
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;
@@ -264,6 +275,8 @@ export default class GameScene extends Phaser.Scene {
     public loseHealth (enemy: IEnemy, takesHealth) {
         this.lifes -= takesHealth;
 
+        this.healthText!.updateText(this.lifes.toString());
+
         if (this.lifes <= 0) {
             this.scene.pause('game');
 
@@ -298,10 +311,14 @@ export default class GameScene extends Phaser.Scene {
 
     public addMoney (money: number) {
         this.money += money;
+
+        this.moneyText!.updateText(this.money.toString());
     }
 
     public removeMoney (money: number) {
         this.money -= money;
+
+        this.moneyText!.updateText(this.money.toString());
     }
 
     public getMoney (): number {
