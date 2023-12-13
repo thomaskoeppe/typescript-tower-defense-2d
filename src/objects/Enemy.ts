@@ -95,7 +95,7 @@ export abstract class AbstractEnemy implements IEnemy {
         this.healthBar.update(this.sprite.x, this.sprite.y + 32, this.params.hp);
 
         if (this.follower.t >= 1) {
-            this.scene.loseHealth(this, this.params.takesHealth);
+            this.scene.loseHealth(this.params.takesHealth);
         }
     }
 

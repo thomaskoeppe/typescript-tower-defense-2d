@@ -5,7 +5,7 @@ import { CrossbowIcon, CatapultIcon } from '../objects/icons';
 import { Loader, AutoRemoveList, LayerDepth, Utils } from '../lib';
 import { AbstractTower } from '../objects/Tower';
 import { IEnemy } from '../interfaces';
-import { TextWithIcon, Frame } from '../objects/UI';
+import { TextWithIcon, Frame, Text } from '../objects/UI';
 
 export type PlacedTurret = {
   sprite: AbstractTower,
@@ -41,7 +41,7 @@ export default class GameScene extends Phaser.Scene {
 
     private moneyText: TextWithIcon | undefined;
     private healthText: TextWithIcon | undefined;
-    private waveText: TextWithIcon | undefined;
+    private waveText: Text | undefined;
 
     constructor () {
         super({ key: 'game', active: true, visible: true });
@@ -95,10 +95,10 @@ export default class GameScene extends Phaser.Scene {
             });
         }
     });
-
-    new Frame(this, this.cameras.main.width - 32 * 5 - 4, 4, 'icons-frames-1', [
-        [ '0', '1', '2', '2', '3' ],
-        [ '12', '13', '14', '13', '15' ]
+    
+    new Frame(this, this.cameras.main.centerX - 16 * 7, 4, 'icons-frames-1', [
+        [ '0', '1', '2', '2', '1', '1', '3' ],
+        [ '12', '13', '14', '13', '13', '13', '15' ]
     ], 32);
 
     new Frame(this, 4, 4, 'icons-frames-1', [
@@ -110,7 +110,8 @@ export default class GameScene extends Phaser.Scene {
 
     this.healthText = new TextWithIcon(this, 20, 46, 'icons-frames-0', '160', this.lifes.toString(), 32, 0x000000);
     this.moneyText = new TextWithIcon(this, 20, 92, 'icons-frames-0', '180', this.money.toString(), 32, 0x000000);
-    this.waveText = new TextWithIcon(this, this.cameras.main.width - 32 * 5 + 20, 38, 'icons-frames-0', '167', this.wave.toString(), 32, 0x000000);
+    this.waveText = new Text(this, 0, 38, 'WAVE ' + this.wave.toString(), 32, 0x000000);
+    this.waveText.setPosition(this.cameras.main.centerX - this.waveText.width / 2, 38);
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;
@@ -272,7 +273,7 @@ export default class GameScene extends Phaser.Scene {
         projectile.destroy();
     }
 
-    public loseHealth (enemy: IEnemy, takesHealth) {
+    public loseHealth (takesHealth) {
         this.lifes -= takesHealth;
 
         this.healthText!.updateText(this.lifes.toString());
