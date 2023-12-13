@@ -8,7 +8,7 @@
     "lint": "eslint . --ext .ts",
     "start": "webpack serve --mode development",
     "build": "npm run lint && webpack --mode production",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build && cp CNAME dist/CNAME",
     "deploy": "gh-pages -d dist"
   },
   "repository": {
