@@ -34,7 +34,7 @@ export default class OverlayScene extends Phaser.Scene {
         this.waveText = new Text(this, 0, 38, 'WAVE 1', 32, 0x000000);
         this.waveText.setPosition(this.cameras.main.centerX - this.waveText.width / 2, 38);
 
-        new Button(this, this.cameras.main.width - 36, 36, 'buttons', { default: '56', hover: '57' }).setDisplaySize(64, 64).setDepth(LayerDepth.UI).on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        new Button(this, this.cameras.main.width - 36, 36, { default: 'sprite1372', hover: 'sprite1389', active: 'sprite1407', activeHover: 'sprite1425' }, 'sprite1511').setDisplaySize(64, 64).on('pointerdown', (pointer: Phaser.Input.Pointer) => {
             if (pointer.leftButtonDown()) {
                 if (this.scene.isPaused('game')) {
                     this.scene.resume('game');
@@ -42,6 +42,10 @@ export default class OverlayScene extends Phaser.Scene {
                     this.scene.pause('game');
                 }
             }
+        });
+
+        new Button(this, this.cameras.main.width - 36 * 3, 36, { default: 'sprite1372', hover: 'sprite1389', active: 'sprite1407', activeHover: 'sprite1425' }, 'sprite1445').setDisplaySize(64, 64).on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+            console.log('settings');
         });
 
         this.scene.get('game').events
