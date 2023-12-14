@@ -26,6 +26,8 @@ export class Loader {
         // == Animations == //
         scene.load.atlas('tower-destroy-animations', './assets/sprites/anims/0/spritesheet.png', './assets/sprites/anims/0/spritesheet.json');
         scene.load.atlas('tower-animations', './assets/sprites/anims/1/spritesheet.png', './assets/sprites/anims/1/spritesheet.json');
+    
+        scene.load.atlas('buttons', './assets/icons/buttons.png', './assets/icons/buttons.json');
     }
 
     public static loadImages (scene: Phaser.Scene) {

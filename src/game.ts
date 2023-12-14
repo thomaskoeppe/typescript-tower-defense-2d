@@ -1,6 +1,7 @@
 import PhaserMatterCollisionPlugin from 'phaser-matter-collision-plugin';
 import { AnimatedTiles } from './lib';
 import GameScene from './scenes/GameScene';
+import OverlayScene from './scenes/OverlayScene';
 
 declare module 'phaser' {
   interface Scene {
@@ -35,7 +36,7 @@ const config: Phaser.Types.Core.GameConfig = {
     fps: {
         target: 30
     },
-    scene: [ GameScene ],
+    scene: [ GameScene, OverlayScene ],
     plugins: {
         scene: [
             {

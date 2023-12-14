@@ -5,7 +5,7 @@ import { CrossbowIcon, CatapultIcon } from '../objects/icons';
 import { Loader, AutoRemoveList, LayerDepth, Utils } from '../lib';
 import { AbstractTower } from '../objects/Tower';
 import { IEnemy } from '../interfaces';
-import { TextWithIcon, Frame, Text } from '../objects/UI';
+import { TextWithIcon, Frame, Text, Button } from '../objects/UI';
 
 export type PlacedTurret = {
   sprite: AbstractTower,
@@ -112,6 +112,16 @@ export default class GameScene extends Phaser.Scene {
     this.moneyText = new TextWithIcon(this, 20, 92, 'icons-frames-0', '180', this.money.toString(), 32, 0x000000);
     this.waveText = new Text(this, 0, 38, 'WAVE ' + this.wave.toString(), 32, 0x000000);
     this.waveText.setPosition(this.cameras.main.centerX - this.waveText.width / 2, 38);
+
+    new Button(this, this.cameras.main.width - 36, 36, 'buttons', { default: '56', hover: '57' }).setDisplaySize(64, 64).setDepth(LayerDepth.UI).on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+        if (pointer.leftButtonDown()) {
+            if (this.scene.isPaused()) {
+                this.scene.resume('game');
+            } else {
+                this.scene.pause('game');
+            }
+        }
+    });
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;
