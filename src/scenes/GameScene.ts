@@ -96,32 +96,9 @@ export default class GameScene extends Phaser.Scene {
         }
     });
     
-    new Frame(this, this.cameras.main.centerX - 16 * 7, 4, 'icons-frames-1', [
-        [ '0', '1', '2', '2', '1', '1', '3' ],
-        [ '12', '13', '14', '13', '13', '13', '15' ]
-    ], 32);
-
-    new Frame(this, 4, 4, 'icons-frames-1', [
-        [ '0', '1', '2', '2', '3' ],
-        [ '4', '5', '5', '6', '7' ],
-        [ '8', '9', '10', '9', '11' ],
-        [ '12', '13', '13', '14', '15' ]
-    ], 32);
-
-    this.healthText = new TextWithIcon(this, 20, 46, 'icons-frames-0', '160', this.lifes.toString(), 32, 0x000000);
-    this.moneyText = new TextWithIcon(this, 20, 92, 'icons-frames-0', '180', this.money.toString(), 32, 0x000000);
-    this.waveText = new Text(this, 0, 38, 'WAVE ' + this.wave.toString(), 32, 0x000000);
-    this.waveText.setPosition(this.cameras.main.centerX - this.waveText.width / 2, 38);
-
-    new Button(this, this.cameras.main.width - 36, 36, 'buttons', { default: '56', hover: '57' }).setDisplaySize(64, 64).setDepth(LayerDepth.UI).on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-        if (pointer.leftButtonDown()) {
-            if (this.scene.isPaused()) {
-                this.scene.resume('game');
-            } else {
-                this.scene.pause('game');
-            }
-        }
-    });
+    this.events.emit('updateHealth', this.lifes);
+    this.events.emit('updateMoney', this.money);
+    this.events.emit('updateWave', this.wave);
 
     // this.waveData = this.cache.json.get("wavedata")[this.wave];
     // this.enemiesLeft = this.waveData.enemies.length;
@@ -286,7 +263,7 @@ export default class GameScene extends Phaser.Scene {
     public loseHealth (takesHealth) {
         this.lifes -= takesHealth;
 
-        this.healthText!.updateText(this.lifes.toString());
+        this.events.emit('updateHealth', this.lifes);
 
         if (this.lifes <= 0) {
             this.scene.pause('game');
@@ -323,13 +300,13 @@ export default class GameScene extends Phaser.Scene {
     public addMoney (money: number) {
         this.money += money;
 
-        this.moneyText!.updateText(this.money.toString());
+        this.events.emit('updateMoney', this.money);
     }
 
     public removeMoney (money: number) {
         this.money -= money;
 
-        this.moneyText!.updateText(this.money.toString());
+        this.events.emit('updateMoney', this.money);
     }
 
     public getMoney (): number {
